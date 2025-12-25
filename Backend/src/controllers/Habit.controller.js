@@ -55,3 +55,30 @@ export const getHabits = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
+
+export const deleteHabit = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { habitId } = req.params;
+
+    const habit = await Habit.findOne({ _id: habitId, user: userId });
+    if (!habit) {
+      return res.status(404).json({ message: "Habit not found" });
+    }
+
+    // 🔥 delete all logs first
+    await ActivityLog.deleteMany({
+      user: userId,
+      habit: habitId,
+    });
+
+    // 🔥 delete habit
+    await habit.deleteOne();
+
+    res.json({ message: "Habit deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

@@ -3,6 +3,7 @@ import authMiddleware from "../middlewares/Auth.middleware.js";
 import {
   getHabits,
   completeHabitToday,
+  deleteHabit,
 } from "../controllers/Habit.controller.js";
 import { addHabit } from "../controllers/Activity.controller.js";
 
@@ -14,5 +15,6 @@ router.use(authMiddleware);
 router.get("/", getHabits);                     // GET /habits
 router.post("/", addHabit);                     // POST /habits (create)
 router.post("/:habitId/complete", completeHabitToday); // complete today
+router.delete("/:habitId", deleteHabit);
 
 export default router;
