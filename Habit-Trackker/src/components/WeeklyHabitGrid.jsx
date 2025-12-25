@@ -7,7 +7,7 @@ import { getStartOfWeek } from "../utils/week";
 ===================== */
 const toDateKey = (d) => d.toISOString().slice(0, 10);
 
-function getNDays(start, n = 50) {
+function getNDays(start, n = 100) {
   return Array.from({ length: n }, (_, i) => {
     const d = new Date(start);
     d.setUTCDate(start.getUTCDate() + i);
@@ -16,15 +16,41 @@ function getNDays(start, n = 50) {
   });
 }
 
+/* 🔥 FIXED SCHEDULING LOGIC */
 function isHabitScheduledOnDate(habit, date) {
-  const weekday = date
-    .toLocaleDateString("en-US", { weekday: "short", timeZone: "UTC" })
-    .toLowerCase();
+  const day = new Date(date);
+  day.setUTCHours(0, 0, 0, 0);
+
+  // startDate guard
+  if (habit.startDate) {
+    const start = new Date(habit.startDate);
+    start.setUTCHours(0, 0, 0, 0);
+    if (day < start) return false;
+  }
+
+  // endDate guard
+  if (habit.endDate) {
+    const end = new Date(habit.endDate);
+    end.setUTCHours(0, 0, 0, 0);
+    if (day > end) return false;
+  }
+
+  const weekday = day
+    .toLocaleDateString("en-US", {
+      weekday: "short",
+      timeZone: "UTC",
+    })
+    .toLowerCase()
+    .slice(0, 3); // mon, tue...
+
+  const habitDays = Array.isArray(habit.days)
+    ? habit.days.map((d) => d.toLowerCase().slice(0, 3))
+    : [];
 
   if (habit.frequency === "daily") return true;
 
   if (habit.frequency === "weekly") {
-    return habit.days?.includes(weekday);
+    return habitDays.includes(weekday);
   }
 
   if (habit.frequency === "interval") {
@@ -34,7 +60,7 @@ function isHabitScheduledOnDate(habit, date) {
     start.setUTCHours(0, 0, 0, 0);
 
     const diff =
-      (date.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
+      (day.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
 
     return diff >= 0 && diff % habit.intervalDays === 0;
   }
@@ -58,7 +84,7 @@ export default function WeeklyHabitGrid() {
   const [loading, setLoading] = useState(true);
 
   const weekStart = getStartOfWeek(); // UTC Monday
-  const days = getNDays(weekStart, 50);
+  const days = getNDays(weekStart, 100);
   const weekKey = toDateKey(weekStart);
 
   const today = new Date();
@@ -107,7 +133,7 @@ export default function WeeklyHabitGrid() {
       <div
         className="grid gap-[6px] p-4"
         style={{
-          gridTemplateColumns: `140px repeat(50, 28px)`,
+          gridTemplateColumns: `140px repeat(100, 28px)`,
           gridAutoRows: "32px",
         }}
       >
@@ -132,48 +158,51 @@ export default function WeeklyHabitGrid() {
         {/* HABIT ROWS */}
         {habits.map((habit) => (
           <div key={habit._id} className="contents">
-            {/* HABIT NAME */}
             <div className="flex items-center text-xs font-medium text-zinc-300 truncate pr-2">
               {habit.title}
             </div>
 
-            {/* CELLS */}
             {days.map((day) => {
-              const dateKey = toDateKey(day);
-              const cellKey = `${habit._id}_${dateKey}`;
+  const dateKey = toDateKey(day);
+  const cellKey = `${habit._id}_${dateKey}`;
 
-              const rawLog = logs[cellKey];
-              const log =
-                typeof rawLog === "boolean"
-                  ? { done: rawLog, confidence: 30 }
-                  : rawLog;
+  const rawLog = logs[cellKey];
+  const log =
+    typeof rawLog === "boolean"
+      ? { done: rawLog, confidence: 30 }
+      : rawLog;
 
-              const isPast = dateKey < todayKey;
-              const isScheduled = isHabitScheduledOnDate(habit, day);
+  const isPast = dateKey < todayKey;
+  const hasLog = !!log;
 
-              return (
-                <div
-                  key={cellKey}
-                  className={`flex items-center justify-center ${
-                    !isScheduled
-                      ? "opacity-10"
-                      : isPast
-                      ? "opacity-40"
-                      : ""
-                  }`}
-                >
-                  {isScheduled && (
-                    <div
-                      className={`w-4 h-4 rounded-sm border border-zinc-700 ${
-                        log?.done
-                          ? getHeatColor(log.confidence)
-                          : "bg-zinc-900"
-                      }`}
-                    />
-                  )}
-                </div>
-              );
-            })}
+  // 🔥 FIX: show past stats even if not scheduled
+  const isScheduled =
+    hasLog || isHabitScheduledOnDate(habit, day);
+
+  return (
+    <div
+      key={cellKey}
+      className={`flex items-center justify-center ${
+        !isScheduled
+          ? "opacity-10"
+          : isPast
+          ? "opacity-40"
+          : ""
+      }`}
+    >
+      {isScheduled && (
+        <div
+          className={`w-4 h-4 rounded-sm border border-zinc-700 ${
+            log?.done
+              ? getHeatColor(log.confidence)
+              : "bg-zinc-900"
+          }`}
+        />
+      )}
+    </div>
+  );
+})}
+
           </div>
         ))}
       </div>

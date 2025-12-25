@@ -1,4 +1,3 @@
-// components/AddHabitModal.jsx
 import { useState } from "react";
 import api from "../api/axios";
 import { DAYS } from "../constants/days";
@@ -9,8 +8,7 @@ export default function AddHabitModal({ onClose, onAdded }) {
   const [days, setDays] = useState([]);
   const [intervalDays, setIntervalDays] = useState(1);
 
-  // 🔥 NEW
-  const [durationType, setDurationType] = useState("forever"); // forever | custom
+  const [durationType, setDurationType] = useState("forever");
   const [durationDays, setDurationDays] = useState(3);
 
   const [loading, setLoading] = useState(false);
@@ -52,8 +50,12 @@ export default function AddHabitModal({ onClose, onAdded }) {
         frequency,
         days: frequency === "weekly" ? days : [],
         intervalDays: frequency === "interval" ? intervalDays : undefined,
-        durationDays: durationType === "custom" ? durationDays : undefined,
+        durationDays:
+          durationType === "custom" ? durationDays : undefined,
       });
+
+      // 🔥 HARD REAL-TIME SYNC (THIS IS THE FIX)
+      window.dispatchEvent(new Event("habits-updated"));
 
       // reset
       setTitle("");
@@ -77,7 +79,6 @@ export default function AddHabitModal({ onClose, onAdded }) {
       <div className="bg-zinc-900 border border-zinc-700 p-6 rounded-xl w-96 text-white shadow-xl">
         <h2 className="text-lg font-semibold mb-4">Add Habit</h2>
 
-        {/* TITLE */}
         <input
           className="w-full bg-zinc-800 border border-zinc-700 p-2 mb-3 rounded
                      focus:outline-none focus:ring-2 focus:ring-indigo-600"
@@ -87,7 +88,6 @@ export default function AddHabitModal({ onClose, onAdded }) {
           disabled={loading}
         />
 
-        {/* FREQUENCY */}
         <select
           className="w-full bg-zinc-800 border border-zinc-700 p-2 mb-3 rounded"
           value={frequency}
@@ -99,7 +99,6 @@ export default function AddHabitModal({ onClose, onAdded }) {
           <option value="interval">Every N days</option>
         </select>
 
-        {/* WEEKLY DAYS */}
         {frequency === "weekly" && (
           <div className="flex flex-wrap gap-2 mb-4">
             {DAYS.map((day) => {
@@ -124,7 +123,6 @@ export default function AddHabitModal({ onClose, onAdded }) {
           </div>
         )}
 
-        {/* INTERVAL */}
         {frequency === "interval" && (
           <div className="mb-4">
             <label className="block text-sm mb-1">Repeat every</label>
@@ -141,7 +139,6 @@ export default function AddHabitModal({ onClose, onAdded }) {
           </div>
         )}
 
-        {/* 🔥 DURATION */}
         <div className="mb-4">
           <label className="block text-sm mb-1">Duration</label>
           <select
@@ -160,12 +157,10 @@ export default function AddHabitModal({ onClose, onAdded }) {
               value={durationDays}
               onChange={(e) => setDurationDays(+e.target.value)}
               className="w-full bg-zinc-800 border border-zinc-700 p-2 rounded"
-              placeholder="Number of days"
             />
           )}
         </div>
 
-        {/* ACTIONS */}
         <div className="flex justify-end gap-2">
           <button
             onClick={onClose}

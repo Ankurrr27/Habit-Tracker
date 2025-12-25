@@ -1,10 +1,16 @@
-// components/Sidebar.jsx
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AddHabitModal from "./AddHabitModal";
-import { Plus, Home, Flame } from "lucide-react";
+import { Plus, Home, Flame, User, LogOut } from "lucide-react";
 
 export default function Sidebar() {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   return (
     <>
@@ -13,21 +19,38 @@ export default function Sidebar() {
           group
           h-full
           min-w-[4rem]
-          bg-zinc-900
+          bg-black
           border-r border-zinc-800
           transition-all duration-300 ease-in-out
           w-16 hover:w-56
           flex flex-col
         "
       >
-        {/* NAV ITEMS */}
-        <nav className="flex-1 px-2 py-4 space-y-2">
-          <SidebarItem icon={<Home />} label="Home" />
-          <SidebarItem icon={<Flame />} label="Streaks" />
+        {/* TOP NAV ITEMS */}
+        <nav className="px-2 py-4 space-y-2">
+          <SidebarItem
+            icon={<Home />}
+            label="Home"
+            onClick={() => navigate("/")}
+          />
+
+          <SidebarItem
+            icon={<Flame />}
+            label="Streaks"
+            onClick={() => navigate("/")}
+          />
+
+          <SidebarItem
+            icon={<User />}
+            label="Profile"
+            onClick={() => navigate("/profile")}
+          />
         </nav>
 
-        {/* ADD HABIT */}
-        <div className="p-2">
+        {/* 🔥 PUSH EVERYTHING BELOW TO BOTTOM */}
+        <div className="mt-auto p-2 space-y-2">
+          
+          {/* ADD HABIT */}
           <button
             onClick={() => setOpen(true)}
             className="
@@ -40,10 +63,7 @@ export default function Sidebar() {
               transition
             "
           >
-            {/* ICON — HARD LOCKED */}
             <Plus className="w-5 h-5 min-w-[20px] min-h-[20px]" />
-
-            {/* LABEL — COLLAPSIBLE */}
             <span
               className="
                 whitespace-nowrap
@@ -56,6 +76,9 @@ export default function Sidebar() {
               Add Habit
             </span>
           </button>
+
+
+         
         </div>
       </aside>
 
@@ -64,24 +87,21 @@ export default function Sidebar() {
   );
 }
 
-function SidebarItem({ icon, label }) {
+function SidebarItem({ icon, label, onClick }) {
   return (
-    <div
+    <button
+      onClick={onClick}
       className="
+        w-full
         flex items-center justify-start gap-3
         text-zinc-300 hover:text-white
         hover:bg-zinc-800
         px-3 py-2 rounded-md
-        cursor-pointer
         transition
       "
     >
-      {/* ICON — HARD LOCKED */}
-      <div className="min-w-[20px] min-h-[20px]">
-        {icon}
-      </div>
+      <div className="min-w-[20px] min-h-[20px]">{icon}</div>
 
-      {/* LABEL */}
       <span
         className="
           whitespace-nowrap
@@ -93,6 +113,6 @@ function SidebarItem({ icon, label }) {
       >
         {label}
       </span>
-    </div>
+    </button>
   );
 }

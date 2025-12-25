@@ -1,29 +1,76 @@
-import React from "react";
-import Navbar from "../components/Navbar";
+import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import WeeklyHabitGrid from "../components/WeeklyHabitGrid";
 import HabitByDayList from "../components/HabitByDayList";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const MainPage = () => {
+  const [collapsed, setCollapsed] = useState(false);
+
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
-      <Navbar />
-
       <div className="flex flex-1 h-[calc(100vh-64px)] overflow-hidden">
-        {/* SIDEBAR */}
+        {/* LEFT APP SIDEBAR */}
         <Sidebar />
 
-        {/* MAIN STRIP */}
+        {/* MAIN AREA */}
         <div className="flex flex-1 overflow-hidden">
-          {/* DAILY LIST */}
-          <aside className="w-72 shrink-0 border-r border-zinc-800 p-4 overflow-y-auto">
-            <HabitByDayList />
+
+          {/* 🟦 HABIT PANEL */}
+          <aside
+            className={`
+              flex flex-col
+              border-r border-zinc-800
+              transition-[width] duration-300 ease-in-out
+              ${collapsed ? "w-14" : "w-[260px]"}
+              bg-black
+            `}
+          >
+            {/* HEADER (STABLE HEIGHT) */}
+            <div className="h-12 flex items-center justify-between px-3 border-b border-zinc-800">
+              {!collapsed && (
+                <span className="text-xs font-medium text-zinc-400">
+                  Daily Habits
+                </span>
+              )}
+
+              <button
+                onClick={() => setCollapsed(!collapsed)}
+                className="
+                  p-1 rounded-md
+                  hover:bg-zinc-800
+                  transition
+                "
+              >
+                {collapsed ? (
+                  <ChevronRight size={16} />
+                ) : (
+                  <ChevronLeft size={16} />
+                )}
+              </button>
+            </div>
+
+            {/* CONTENT */}
+            <div
+              className={`
+                flex-1 overflow-y-auto
+                transition-opacity duration-200
+                ${collapsed ? "opacity-0 pointer-events-none" : "opacity-100"}
+              `}
+            >
+              {!collapsed && (
+                <div className="p-4">
+                  <HabitByDayList />
+                </div>
+              )}
+            </div>
           </aside>
 
-          {/* WEEKLY GRID */}
-          <main className="flex-1 overflow-auto">
+          {/* 🟩 GRID (NEVER JITTERS) */}
+          <main className="flex-1 overflow-hidden">
             <WeeklyHabitGrid />
           </main>
+
         </div>
       </div>
     </div>

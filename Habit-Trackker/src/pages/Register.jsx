@@ -1,76 +1,92 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
+import { useNavigate, Link } from "react-router-dom";
 
-export default function Register() {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
-  const [loading, setLoading] = useState(false);
+export default function RegisterPage() {
   const navigate = useNavigate();
 
-  const change = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const submit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setError("");
+
+    if (!name || !email || !password) {
+      setError("All fields are required");
+      return;
+    }
 
     try {
-      await api.post("/auth/register", form);
-      navigate("/login");
+      setLoading(true);
+
+      const res = await api.post("/auth/register", {
+        name,
+        email,
+        password,
+      });
+
+      localStorage.setItem("token", res.data.token);
+      navigate("/");
     } catch (err) {
-      alert(err.response?.data?.message || "Signup failed");
+      setError(err.response?.data?.message || "Signup failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black">
+    <div className="min-h-screen flex items-center justify-center bg-black text-white">
       <form
         onSubmit={submit}
-        className="w-full max-w-sm bg-zinc-900 p-6 rounded-lg border border-zinc-800"
+        className="w-full max-w-sm bg-zinc-900 border border-zinc-800 p-6 rounded-xl"
       >
-        <h1 className="text-xl text-white font-semibold mb-4">Sign Up</h1>
+        <h1 className="text-xl font-semibold mb-4">Create Account</h1>
+
+        {error && (
+          <p className="text-sm text-red-400 mb-3">{error}</p>
+        )}
 
         <input
-          name="name"
           placeholder="Name"
-          onChange={change}
-          required
-          className="w-full mb-3 px-3 py-2 bg-zinc-800 text-white rounded"
+          className="w-full mb-3 p-2 rounded bg-zinc-800 border border-zinc-700"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          disabled={loading}
         />
 
         <input
-          name="email"
+          type="email"
           placeholder="Email"
-          onChange={change}
-          required
-          className="w-full mb-3 px-3 py-2 bg-zinc-800 text-white rounded"
+          className="w-full mb-3 p-2 rounded bg-zinc-800 border border-zinc-700"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          disabled={loading}
         />
 
         <input
           type="password"
-          name="password"
           placeholder="Password"
-          onChange={change}
-          required
-          className="w-full mb-4 px-3 py-2 bg-zinc-800 text-white rounded"
+          className="w-full mb-4 p-2 rounded bg-zinc-800 border border-zinc-700"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          disabled={loading}
         />
 
         <button
+          type="submit"
           disabled={loading}
-          className="w-full bg-white text-black py-2 rounded font-medium"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 py-2 rounded"
         >
-          {loading ? "Creating account..." : "Sign Up"}
+          {loading ? "Creating..." : "Create Account"}
         </button>
 
-        <p className="text-sm text-zinc-400 mt-4">
+        <p className="text-sm text-zinc-400 mt-4 text-center">
           Already have an account?{" "}
-          <Link to="/login" className="text-white underline">
+          <Link to="/login" className="text-indigo-400 hover:underline">
             Login
           </Link>
         </p>
