@@ -1,0 +1,33 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Habit Tracker App for student, Bachelors, Professionals, Coders etc.",
+  "homepage": "https://github.com/Ankurrr27/Habit-Tracker#readme",
+  "bugs": {
+    "url": "https://github.com/Ankurrr27/Habit-Tracker/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ankurrr27/Habit-Tracker.git"
+  },
+  "license": "ISC",
+  "author": "Ankur",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js"
+  },
+  "devDependencies": {
+    "prettier": "3.7.4"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.0.2",
+    "nodemon": "^3.1.11"
+  }
+}
