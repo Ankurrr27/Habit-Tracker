@@ -3,6 +3,8 @@ import Sidebar from "../components/Sidebar";
 import WeeklyHabitGrid from "../components/WeeklyHabitGrid";
 import HabitByDayList from "../components/HabitByDayList";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import ContributionHeatmap from "../components/WeeklyHabitGrdi2";
+import HabitHeatmap2 from "../components/HabitHeatMap2";
 
 const MainPage = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -15,7 +17,6 @@ const MainPage = () => {
 
         {/* MAIN AREA */}
         <div className="flex flex-1 overflow-hidden">
-
           {/* 🟦 HABIT PANEL */}
           <aside
             className={`
@@ -67,10 +68,14 @@ const MainPage = () => {
           </aside>
 
           {/* 🟩 GRID (NEVER JITTERS) */}
-          <main className="flex-1 overflow-hidden">
-            <WeeklyHabitGrid />
-          </main>
+          {/* 🟩 MAIN CONTENT (STACKED) */}
+          <main className="flex-1 overflow-y-auto p-6 space-y-6 flex flex-col">
+            {/* TOP: Calendar / Weekly Grid */}
+            <ContributionHeatmap />
 
+            {/* BOTTOM: Year Heatmap */}
+            <HabitHeatmap2 />
+          </main>
         </div>
       </div>
     </div>
