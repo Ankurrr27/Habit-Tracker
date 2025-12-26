@@ -3,17 +3,17 @@ import Sidebar from "../components/Sidebar";
 import WeeklyHabitGrid from "../components/WeeklyHabitGrid";
 import HabitByDayList from "../components/HabitByDayList";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import ContributionHeatmap from "../components/WeeklyHabitGrdi2";
+import ContributionHeatmap from "../components/WeeklyHabitGrid2";
 import HabitHeatmap2 from "../components/HabitHeatMap2";
 
-const MainPage = () => {
+const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
       <div className="flex flex-1 h-[calc(100vh-64px)] overflow-hidden">
         {/* LEFT APP SIDEBAR */}
-        <Sidebar />
+  
 
         {/* MAIN AREA */}
         <div className="flex flex-1 overflow-hidden">
@@ -82,4 +82,4 @@ const MainPage = () => {
   );
 };
 
-export default MainPage;
+export default Dashboard;

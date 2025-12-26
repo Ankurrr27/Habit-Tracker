@@ -1,44 +1,49 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
 
-import MainPage from "./pages/Main";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProfilePage from "./pages/ProfilePage";
+import IntroPage from "./pages/Intro";
+import Dashboard from "./pages/Main";
 
-import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
+import ProtectedRoute from "./routes/ProtectedRoute";
+
+import AppLayout from "./layouts/AppLayout";
+import DashboardLayout from "./layouts/DashboardLayout";
+import AuthLayout from "./layouts/AuthLayout";
+import UsersPage from "./pages/Users";
 
 export default function App() {
   return (
     <BrowserRouter>
-      {/* APP SHELL */}
-      <div className="min-h-screen flex flex-col bg-black text-white">
-        
-        {/* NAVBAR */}
-        <Navbar />
+      <Routes>
+        {/* 🌍 INTRO PAGE (HEADER + FOOTER, NO SIDEBAR) */}
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<IntroPage />} />
+        </Route>
 
-        {/* ROUTES */}
-        <main className="flex-1">
-          <Routes>
-            {/* 🔓 PUBLIC ONLY */}
-            <Route element={<PublicRoute />}>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-            </Route>
+        {/* 🔓 AUTH (NO HEADER / FOOTER / SIDEBAR) */}
+        <Route element={<PublicRoute />}>
+          <Route element={<AuthLayout />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Route>
+        </Route>
 
-            {/* 🔐 PROTECTED */}
-            <Route element={<ProtectedRoute />}>
-              <Route path="/" element={<MainPage />} />
+        {/* 🔐 DASHBOARD (HEADER + FOOTER + SIDEBAR) */}
+        <Route element={<ProtectedRoute />}>
+          <Route element={<AppLayout />}>
+            <Route element={<DashboardLayout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/profile" element={<ProfilePage />} />
-            </Route>
-          </Routes>
-        </main>
+              <Route path="/u/:username" element={<ProfilePage />} />
+              <Route path="/users" element={<UsersPage />} />
 
-        {/* FOOTER */}
-        <Footer />
-      </div>
+            </Route>
+          </Route>
+        </Route>
+      </Routes>
     </BrowserRouter>
   );
 }

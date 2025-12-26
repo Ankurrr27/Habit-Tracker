@@ -8,6 +8,15 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
 
+    username: {
+      type: String,
+      unique: true,
+      required: true,
+      lowercase: true,
+      trim: true,
+      match: /^[a-zA-Z0-9_]+$/,
+    },
+
     email: {
       type: String,
       required: true,
@@ -19,12 +28,11 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
-      select: false, // 🔒 NEVER return password by default
+      select: false,
     },
 
-    // 🔥 CLOUDINARY AVATAR
     avatar: {
-      type: String, // Cloudinary secure_url
+      type: String,
       default: "",
     },
 
@@ -38,14 +46,23 @@ const userSchema = new mongoose.Schema(
       default: 0,
     },
 
-    // 🔥 AUTH / SESSION READY
     role: {
       type: String,
       enum: ["user", "admin"],
       default: "user",
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      transform(doc, ret) {
+        ret.id = ret._id;
+        delete ret._id;
+        delete ret.__v;
+      },
+    },
+  }
 );
 
-export default mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+export default User;

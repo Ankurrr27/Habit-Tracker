@@ -133,37 +133,51 @@ export default function HabitByDayList() {
   };
 
   return (
-    <div className="space-y-5">
-      <WeekCalendar
-        weekDates={weekDates}
-        selectedIndex={selectedIndex}
-        onSelect={setSelectedIndex}
-        habitCounts={weekDates.map((_, i) =>
-          i === selectedIndex ? habits.length : 0
-        )}
-      />
+  <div className="space-y-4 md:space-y-5">
+    {/* CALENDAR */}
+    <WeekCalendar
+      weekDates={weekDates}
+      selectedIndex={selectedIndex}
+      onSelect={setSelectedIndex}
+      habitCounts={weekDates.map((_, i) =>
+        i === selectedIndex ? habits.length : 0
+      )}
+    />
 
-      <div className="text-sm text-zinc-400">
-        {isToday ? "Today" : selectedDate.toDateString()}
-      </div>
-
-      <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-1">
-        {loading ? (
-          <p className="text-zinc-500 text-sm">Loading…</p>
-        ) : habits.length === 0 ? (
-          <p className="text-zinc-600 text-sm">No habits</p>
-        ) : (
-          habits.map((habit) => (
-            <HabitItem
-              key={habit._id}
-              habit={habit}
-              onComplete={completeHabit}
-              onDelete={deleteHabit}   
-              disabled={!isToday}
-            />
-          ))
-        )}
-      </div>
+    {/* DATE LABEL */}
+    <div className="text-sm md:text-sm text-zinc-400 px-1">
+      {isToday ? "Today" : selectedDate.toDateString()}
     </div>
-  );
+
+    {/* HABIT LIST */}
+    <div
+      className="
+        space-y-2
+        max-h-[50vh] md:max-h-[60vh]
+        overflow-y-auto
+        pr-1
+        pb-24 md:pb-0
+      "
+    >
+      {loading ? (
+        <p className="text-zinc-500 text-sm px-1">Loading…</p>
+      ) : habits.length === 0 ? (
+        <p className="text-zinc-600 text-sm px-1">
+          No habits
+        </p>
+      ) : (
+        habits.map((habit) => (
+          <HabitItem
+            key={habit._id}
+            habit={habit}
+            onComplete={completeHabit}
+            onDelete={deleteHabit}
+            disabled={!isToday}
+          />
+        ))
+      )}
+    </div>
+  </div>
+);
+
 }

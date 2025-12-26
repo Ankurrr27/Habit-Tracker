@@ -1,11 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AddHabitModal from "./AddHabitModal";
-import { Plus, Home, Flame, User, LogOut } from "lucide-react";
+import { Plus, Home, Flame, User, Users } from "lucide-react";
+import api from "../api/axios";
 
 export default function Sidebar() {
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
+
+  /* =====================
+     FETCH ME
+  ===================== */
+  useEffect(() => {
+    api.get("/auth/me").then((res) => setUser(res.data)).catch(() => {});
+  }, []);
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -17,7 +26,7 @@ export default function Sidebar() {
       <aside
         className="
           group
-          h-full
+          h-auto
           min-w-[4rem]
           bg-black
           border-r border-zinc-800
@@ -31,25 +40,34 @@ export default function Sidebar() {
           <SidebarItem
             icon={<Home />}
             label="Home"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/dashboard")}
           />
 
           <SidebarItem
             icon={<Flame />}
             label="Streaks"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/dashboard")}
+          />
+
+          {/* ✅ NEW USERS BUTTON (ONLY ADDITION) */}
+          <SidebarItem
+            icon={<Users />}
+            label="Users"
+            onClick={() => navigate("/users")}
           />
 
           <SidebarItem
             icon={<User />}
             label="Profile"
-            onClick={() => navigate("/profile")}
+            onClick={() => {
+              if (!user?.username) return;
+              navigate(`/u/${user.username}`);
+            }}
           />
         </nav>
 
-        {/* 🔥 PUSH EVERYTHING BELOW TO BOTTOM */}
+        {/* BOTTOM ACTIONS */}
         <div className="mt-auto p-2 space-y-2">
-          
           {/* ADD HABIT */}
           <button
             onClick={() => setOpen(true)}
@@ -76,9 +94,6 @@ export default function Sidebar() {
               Add Habit
             </span>
           </button>
-
-
-         
         </div>
       </aside>
 
@@ -87,18 +102,21 @@ export default function Sidebar() {
   );
 }
 
-function SidebarItem({ icon, label, onClick }) {
+function SidebarItem({ icon, label, onClick, danger = false }) {
   return (
     <button
       onClick={onClick}
-      className="
+      className={`
         w-full
         flex items-center justify-start gap-3
-        text-zinc-300 hover:text-white
-        hover:bg-zinc-800
         px-3 py-2 rounded-md
         transition
-      "
+        ${
+          danger
+            ? "text-red-400 hover:bg-zinc-800"
+            : "text-zinc-300 hover:text-white hover:bg-zinc-800"
+        }
+      `}
     >
       <div className="min-w-[20px] min-h-[20px]">{icon}</div>
 

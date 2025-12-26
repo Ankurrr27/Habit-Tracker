@@ -19,6 +19,15 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
+    // 🔥 Generate unique username
+    const baseUsername = name.toLowerCase().replace(/\s+/g, "_");
+    let username = baseUsername;
+    let count = 1;
+
+    while (await User.findOne({ username })) {
+      username = `${baseUsername}_${count++}`;
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     let avatar = "";
@@ -32,6 +41,7 @@ export const register = async (req, res) => {
 
     const user = await User.create({
       name,
+      username,
       email,
       password: hashedPassword,
       avatar,
@@ -43,8 +53,9 @@ export const register = async (req, res) => {
       message: "User registered successfully",
       token,
       user: {
-        id: user._id,
+        id: user.id,
         name: user.name,
+        username: user.username,
         email: user.email,
         avatar: user.avatar,
       },
@@ -60,13 +71,17 @@ export const register = async (req, res) => {
  */
 export const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { identifier, password } = req.body;
+    // identifier = email OR username
 
-    if (!email || !password) {
+    if (!identifier || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({
+      $or: [{ email: identifier }, { username: identifier }],
+    }).select("+password");
+
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
@@ -82,8 +97,9 @@ export const login = async (req, res) => {
       message: "Login successful",
       token,
       user: {
-        id: user._id,
+        id: user.id,
         name: user.name,
+        username: user.username,
         email: user.email,
         avatar: user.avatar,
       },
@@ -92,6 +108,7 @@ export const login = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 
 /**
@@ -107,6 +124,25 @@ export const updateProfile = async (req, res) => {
 
     if (req.body.name) {
       user.name = req.body.name.trim();
+    }
+
+    if (req.body.username) {
+      const username = req.body.username.toLowerCase().trim();
+
+      if (!/^[a-z0-9_]+$/.test(username)) {
+        return res.status(400).json({ message: "Invalid username format" });
+      }
+
+      const exists = await User.findOne({
+        username,
+        _id: { $ne: user._id },
+      });
+
+      if (exists) {
+        return res.status(400).json({ message: "Username already taken" });
+      }
+
+      user.username = username;
     }
 
     if (typeof req.body.profilePublic === "boolean") {
@@ -126,8 +162,9 @@ export const updateProfile = async (req, res) => {
     res.json({
       message: "Profile updated",
       user: {
-        id: user._id,
+        id: user.id,
         name: user.name,
+        username: user.username,
         email: user.email,
         avatar: user.avatar,
         profilePublic: user.profilePublic,
@@ -139,6 +176,7 @@ export const updateProfile = async (req, res) => {
 };
 
 
+
 /**
  * GET CURRENT USER
  */
@@ -146,11 +184,14 @@ export const me = async (req, res) => {
   const user = await User.findById(req.user.id);
 
   res.json({
-    id: user._id,
+    id: user.id,
     name: user.name,
+    username: user.username,
     email: user.email,
     avatar: user.avatar,
     profilePublic: user.profilePublic,
     credibilityScore: user.credibilityScore,
   });
 };
+
+

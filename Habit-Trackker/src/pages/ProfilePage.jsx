@@ -8,43 +8,45 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
+import { useParams } from "react-router-dom";
 
 export default function ProfilePage() {
+  const { username } = useParams();
+
   const [user, setUser] = useState(null);
+  const [me, setMe] = useState(null);
   const [name, setName] = useState("");
   const [file, setFile] = useState(null);
   const [profilePublic, setProfilePublic] = useState(false);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
 
-  /* =====================
-     FETCH PROFILE
-  ===================== */
   useEffect(() => {
-    api.get("/auth/me").then((res) => {
+    api.get(`/auth/u/${username}`).then((res) => {
       setUser(res.data);
       setName(res.data.name);
-      setProfilePublic(res.data.profilePublic);
+      setProfilePublic(res.data.profilePublic ?? false);
     });
+  }, [username]);
+
+  useEffect(() => {
+    api.get("/auth/me").then((res) => setMe(res.data)).catch(() => {});
   }, []);
 
-  /* =====================
-     UPDATE PROFILE
-  ===================== */
+  const isOwnProfile = me?.username === username;
+
   const submit = async () => {
-    setMsg("");
+    if (!isOwnProfile) return;
     setLoading(true);
+    setMsg("");
 
     try {
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("profilePublic", profilePublic);
-      if (file) formData.append("avatar", file);
+      const fd = new FormData();
+      fd.append("name", name);
+      fd.append("profilePublic", profilePublic);
+      if (file) fd.append("avatar", file);
 
-      await api.put("/auth/profile", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
+      await api.put("/auth/profile", fd);
       setMsg("Profile updated");
     } catch {
       setMsg("Update failed");
@@ -55,88 +57,119 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-black text-zinc-500 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center text-zinc-500">
         Loading profile…
       </div>
     );
   }
 
   return (
-    <div className="min-h-[91vh] bg-black  text-white px-6 py-12">
-      <div className="max-w-4xl mx-auto space-y-5">
+    <div className="min-h-[91vh] bg-black text-white px-6 py-10">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        {/* ================= HEADER ================= */}
-        <div className="flex items-center gap-6 bg-zinc-900 border border-zinc-800 p-6 rounded-xl">
-          <img
-            src={user.avatar || "/avatar-placeholder.png"}
-            alt="avatar"
-            className="w-24 h-24 rounded-full object-cover border border-zinc-700"
-          />
+        {/* ================= LEFT COLUMN ================= */}
+        <div className="lg:col-span-2 space-y-6">
+          
+          {/* HEADER */}
+          <div className="flex gap-6 bg-zinc-900 border border-zinc-800 p-6 rounded-xl">
+            <img
+              src={user.avatar || "/avatar-placeholder.png"}
+              className="w-24 h-24 rounded-full object-cover border border-zinc-700"
+            />
 
-          <div className="flex-1">
-            <h1 className="text-xl font-semibold">{user.name}</h1>
-            <p className="text-sm text-zinc-400">{user.email}</p>
+            <div className="flex-1">
+              <h1 className="text-2xl font-semibold">{user.name}</h1>
+              <p className="text-sm text-zinc-400">@{user.username}</p>
+              <p className="text-xs text-zinc-500 mt-1">
+                Joined {new Date(user.createdAt).toDateString()}
+              </p>
 
-            <p className="text-xs text-zinc-500 mt-1">
-              Joined {new Date(user.createdAt).toDateString()}
+              {isOwnProfile && (
+                <label className="inline-block mt-3 text-xs text-indigo-400 cursor-pointer">
+                  Change avatar
+                  <input
+                    type="file"
+                    hidden
+                    onChange={(e) => setFile(e.target.files[0])}
+                  />
+                </label>
+              )}
+            </div>
+          </div>
+
+          {/* STATS */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Stat icon={<Flame />} label="Streak" value={user.currentStreak} />
+            <Stat icon={<CheckCircle />} label="Completed" value={user.completedCount} />
+            <Stat icon={<Calendar />} label="Active Days" value={user.activeDays} />
+            <Stat icon={<Shield />} label="Credibility" value={user.credibilityScore} />
+          </div>
+
+          {/* ACTIVITY PLACEHOLDER */}
+          <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-xl">
+            <h2 className="text-sm font-semibold text-zinc-300 mb-2">
+              Recent Activity
+            </h2>
+            <p className="text-xs text-zinc-500">
+              Activity timeline will appear here.
             </p>
-
-            <label className="inline-block mt-3 text-xs text-indigo-400 cursor-pointer">
-              Change avatar
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setFile(e.target.files[0])}
-                className="hidden"
-              />
-            </label>
           </div>
         </div>
 
-        {/* ================= STATS ================= */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Stat icon={<Flame />} label="Current Streak" value={user.currentStreak} />
-          <Stat icon={<CheckCircle />} label="Completed" value={user.completedCount} />
-          <Stat icon={<Calendar />} label="Active Days" value={user.activeDays} />
-          <Stat icon={<Shield />} label="Credibility" value={user.credibilityScore} />
-        </div>
+        {/* ================= RIGHT COLUMN ================= */}
+        <div className="space-y-6">
 
-        {/* ================= SETTINGS ================= */}
-        <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-xl space-y-6">
-          <h2 className="text-sm font-semibold text-zinc-300">
-            Profile Settings
-          </h2>
-
-          {/* NAME */}
-          <div>
-            <label className="text-xs text-zinc-400">Name</label>
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full mt-1 p-2 rounded bg-zinc-800 border border-zinc-700"
-            />
+          {/* ABOUT */}
+          <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-xl">
+            <h2 className="text-sm font-semibold text-zinc-300 mb-2">
+              About
+            </h2>
+            <p className="text-xs text-zinc-400">
+              Habit-focused user building consistency over time.
+            </p>
           </div>
 
           {/* VISIBILITY */}
-          <button
-            onClick={() => setProfilePublic((p) => !p)}
-            className="flex items-center gap-2 text-sm text-zinc-300 hover:text-white"
-          >
-            {profilePublic ? <Eye /> : <EyeOff />}
-            Profile is {profilePublic ? "Public" : "Private"}
-          </button>
+          <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-xl">
+            <h2 className="text-sm font-semibold text-zinc-300 mb-3">
+              Profile Visibility
+            </h2>
 
-          {/* SAVE */}
-          <button
-            onClick={submit}
-            disabled={loading}
-            className="px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-700 transition"
-          >
-            {loading ? "Saving…" : "Save Changes"}
-          </button>
+            {isOwnProfile && (
+              <button
+                onClick={() => setProfilePublic((p) => !p)}
+                className="flex items-center gap-2 text-sm text-zinc-300 hover:text-white"
+              >
+                {profilePublic ? <Eye /> : <EyeOff />}
+                {profilePublic ? "Public" : "Private"}
+              </button>
+            )}
+          </div>
 
-          {msg && (
-            <p className="text-xs text-zinc-400">{msg}</p>
+          {/* SETTINGS */}
+          {isOwnProfile && (
+            <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-xl">
+              <h2 className="text-sm font-semibold text-zinc-300 mb-3">
+                Profile Settings
+              </h2>
+
+              <label className="text-xs text-zinc-400">Name</label>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full mt-1 mb-3 p-2 rounded bg-zinc-800 border border-zinc-700"
+              />
+
+              <button
+                onClick={submit}
+                disabled={loading}
+                className="w-full bg-indigo-600 hover:bg-indigo-700 py-2 rounded"
+              >
+                {loading ? "Saving…" : "Save Changes"}
+              </button>
+
+              {msg && <p className="text-xs text-zinc-400 mt-2">{msg}</p>}
+            </div>
           )}
         </div>
       </div>
@@ -144,10 +177,10 @@ export default function ProfilePage() {
   );
 }
 
-/* ================= STAT CARD ================= */
+/* ================= STAT ================= */
 function Stat({ icon, label, value }) {
   return (
-    <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-xl flex items-center gap-3">
+    <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-xl flex gap-3">
       <div className="text-indigo-400">{icon}</div>
       <div>
         <p className="text-xs text-zinc-400">{label}</p>
