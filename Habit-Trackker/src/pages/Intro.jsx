@@ -4,8 +4,8 @@ import { Flame, Shield, Calendar, ArrowRight } from "lucide-react";
 export default function IntroPage() {
   return (
     <div className="relative bg-black text-white overflow-hidden">
-      {/* SOFT BACKGROUND */}
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-purple-500/10" />
+      {/* SOFT BACKGROUND (⚠️ FIXED: pointer-events-none) */}
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-purple-500/10 pointer-events-none" />
 
       {/* HERO */}
       <section className="relative z-10 max-w-7xl mx-auto px-6 pt-28 pb-32 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">

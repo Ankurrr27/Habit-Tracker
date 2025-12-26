@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
-import UserCard from "../components/UserCard";
+import UserCard from "../components/UserCard.jsx";
 import { Users } from "lucide-react";
 
 export default function UsersPage() {
