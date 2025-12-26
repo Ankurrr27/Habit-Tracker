@@ -85,7 +85,7 @@ export default function HabitHeatmap2() {
         <div>
           <h3 className="text-white text-sm font-semibold">Habit Density</h3>
           <p className="text-zinc-500 text-[10px] uppercase tracking-widest">
-            Global completion rate across 100 days
+            Global completion rate across 365 days
           </p>
         </div>
         <div className="flex gap-1 items-center">

@@ -80,10 +80,10 @@ export default function WeekCalendar({
                 if (isToday) todayRef.current = el;
               }}
               onClick={() => onSelect(i)}
-              className={`relative min-w-[64px] px-2 py-2 rounded-xl border transition ${
+              className={`relative min-w-[64px] px-2 py-2 rounded-xl  transition ${
                 isSelected
                   ? "bg-indigo-600 border-indigo-500 text-white"
-                  : "bg-black border-zinc-800 text-zinc-300 hover:bg-zinc-900"
+                  : "bg-black  text-zinc-300 hover:bg-zinc-900"
               }`}
             >
               <div className="text-xs uppercase">

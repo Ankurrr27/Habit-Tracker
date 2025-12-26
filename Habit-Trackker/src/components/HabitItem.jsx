@@ -23,7 +23,7 @@ export default function HabitItem({
   };
 
   return (
-    <div className="flex items-center justify-between rounded-md bg-black border border-zinc-700 px-3 py-2">
+    <div className="flex items-center justify-between rounded-md bg-black  border-zinc-700 px-3 py-2">
       {/* LEFT: CHECK + TITLE */}
       <label className="flex items-center gap-3 flex-1 min-w-0">
         <input

@@ -37,7 +37,7 @@ export default function StreakBadge({ habitId }) {
   return (
     <span className="
       text-xs px-2 py-0.5 rounded-full
-      border border-emerald-600/30
+       border-emerald-600/30
       bg-emerald-600/10
       text-emerald-400
       font-medium
