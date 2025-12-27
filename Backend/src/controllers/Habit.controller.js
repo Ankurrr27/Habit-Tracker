@@ -2,6 +2,9 @@ import ActivityLog from "../models/ActivityLog.model.js";
 import Habit from "../models/Habit.model.js";
 import { getUTCStartOfDay } from "../utils/date.js";
 
+
+
+
 export const completeHabitToday = async (req, res) => {
   try {
     const userId = req.user.id;
