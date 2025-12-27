@@ -1,106 +1,116 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import api from "../api/axios";
-import UserCard from "../components/UserCard.jsx";
-import { Users } from "lucide-react";
+import { Shield } from "lucide-react";
 
-export default function UsersPage() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+const COLORS = [
+  "bg-indigo-500",
+  "bg-emerald-500",
+  "bg-rose-500",
+  "bg-amber-500",
+  "bg-sky-500",
+  "bg-purple-500",
+];
 
-  useEffect(() => {
-    api
-      .get("/users")
-      .then((res) => setUsers(res.data))
-      .catch(() => setUsers([]))
-      .finally(() => setLoading(false));
-  }, []);
+function getColor(name = "") {
+  const index = name.charCodeAt(0) % COLORS.length;
+  return COLORS[index];
+}
 
-  return (
-    <div className="px-4 sm:px-6 py-6 max-w-7xl mx-auto">
-      {/* HEADER */}
-      <div className="mb-6 flex items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-white flex items-center gap-2">
-            <Users className="text-indigo-400" />
-            Users
-          </h1>
-          <p className="text-sm text-zinc-400 mt-1">
-            Discover people building real consistency
+export default function UserCard({ user, compact = false, onClick }) {
+  const hasAvatar = !!user.avatar;
+  const firstLetter = user.name?.charAt(0).toUpperCase() || "?";
+  const color = getColor(user.name);
+
+  /* =====================
+     COMPACT MODE
+  ===================== */
+  if (compact) {
+    return (
+      <button
+        onClick={onClick}
+        className="
+          w-full
+          flex items-center gap-2
+          px-2 py-1.5
+          rounded-md
+          hover:bg-zinc-900
+          transition
+          text-left
+        "
+      >
+        {/* AVATAR */}
+        {hasAvatar ? (
+          <img
+            src={user.avatar}
+            alt={user.name}
+            className="w-8 h-8 rounded-full object-cover border border-zinc-700"
+          />
+        ) : (
+          <div
+            className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold text-white ${color}`}
+          >
+            {firstLetter}
+          </div>
+        )}
+
+        {/* NAME */}
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-medium text-white truncate">
+            {user.name}
+          </p>
+          <p className="text-[10px] text-zinc-500 truncate">
+            @{user.username}
           </p>
         </div>
 
-        {!loading && (
-          <div className="text-xs text-zinc-500">
-            {users.length} {users.length === 1 ? "user" : "users"}
+        {/* SCORE */}
+        <div className="flex items-center gap-0.5 text-[10px] text-indigo-400">
+          <Shield size={10} />
+          {user.credibilityScore ?? 0}
+        </div>
+      </button>
+    );
+  }
+
+  /* =====================
+     NORMAL MODE
+  ===================== */
+  return (
+    <button
+      onClick={onClick}
+      className="
+        w-full
+        bg-zinc-900
+        border border-zinc-800
+        rounded-xl p-4
+        text-left
+        hover:border-indigo-500/40
+        transition
+      "
+    >
+      <div className="flex items-center gap-4">
+        {hasAvatar ? (
+          <img
+            src={user.avatar}
+            alt={user.name}
+            className="w-12 h-12 rounded-full object-cover border border-zinc-700"
+          />
+        ) : (
+          <div
+            className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-semibold text-white ${color}`}
+          >
+            {firstLetter}
           </div>
         )}
-      </div>
 
-      {/* CONTENT */}
-      {loading ? (
-        <LoadingState />
-      ) : users.length === 0 ? (
-        <EmptyState />
-      ) : (
-        <div
-          className="
-            grid
-            grid-cols-1
-            sm:grid-cols-2
-            lg:grid-cols-3
-            gap-4
-          "
-        >
-          {users.map((user) => (
-            <UserCard
-              key={user.username}
-              user={user}
-             
-            />
-          ))}
+        <div className="flex-1">
+          <p className="font-medium text-white">{user.name}</p>
+          <p className="text-xs text-zinc-400">@{user.username}</p>
         </div>
-      )}
-    </div>
-  );
-}
 
-/* =====================
-   LOADING STATE
-===================== */
-function LoadingState() {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div
-          key={i}
-          className="
-            h-20
-            bg-zinc-900
-            border border-zinc-800
-            rounded-xl
-            animate-pulse
-          "
-        />
-      ))}
-    </div>
-  );
-}
-
-/* =====================
-   EMPTY STATE
-===================== */
-function EmptyState() {
-  return (
-    <div className="mt-20 text-center">
-      <div className="text-4xl mb-3">👀</div>
-      <p className="text-zinc-300 font-medium">
-        No users yet
-      </p>
-      <p className="text-sm text-zinc-500 mt-1">
-        Be the first to build credibility
-      </p>
-    </div>
+        <div className="flex items-center gap-1 text-indigo-400 text-sm">
+          <Shield size={14} />
+          {user.credibilityScore ?? 0}
+        </div>
+      </div>
+    </button>
   );
 }

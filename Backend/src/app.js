@@ -4,7 +4,7 @@ import cors from "cors";
 import habitRoutes from "./routes/Habit.routes.js";
 import authRoutes from "./routes/Auth.routes.js";
 import activityRoutes from "./routes/Activity.routes.js";
-import usersRoutes from "./routes/users.routes.js"; // ✅ FIXED
+import usersRoutes from "./routes/Users.routes.js"; // ✅ FIXED
 
 const app = express();
 
