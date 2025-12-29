@@ -1,35 +1,17 @@
 import express from "express";
-import authMiddleware from "../middlewares/Auth.middleware.js";
 import {
-  addProof,
-  getWeeklyStatus,
   toggleHabitByDate,
-  getActivityHeatmap,
-  getHabitStreak,
-  getStatusByDate,
-  getTodayStatus,
-  getUserLevel,
+  completeHabitToday,
   getActivityRange,
-} from "../controllers/Activity.controller.js";
+  getStatusByDate,
+} from "../controllers/activity.controller.js";
+import auth from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-// 🔐 Apply auth to ALL routes
-router.use(authMiddleware);
-
-// ================= ACTIVITY =================
-router.get("/today", getTodayStatus);
-router.get("/streak/:habitId", getHabitStreak);
-router.post("/:logId/proof", addProof);
-router.get("/level", getUserLevel);
-router.get("/", getStatusByDate);          // /activity?date=
-router.get("/heatmap", getActivityHeatmap);
-
-// ✅ RANGE (100 days, stable)
-router.get("/range", getActivityRange);
-
-// 🔥 WEEKLY (legacy / optional)
-router.get("/weekly", getWeeklyStatus);
-router.post("/toggle", toggleHabitByDate);
+router.post("/toggle", auth, toggleHabitByDate);
+router.post("/complete/:habitId", auth, completeHabitToday);
+router.get("/range", auth, getActivityRange);
+router.get("/status", auth, getStatusByDate);
 
 export default router;

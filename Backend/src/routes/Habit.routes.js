@@ -1,20 +1,15 @@
 import express from "express";
-import authMiddleware from "../middlewares/Auth.middleware.js";
 import {
+  addHabit,
   getHabits,
-  completeHabitToday,
   deleteHabit,
-} from "../controllers/Habit.controller.js";
-import { addHabit } from "../controllers/Activity.controller.js";
+} from "../controllers/habit.controller.js";
+import auth from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.use(authMiddleware);
-
-// ================= HABITS =================
-router.get("/", getHabits);                     // GET /habits
-router.post("/", addHabit);                     // POST /habits (create)
-router.post("/:habitId/complete", completeHabitToday); // complete today
-router.delete("/:habitId", deleteHabit);
+router.post("/", auth, addHabit);
+router.get("/", auth, getHabits);
+router.delete("/:habitId", auth, deleteHabit);
 
 export default router;

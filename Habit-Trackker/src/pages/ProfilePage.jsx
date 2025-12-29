@@ -22,7 +22,8 @@ export default function ProfilePage() {
   const [msg, setMsg] = useState("");
 
   useEffect(() => {
-    api.get(`/auth/u/${username}`).then((res) => {
+    api.get(`/users/${username}`)
+.then((res) => {
       setUser(res.data);
       setName(res.data.name);
       setProfilePublic(res.data.profilePublic ?? false);

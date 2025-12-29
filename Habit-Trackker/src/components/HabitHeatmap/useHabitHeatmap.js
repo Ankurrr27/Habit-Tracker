@@ -25,15 +25,19 @@ export function useHabitHeatmap() {
   }, [today]);
 
   useEffect(() => {
-    const weekStart = getStartOfWeek();
-    api
-      .get("/activity/weekly", { params: { startDate: toDateKey(weekStart) } })
-      .then((res) => {
-        setHabits(res.data.habits || []);
-        setLogs(res.data.logs || {});
-      })
-      .finally(() => setLoading(false));
-  }, []);
+  const startDate = toDateKey(
+    new Date(today.getTime() - 364 * 24 * 60 * 60 * 1000)
+  );
+
+  api
+    .get("/activity/range", { params: { startDate } })
+    .then((res) => {
+      setHabits(res.data.habits || []);
+      setLogs(res.data.logs || {});
+    })
+    .finally(() => setLoading(false));
+}, [today]);
+
 
   const getDailyIntensity = (dateKey) => {
     let scheduled = 0;

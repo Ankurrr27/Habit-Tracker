@@ -26,8 +26,8 @@ export function useHabitByDay() {
     setLoading(true);
 
     const endpoint = isToday
-      ? "/activity/today"
-      : `/activity?date=${selectedKey}`;
+      ? "/stats/today"
+      : `/activity/status?date=${selectedKey}`;
 
     api
       .get(endpoint)

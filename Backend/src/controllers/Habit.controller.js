@@ -1,54 +1,74 @@
-import ActivityLog from "../models/ActivityLog.model.js";
-import Habit from "../models/Habit.model.js";
+import ActivityLog from "../models/activityLog.model.js";
+import Habit from "../models/habit.model.js";
 import { getUTCStartOfDay } from "../utils/date.js";
 
-
-
-
-export const completeHabitToday = async (req, res) => {
+export const addHabit = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const habitId = req.params.habitId;
+    const userId = req.user._id;
 
-    const habit = await Habit.findById(habitId);
-    if (!habit) {
-      return res.status(404).json({ message: "Habit not found" });
+    const {
+      title,
+      frequency,
+      days,
+      intervalDays,
+      durationDays, // 🔥 NEW
+      verificationRule,
+      githubRepo,
+    } = req.body;
+
+    if (!title || !frequency) {
+      return res.status(400).json({ message: "Title and frequency required" });
     }
 
-    // ✅ UTC DAY (REAL FIX)
-    const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
-
-    const exists = await ActivityLog.findOne({
-      user: userId,
-      habit: habitId,
-      date: today,
-    });
-
-    if (exists) {
-      return res.status(400).json({
-        message: "Already marked as done today",
-      });
+    if (frequency === "weekly" && (!Array.isArray(days) || days.length === 0)) {
+      return res
+        .status(400)
+        .json({ message: "Weekly habits need selected days" });
     }
 
-    const log = await ActivityLog.create({
+    if (frequency === "interval" && (!intervalDays || intervalDays < 1)) {
+      return res
+        .status(400)
+        .json({ message: "Interval habits need intervalDays >= 1" });
+    }
+
+    if (verificationRule === "github" && !githubRepo) {
+      return res
+        .status(400)
+        .json({ message: "GitHub repo required for github verification" });
+    }
+
+    // 🧠 duration logic
+    let endDate = null;
+    if (durationDays && durationDays > 0) {
+      endDate = new Date();
+      endDate.setDate(endDate.getDate() + Number(durationDays));
+    }
+
+    const habit = await Habit.create({
       user: userId,
-      habit: habitId,
-      date: today,
-      status: "done",
-      confidence: 30,
+      title: title.trim(),
+      frequency,
+
+      // clean frequency-specific fields
+      days: frequency === "weekly" ? days : [],
+      intervalDays: frequency === "interval" ? intervalDays : undefined,
+
+      startDate: new Date(),
+      endDate,
+
+      verificationRule: verificationRule || "manual",
+      githubRepo: verificationRule === "github" ? githubRepo : undefined,
     });
 
     res.status(201).json({
-      message: "Habit completed",
-      log,
+      message: "Habit created",
+      habitId: habit._id,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
-
-
 
 export const getHabits = async (req, res) => {
   try {
@@ -58,8 +78,6 @@ export const getHabits = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
-
 
 export const deleteHabit = async (req, res) => {
   try {

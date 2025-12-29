@@ -1,15 +1,20 @@
 import express from "express";
 import cors from "cors";
 
-import habitRoutes from "./routes/Habit.routes.js";
-import authRoutes from "./routes/Auth.routes.js";
-import activityRoutes from "./routes/Activity.routes.js";
-import usersRoutes from "./routes/Users.routes.js"; // ✅ FIXED
+/* ROUTES */
+import authRoutes from "./routes/auth.routes.js";
+import userRoutes from "./routes/user.routes.js";
+import habitRoutes from "./routes/habit.routes.js";
+import activityRoutes from "./routes/activity.routes.js";
+import statsRoutes from "./routes/stats.routes.js";
+import streakRoutes from "./routes/streak.routes.js";
+import heatmapRoutes from "./routes/heatmap.routes.js";
+import proofRoutes from "./routes/proof.routes.js";
 
 const app = express();
 
 /* =====================
-   CORS CONFIG
+   CORS
 ===================== */
 app.use(
   cors({
@@ -29,10 +34,14 @@ app.use(express.json());
 /* =====================
    ROUTES
 ===================== */
-app.use("/habits", habitRoutes);
 app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
+app.use("/habits", habitRoutes);
 app.use("/activity", activityRoutes);
-app.use("/users", usersRoutes); // ✅ NOW WORKS
+app.use("/stats", statsRoutes);
+app.use("/streak", streakRoutes);
+app.use("/heatmap", heatmapRoutes);
+app.use("/proof", proofRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is running");

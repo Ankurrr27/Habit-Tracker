@@ -9,7 +9,7 @@ export function useWeeklyHabits(weekKey) {
   const fetchWeeklyData = () => {
     setLoading(true);
     api
-      .get("/activity/weekly", { params: { startDate: weekKey } })
+      .get("/activity/range", { params: { startDate: weekKey } })
       .then((res) => {
         setHabits(res.data.habits || []);
         setLogs(res.data.logs || {});
