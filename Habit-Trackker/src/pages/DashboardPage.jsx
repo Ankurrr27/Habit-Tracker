@@ -1,10 +1,9 @@
-import React, { useState } from "react";
-import Sidebar from "../components/Sidebar";
-import WeeklyHabitGrid from "../components/WeeklyHabitGrid";
-import HabitByDayList from "../components/HabitByDayList";
+import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import ContributionHeatmap from "../components/WeeklyHabitGrid2";
-import HabitHeatmap2 from "../components/HabitHeatMap2";
+
+import WeeklyHabitGrid from "../components/WeeklyHabitGrid";
+import HabitHeatmap from "../components/HabitHeatmap";
+import HabitByDay from "../components/HabitByDay";
 
 const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -12,22 +11,18 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
       <div className="flex flex-1 h-[calc(100vh-64px)] overflow-hidden">
-        {/* LEFT APP SIDEBAR */}
-  
-
-        {/* MAIN AREA */}
         <div className="flex flex-1 overflow-hidden">
-          {/* 🟦 HABIT PANEL */}
+          {/* 🟦 LEFT HABIT PANEL */}
           <aside
             className={`
               flex flex-col
               border-r border-zinc-800
+              bg-black
               transition-[width] duration-300 ease-in-out
               ${collapsed ? "w-14" : "w-[260px]"}
-              bg-black
             `}
           >
-            {/* HEADER (STABLE HEIGHT) */}
+            {/* PANEL HEADER */}
             <div className="h-12 flex items-center justify-between px-3 border-b border-zinc-800">
               {!collapsed && (
                 <span className="text-xs font-medium text-zinc-400">
@@ -36,12 +31,9 @@ const Dashboard = () => {
               )}
 
               <button
-                onClick={() => setCollapsed(!collapsed)}
-                className="
-                  p-1 rounded-md
-                  hover:bg-zinc-800
-                  transition
-                "
+                onClick={() => setCollapsed((v) => !v)}
+                className="p-1 rounded-md hover:bg-zinc-800 transition"
+                aria-label="Toggle habit panel"
               >
                 {collapsed ? (
                   <ChevronRight size={16} />
@@ -51,7 +43,7 @@ const Dashboard = () => {
               </button>
             </div>
 
-            {/* CONTENT */}
+            {/* PANEL CONTENT */}
             <div
               className={`
                 flex-1 overflow-y-auto
@@ -61,20 +53,19 @@ const Dashboard = () => {
             >
               {!collapsed && (
                 <div className="p-4">
-                  <HabitByDayList />
+                  <HabitByDay />
                 </div>
               )}
             </div>
           </aside>
 
-          {/* 🟩 GRID (NEVER JITTERS) */}
-          {/* 🟩 MAIN CONTENT (STACKED) */}
+          {/* 🟩 MAIN CONTENT */}
           <main className="flex-1 overflow-y-auto p-6 space-y-6 flex flex-col">
-            {/* TOP: Calendar / Weekly Grid */}
-            <ContributionHeatmap />
+            {/* WEEKLY GRID */}
+            <WeeklyHabitGrid />
 
-            {/* BOTTOM: Year Heatmap */}
-            <HabitHeatmap2 />
+            {/* YEAR HEATMAP */}
+            <HabitHeatmap />
           </main>
         </div>
       </div>

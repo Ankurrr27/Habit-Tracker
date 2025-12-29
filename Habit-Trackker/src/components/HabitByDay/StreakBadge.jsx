@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import api from "../api/axios";
+import api from "../../api/axios";
 
 export default function StreakBadge({ habitId }) {
   const [streak, setStreak] = useState(null);
 
   const fetchStreak = async () => {
     if (!habitId) return;
+
 
     try {
       const res = await api.get(`/activity/streak/${habitId}`);
@@ -14,6 +15,7 @@ export default function StreakBadge({ habitId }) {
       setStreak(0);
     }
   };
+ 
 
   useEffect(() => {
     fetchStreak();

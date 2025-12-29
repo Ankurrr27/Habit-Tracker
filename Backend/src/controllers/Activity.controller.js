@@ -481,3 +481,48 @@ export const toggleHabitByDate = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
+
+export const getActivityRange = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { startDate } = req.query;
+
+    if (!startDate) {
+      return res.status(400).json({ message: "startDate required" });
+    }
+
+    const start = new Date(startDate);
+    start.setUTCHours(0, 0, 0, 0);
+
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+
+    // 1️⃣ Fetch habits
+    const habits = await Habit.find({ user: userId }).lean();
+
+    // 2️⃣ Fetch logs in range
+    const logs = await ActivityLog.find({
+      user: userId,
+      date: { $gte: start, $lte: today },
+    }).lean();
+
+    // 3️⃣ Map logs → fast lookup
+    const logMap = {};
+    for (const log of logs) {
+      const key = `${log.habit}_${log.date.toISOString().slice(0, 10)}`;
+      logMap[key] = {
+        done: log.status === "done",
+        confidence: log.confidence ?? 0,
+      };
+    }
+
+    res.json({
+      habits,
+      logs: logMap,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

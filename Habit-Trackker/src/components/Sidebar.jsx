@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import AddHabitModal from "./AddHabitModal";
+import AddHabitModal from "./AddHabit"; // ✅ IMPORT FROM FEATURE INDEX
 import { Plus, Home, Flame, User, Users } from "lucide-react";
 import api from "../api/axios";
 
@@ -49,7 +49,6 @@ export default function Sidebar() {
             onClick={() => navigate("/dashboard")}
           />
 
-          {/* ✅ NEW USERS BUTTON (ONLY ADDITION) */}
           <SidebarItem
             icon={<Users />}
             label="Users"
@@ -97,7 +96,13 @@ export default function Sidebar() {
         </div>
       </aside>
 
-      {open && <AddHabitModal onClose={() => setOpen(false)} />}
+      {/* ✅ ONLY MODAL IS RENDERED */}
+      {open && (
+        <AddHabitModal
+          onClose={() => setOpen(false)}
+          onAdded={() => setOpen(false)}
+        />
+      )}
     </>
   );
 }

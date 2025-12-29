@@ -9,6 +9,7 @@ import {
   getStatusByDate,
   getTodayStatus,
   getUserLevel,
+  getActivityRange,
 } from "../controllers/Activity.controller.js";
 
 const router = express.Router();
@@ -21,10 +22,13 @@ router.get("/today", getTodayStatus);
 router.get("/streak/:habitId", getHabitStreak);
 router.post("/:logId/proof", addProof);
 router.get("/level", getUserLevel);
-router.get("/", getStatusByDate); // /activity?date=
+router.get("/", getStatusByDate);          // /activity?date=
 router.get("/heatmap", getActivityHeatmap);
 
-// 🔥 WEEKLY GRID
+// ✅ RANGE (100 days, stable)
+router.get("/range", getActivityRange);
+
+// 🔥 WEEKLY (legacy / optional)
 router.get("/weekly", getWeeklyStatus);
 router.post("/toggle", toggleHabitByDate);
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Sidebar from "../components/Sidebar";
-import MobileBottomBar from "../components/MobileBottomBar";
-import AddHabitModal from "../components/AddHabitModal";
+
+
 import { Outlet } from "react-router-dom";
 
 export default function DashboardLayout() {
@@ -19,10 +19,9 @@ export default function DashboardLayout() {
         <Outlet />
       </main>
 
-      {/* MOBILE BOTTOM BAR */}
-      <MobileBottomBar onAddHabit={() => setOpen(true)} />
 
-      {open && <AddHabitModal onClose={() => setOpen(false)} />}
+
+      
     </div>
   );
 }
