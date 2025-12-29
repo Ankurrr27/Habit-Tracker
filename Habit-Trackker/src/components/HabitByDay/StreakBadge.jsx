@@ -9,7 +9,7 @@ export default function StreakBadge({ habitId }) {
 
 
     try {
-      const res = await api.get(`/activity/streak/${habitId}`);
+      const res = await api.get(`/streak/${habitId}`);
       setStreak(res.data.streak);
     } catch {
       setStreak(0);
