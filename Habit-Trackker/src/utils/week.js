@@ -44,18 +44,33 @@ export const toDateKey = (date) =>
 /**
  * Metadata for dense UI rendering
  */
-export const getDateMeta = (date) => {
+/**
+ * Metadata for dense UI rendering (MONTH SAFE)
+ */
+export const getDateMeta = (date, windowStart) => {
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
 
+  const base =
+    windowStart ??
+    new Date(Date.UTC(
+      date.getUTCFullYear(),
+      date.getUTCMonth(),
+      1 // 👈 month start
+    ));
+
+  base.setUTCHours(0, 0, 0, 0);
+
   return {
     key: toDateKey(date),
-    day: date.getUTCDate(),              // 1–31
-    weekday: date.getUTCDay(),           // 0–6
+    day: date.getUTCDate(),        // 1–31
+    weekday: date.getUTCDay(),     // 0–6
     isToday: date.getTime() === today.getTime(),
     isPast: date.getTime() < today.getTime(),
+
+    // ✅ week index INSIDE THE MONTH
     weekIndex: Math.floor(
-      (date - getStartOfWeek(today)) / (7 * 86400000)
+      (date - base) / (7 * 86400000)
     ),
   };
 };

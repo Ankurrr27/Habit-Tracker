@@ -1,41 +1,51 @@
-import { motion } from "framer-motion";
+import { useMemo } from "react";
 import { toDateKey, getIntensityColor } from "./heatmap.utils";
+import {MonthGroup} from "./MonthGroup";
 
-export default function HeatmapGrid({
-  days,
-  today,
-  getDailyIntensity,
-}) {
+export default function HeatmapGrid({ days, today, getDailyIntensity }) {
   const todayKey = toDateKey(today);
 
-  return (
-    <div className="overflow-x-auto pb-4 custom-scrollbar">
-      <div
-        className="grid grid-flow-col grid-rows-7 gap-2"
-        style={{ gridAutoColumns: "16px" }}
-      >
-        {days.map((day, i) => {
-          const dateKey = toDateKey(day);
-          const intensity = getDailyIntensity(dateKey);
-          const isToday = dateKey === todayKey;
+  // Group days into months with start-of-week offsets
+  const months = useMemo(() => {
+    const grouped = [];
+    days.forEach((day) => {
+      const monthLabel = day.toLocaleString("default", { month: "short" });
+      const year = day.getFullYear();
+      const key = `${monthLabel}-${year}`;
 
-          return (
-            <motion.div
-              key={dateKey}
-              initial={{ opacity: 0, scale: 0.6 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.0015 }}
-              whileHover={{ scale: 1.35, zIndex: 20 }}
-              className={`
-                w-4 h-4 rounded-[3px]
-                ${getIntensityColor(intensity)}
-                ${isToday ? "ring-1 ring-violet-400" : ""}
-                transition-colors
-              `}
-              title={`${dateKey} • ${Math.round(intensity)}% completed`}
-            />
-          );
-        })}
+      let lastMonth = grouped[grouped.length - 1];
+      if (!lastMonth || lastMonth.key !== key) {
+        grouped.push({
+          key,
+          label: monthLabel,
+          days: [day],
+          startOffset: day.getDay(), // 0 = Sun, 1 = Mon...
+        });
+      } else {
+        lastMonth.days.push(day);
+      }
+    });
+    return grouped;
+  }, [days]);
+
+  return (
+    <div className="w-full overflow-x-auto pb-4 custom-scrollbar">
+      <div className="flex gap-2.75 min-w-max items-end px-2">
+        {/* Optional: Add a Weekday Legend here */}
+        <div className="grid grid-rows-7 gap-1 pb-[2px] pr-2 text-[9px] text-slate-400 uppercase">
+          <div>Sun</div><div></div><div>Tue</div><div></div><div>Thu</div><div></div><div>Sat</div>
+        </div>
+
+        {months.map((month) => (
+          <MonthGroup
+            key={month.key}
+            month={month}
+            todayKey={todayKey}
+            getDailyIntensity={getDailyIntensity}
+            toDateKey={toDateKey}
+            getIntensityColor={getIntensityColor}
+          />
+        ))}
       </div>
     </div>
   );

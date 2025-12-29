@@ -4,17 +4,19 @@ import HabitCell from "./HabitCell";
 
 export default function HabitRow({ habit, days, logs, todayKey }) {
   return (
-    <div className="contents">
-      {/* HABIT TITLE */}
+    <div className="contents group">
+      {/* HABIT TITLE — STICKY */}
       <div
         className="
+          sticky  z-20
           flex items-center
-          text-sm font-medium
-          text-zinc-200
-          pr-3
-          sticky left-0
+          rounded-lg
           bg-zinc-950
-          z-10
+          pr-3 pl-4
+          text-[13px] font-medium text-zinc-200
+          transition-colors
+          group-hover:underline
+          group-hover:text-white
         "
       >
         {habit.title}
@@ -31,17 +33,24 @@ export default function HabitRow({ habit, days, logs, todayKey }) {
             : rawLog;
 
         const isPast = dateKey < todayKey;
-        const hasLog = !!log;
         const isScheduled =
-          hasLog || isHabitScheduledOnDate(habit, day);
+          !!log || isHabitScheduledOnDate(habit, day);
 
         return (
-          <HabitCell
+          <div
             key={cellKey}
-            isScheduled={isScheduled}
-            isPast={isPast}
-            log={log}
-          />
+            className="
+              flex items-center justify-center
+              transition-colors
+             
+            "
+          >
+            <HabitCell
+              isScheduled={isScheduled}
+              isPast={isPast}
+              log={log}
+            />
+          </div>
         );
       })}
     </div>

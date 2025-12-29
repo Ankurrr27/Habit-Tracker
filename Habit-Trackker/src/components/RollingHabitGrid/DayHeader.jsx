@@ -11,18 +11,24 @@ export default function DayHeader({ day, todayKey }) {
     <div
       className={`
         flex flex-col items-center justify-center
-        text-[11px] font-medium
-        rounded-md px-1 py-[2px]
+        text-[10px] leading-none
+        px-1 py-[1px] rounded
         ${
           isToday
             ? "text-violet-300 bg-violet-500/10"
             : "text-zinc-400"
         }
-        ${isWeekStart ? "border-l border-zinc-700 ml-1 bg-zinc-900/40" : ""}
+        ${
+          isWeekStart
+            ? "border-l border-zinc-700 ml-1 pl-1"
+            : ""
+        }
       `}
     >
-      <span className="leading-none">{weekday}</span>
-      <span className="leading-none">{day.getUTCDate()}</span>
+      <span>{weekday}</span>
+      <span className="text-[9px] text-zinc-500">
+        {day.getUTCDate()}
+      </span>
     </div>
   );
 }

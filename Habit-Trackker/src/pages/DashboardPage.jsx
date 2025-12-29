@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import WeeklyHabitGrid from "../components/WeeklyHabitGrid";
+import WeeklyHabitGrid from "../components/RollingHabitGrid";
 import HabitHeatmap from "../components/HabitHeatmap";
 import HabitByDay from "../components/HabitByDay";
+import RollingHabitGrid from "../components/RollingHabitGrid/RollingHabitGrid";
 
 const Dashboard = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
@@ -62,7 +63,7 @@ const Dashboard = () => {
           {/* 🟩 MAIN CONTENT */}
           <main className="flex-1 overflow-y-auto p-6 space-y-6 flex flex-col">
             {/* WEEKLY GRID */}
-            <WeeklyHabitGrid />
+            <RollingHabitGrid />
 
             {/* YEAR HEATMAP */}
             <HabitHeatmap />
