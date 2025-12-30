@@ -8,7 +8,7 @@ export const DayCell = ({ dateKey, intensity, isToday, colorClass }) => (
     className={`
       aspect-square w-[13px] h-[13px] rounded-[2px]
       ${colorClass}
-      ${isToday ? "ring-1 ring-violet-500 ring-offset-1" : ""}
+      ${isToday ? "" : ""}
     `}
     title={`${dateKey}: ${Math.round(intensity)}%`}
   />

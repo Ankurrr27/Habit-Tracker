@@ -9,35 +9,45 @@ import {
   EyeOff,
 } from "lucide-react";
 import { useParams } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function ProfilePage() {
   const { username } = useParams();
+  const { user: me } = useAuth(); // 🔥 SINGLE SOURCE OF TRUTH
 
   const [user, setUser] = useState(null);
-  const [me, setMe] = useState(null);
   const [name, setName] = useState("");
   const [file, setFile] = useState(null);
   const [profilePublic, setProfilePublic] = useState(false);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
 
+  /* =====================
+     FETCH PROFILE
+  ===================== */
   useEffect(() => {
-    api.get(`/users/${username}`)
-.then((res) => {
-      setUser(res.data);
-      setName(res.data.name);
-      setProfilePublic(res.data.profilePublic ?? false);
-    });
-  }, [username]);
+    if (!username) return; // 🔥 IMPORTANT GUARD
 
-  useEffect(() => {
-    api.get("/auth/me").then((res) => setMe(res.data)).catch(() => {});
-  }, []);
+    api
+      .get(`/users/${username}`)
+      .then((res) => {
+        setUser(res.data);
+        setName(res.data.name);
+        setProfilePublic(res.data.profilePublic ?? false);
+      })
+      .catch(() => {
+        setUser(null);
+      });
+  }, [username]);
 
   const isOwnProfile = me?.username === username;
 
+  /* =====================
+     UPDATE PROFILE
+  ===================== */
   const submit = async () => {
     if (!isOwnProfile) return;
+
     setLoading(true);
     setMsg("");
 
@@ -47,7 +57,7 @@ export default function ProfilePage() {
       fd.append("profilePublic", profilePublic);
       if (file) fd.append("avatar", file);
 
-      await api.put("/auth/profile", fd);
+      await api.put("/users/profile", fd);
       setMsg("Profile updated");
     } catch {
       setMsg("Update failed");
@@ -56,6 +66,9 @@ export default function ProfilePage() {
     }
   };
 
+  /* =====================
+     LOADING STATE
+  ===================== */
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center text-zinc-500">
@@ -70,7 +83,7 @@ export default function ProfilePage() {
 
         {/* ================= LEFT COLUMN ================= */}
         <div className="lg:col-span-2 space-y-6">
-          
+
           {/* HEADER */}
           <div className="flex gap-6 bg-zinc-900 border border-zinc-800 p-6 rounded-xl">
             <img
@@ -106,7 +119,7 @@ export default function ProfilePage() {
             <Stat icon={<Shield />} label="Credibility" value={user.credibilityScore} />
           </div>
 
-          {/* ACTIVITY PLACEHOLDER */}
+          {/* ACTIVITY */}
           <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-xl">
             <h2 className="text-sm font-semibold text-zinc-300 mb-2">
               Recent Activity

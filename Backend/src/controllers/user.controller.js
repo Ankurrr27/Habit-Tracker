@@ -64,16 +64,21 @@ export const getUsers = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
+    const user = await User.findById(req.user.id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
+    /* NAME */
     if (req.body.name) {
       user.name = req.body.name.trim();
     }
 
+    /* USERNAME */
     if (req.body.username) {
       const username = req.body.username.toLowerCase().trim();
 
@@ -93,10 +98,12 @@ export const updateProfile = async (req, res) => {
       user.username = username;
     }
 
-    if (typeof req.body.profilePublic === "boolean") {
-      user.profilePublic = req.body.profilePublic;
+    /* PROFILE VISIBILITY (🔥 FIX) */
+    if (req.body.profilePublic !== undefined) {
+      user.profilePublic = req.body.profilePublic === "true";
     }
 
+    /* AVATAR */
     if (req.file) {
       const upload = await cloudinary.uploader.upload(req.file.path, {
         folder: "avatars",
@@ -119,6 +126,7 @@ export const updateProfile = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("UPDATE PROFILE ERROR:", err);
+    res.status(500).json({ error: "Profile update failed" });
   }
 };

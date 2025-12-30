@@ -15,7 +15,7 @@ export default function HabitRow({ habit, days, logs, todayKey }) {
           pr-3 pl-4
           text-[13px] font-medium text-zinc-200
           transition-colors
-          group-hover:underline
+          
           group-hover:text-white
         "
       >

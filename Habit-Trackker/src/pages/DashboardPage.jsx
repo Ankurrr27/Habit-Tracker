@@ -17,14 +17,14 @@ const Dashboard = () => {
           <aside
             className={`
               flex flex-col
-              border-r border-zinc-800
+              border-r border-zinc-950
               bg-black
               transition-[width] duration-300 ease-in-out
               ${collapsed ? "w-14" : "w-[260px]"}
             `}
           >
             {/* PANEL HEADER */}
-            <div className="h-12 flex items-center justify-between px-3 border-b border-zinc-800">
+            <div className="h-12 flex items-center justify-between px-3 border-b border-zinc-950">
               {!collapsed && (
                 <span className="text-xs font-medium text-zinc-400">
                   Daily Habits
