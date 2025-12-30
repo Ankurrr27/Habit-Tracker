@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
-import { Home, LogOut, User } from "lucide-react";
+import { Home, LogOut, User, Menu } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import ThemeToggle from "./ThemeToggle";
 
@@ -38,7 +38,6 @@ export default function Navbar() {
       "
     >
       <div className="w-full px-6 py-4 flex items-center justify-between">
-
         {/* LOGO */}
         <Link
           to="/"
@@ -61,7 +60,7 @@ export default function Navbar() {
             <span className="text-zinc-500">…</span>
           ) : user ? (
             <>
-              {/* AVATAR + CARET */}
+              {/* AVATAR + HAMBURGER */}
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => navigate(`/u/${user.username}`)}
@@ -80,9 +79,18 @@ export default function Navbar() {
 
                 <button
                   onClick={() => setOpen((v) => !v)}
-                  className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white text-xs px-1"
+                  aria-label="Open menu"
+                  aria-expanded={open}
+                  className={`
+                    p-1.5 rounded transition
+                    ${
+                      open
+                        ? "bg-zinc-200 text-zinc-900 dark:bg-zinc-800 dark:text-white"
+                        : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                    }
+                  `}
                 >
-                  ▾
+                  <Menu size={18} />
                 </button>
               </div>
 

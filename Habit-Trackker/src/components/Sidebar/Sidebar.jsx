@@ -1,22 +1,28 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Plus,
   Home,
   Flame,
-  User,
   Users,
-  Group,
-  Calendar1Icon,
+  Workflow,
+  User2,
+  LogOut,
 } from "lucide-react";
+
 import { useAuth } from "../../context/AuthContext";
-import AddHabitModal from "./../AddHabit";
+import AddHabitModal from "../AddHabit";
 import SidebarItem from "./SidebarItem";
 
 export default function Sidebar() {
   const [open, setOpen] = useState(false);
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isActive = (path) =>
+    location.pathname === path ||
+    location.pathname.startsWith(path + "/");
 
   return (
     <>
@@ -24,75 +30,117 @@ export default function Sidebar() {
         className="
           group
           w-16 hover:w-56
-          transition-all flex flex-col
-
+          transition-[width] duration-200 ease-in-out
+          flex flex-col
           bg-white dark:bg-black
           border-r border-zinc-200 dark:border-zinc-800
         "
       >
         {/* NAV */}
-        <nav className="px-2 py-4 space-y-2">
+        <nav className="px-2 py-4 space-y-1">
           <SidebarItem
-            icon={<Home />}
+            icon={<Home size={20} />}
             label="Home"
+            active={isActive("/dashboard")}
             onClick={() => navigate("/dashboard")}
           />
 
           <SidebarItem
-            icon={<Flame />}
+            icon={<Flame size={20} />}
             label="Streaks"
+            active={isActive("/streaks") || isActive("/dashboard")}
             onClick={() => navigate("/dashboard")}
           />
 
           <SidebarItem
-            icon={<Group />}
-            label="Team"
-            onClick={() => navigate("/dashboard")}
+            icon={<Users size={20} />}
+            label="Teams"
+            active={isActive("/teams")}
+            onClick={() => navigate("/teams")}
           />
 
           <SidebarItem
-            icon={<Calendar1Icon />}
-            label="Week Planner"
-            onClick={() => navigate("/dashboard")}
+            icon={<Workflow size={20} />}
+            label="Projects"
+            active={isActive("/projects")}
+            onClick={() => navigate("/projects")}
           />
 
           <SidebarItem
-            icon={<Users />}
+            icon={<User2 size={20} />}
             label="Users"
+            active={isActive("/users")}
             onClick={() => navigate("/users")}
           />
 
+          {/* PROFILE */}
           <SidebarItem
-            icon={<User />}
+            icon={
+              <img
+                src={user?.avatar || "/avatar-placeholder.png"}
+                alt="Profile"
+                className="
+                  w-6 h-6 rounded-full object-cover
+                  border border-zinc-300 dark:border-zinc-700
+                "
+              />
+            }
             label="Profile"
+            active={isActive(`/u/${user?.username}`)}
             onClick={() =>
               user?.username && navigate(`/u/${user.username}`)
             }
           />
         </nav>
 
-        {/* ADD HABIT */}
-        <div className="mt-auto p-2">
+        {/* FOOTER */}
+        <div className="mt-auto p-2 space-y-2">
+          {/* ADD HABIT */}
           <button
             onClick={() => setOpen(true)}
             className="
-              w-full flex gap-3 items-center
+              w-full h-11 flex items-center gap-3
               rounded-md
-              transition-colors
-
               bg-indigo-600 hover:bg-indigo-700
               text-white
+              transition-colors
             "
           >
-            <Plus className="w-5 h-5 mx-2 my-2" />
+            <Plus className="w-5 h-5 ml-3 shrink-0" />
             <span
               className="
                 whitespace-nowrap overflow-hidden
                 max-w-0 group-hover:max-w-xs
-                transition-all pt-1
+                transition-all duration-200
+                text-sm font-medium
               "
             >
               Add Habit
+            </span>
+          </button>
+
+          {/* LOGOUT */}
+          <button
+            onClick={logout}
+            className="
+              w-full h-11 flex items-center gap-3
+              rounded-md
+              text-red-500 hover:bg-red-500/10
+              transition-all duration-200
+              opacity-0 pointer-events-none
+              group-hover:opacity-100 group-hover:pointer-events-auto
+            "
+          >
+            <LogOut className="w-5 h-5 ml-3 shrink-0" />
+            <span
+              className="
+                whitespace-nowrap overflow-hidden
+                max-w-0 group-hover:max-w-xs
+                transition-all duration-200
+                text-sm font-medium
+              "
+            >
+              Logout
             </span>
           </button>
         </div>

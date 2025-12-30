@@ -1,35 +1,53 @@
-export default function SidebarItem({ icon, label, onClick, danger = false }) {
+export default function SidebarItem({ icon, label, onClick, active }) {
   return (
     <button
       onClick={onClick}
       className={`
-        w-full flex items-center gap-3
-        px-3 py-2 rounded-md
-        transition-colors
+        w-full h-11
+        flex items-center gap-3
+        px-2 rounded-md
+        text-sm
+        transition
 
         ${
-          danger
+          active
             ? `
-              text-red-500
-              hover:bg-red-500/10
-              dark:text-red-400
-              dark:hover:bg-zinc-800
+              bg-indigo-50 text-indigo-700
+              dark:bg-emerald-500/10 dark:text-emerald-400
             `
             : `
               text-zinc-700 dark:text-zinc-300
-              hover:text-zinc-900 dark:hover:text-white
-              hover:bg-zinc-200 dark:hover:bg-zinc-800
+              hover:bg-zinc-100 dark:hover:bg-zinc-800
             `
         }
       `}
     >
-      <div className="min-w-[20px]">{icon}</div>
+      {/* ICON */}
+      <span
+        className={`
+          shrink-0 flex items-center justify-center w-8
+          ${
+            active
+              ? `
+                text-indigo-600
+                dark:text-emerald-400
+              `
+              : `
+                text-zinc-500
+                dark:text-zinc-400
+              `
+          }
+        `}
+      >
+        {icon}
+      </span>
 
+      {/* LABEL */}
       <span
         className="
           whitespace-nowrap overflow-hidden
           max-w-0 group-hover:max-w-xs
-          transition-all duration-300
+          transition-all duration-200
         "
       >
         {label}

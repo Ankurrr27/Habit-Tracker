@@ -14,16 +14,21 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import AuthLayout from "./layouts/AuthLayout";
 import UsersPage from "./pages/UsersPage";
 
+import TeamPage from "./pages/TeamPage";
+import TeamsPage from "./pages/TeamsPage";
+import ProjectPage from "./pages/ProjectPage";
+
+
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* 🌍 INTRO PAGE (HEADER + FOOTER, NO SIDEBAR) */}
+        {/* 🌍 INTRO PAGE */}
         <Route element={<AppLayout />}>
           <Route path="/" element={<IntroPage />} />
         </Route>
 
-        {/* 🔓 AUTH (NO HEADER / FOOTER / SIDEBAR) */}
+        {/* 🔓 AUTH */}
         <Route element={<PublicRoute />}>
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<Login />} />
@@ -31,14 +36,25 @@ export default function App() {
           </Route>
         </Route>
 
-        {/* 🔐 DASHBOARD (HEADER + FOOTER + SIDEBAR) */}
+        {/* 🔐 APP */}
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
             <Route element={<DashboardLayout />}>
+
+              {/* DASHBOARD */}
               <Route path="/dashboard" element={<Dashboard />} />
+
+              {/* PROFILE */}
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/u/:username" element={<ProfilePage />} />
+
+              {/* USERS */}
               <Route path="/users" element={<UsersPage />} />
+
+              {/* 🟣 TEAMS */}
+              <Route path="/teams" element={<TeamsPage />} />
+              <Route path="/projects" element={<ProjectPage />} />
+              <Route path="/teams/:teamId" element={<TeamPage />} />
 
             </Route>
           </Route>
@@ -47,3 +63,4 @@ export default function App() {
     </BrowserRouter>
   );
 }
+
