@@ -36,20 +36,20 @@
 .dark ::-webkit-scrollbar-thumb {
   background-color: rgba(47, 48, 120, 0.55); /* indigo */
   border-radius: 9999px;
-  border: 2px solid #09090b;
+  border: 2px solid #ffffff;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(7, 7, 35, 0.85);
+  background-color: rgba(0, 0, 0, 0.85);
 }
 
 /* ===== Firefox ===== */
 :not(.dark) * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(99, 102, 241, 0.45) #f4f4f5;
+  scrollbar-color: rgba(255, 255, 255, 0.45) #f4f4f5;
 }
 
 .dark * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(47, 48, 120, 0.55) #09090b;
+  scrollbar-color: rgba(0, 0, 0, 0.55) #09090b;
 }

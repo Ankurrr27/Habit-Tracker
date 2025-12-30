@@ -57,7 +57,7 @@ export default function HabitItem({
             focus:outline-none focus:ring-2 focus:ring-indigo-500/50
             ${
               habit.done
-                ? "bg-emerald-500 border-emerald-400"
+                ? "bg-blue-500 border-blue-400"
                 : "border-zinc-400 dark:border-zinc-600 group-hover:border-indigo-500"
             }
             ${!canToggle ? "opacity-40 cursor-not-allowed" : ""}
