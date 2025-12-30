@@ -2,7 +2,6 @@ import WeekCalendar from "./WeekCalendar";
 import HabitList from "./HabitList";
 import { useHabitByDay } from "./useHabitByDay";
 
-
 export default function HabitByDay() {
   const {
     weekDates,
@@ -27,10 +26,12 @@ export default function HabitByDay() {
         )}
       />
 
-      <div className="text-sm text-zinc-400 px-1">
+      {/* DATE LABEL */}
+      <div className="text-sm px-1 text-zinc-600 dark:text-zinc-400">
         {isToday ? "Today" : selectedDate.toDateString()}
       </div>
 
+      {/* HABIT LIST */}
       <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-1 pb-24">
         <HabitList
           habits={habits}

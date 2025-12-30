@@ -4,7 +4,7 @@ import Footer from "../components/Footer";
 
 export default function AppLayout() {
   return (
-    <div className="min-h-screen flex flex-col bg-black text-white">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-black text-black dark:text-white">
       <Navbar />
       <main className="flex-1">
         <Outlet />

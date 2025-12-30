@@ -18,8 +18,13 @@ export default function HabitCell({ isScheduled, isPast, log }) {
       <motion.div
         className={`
           w-[22px] h-[22px]
-          
-          ${active ? getHeatColor(log.confidence) : "bg-zinc-900"}
+          rounded
+          transition-colors
+          ${
+            active
+              ? getHeatColor(log.confidence)
+              : "bg-zinc-200 dark:bg-zinc-900"
+          }
         `}
         initial={{
           scale: 0.85,
@@ -37,10 +42,13 @@ export default function HabitCell({ isScheduled, isPast, log }) {
           scale: 1.3,
           rotateX: 12,
           rotateY: -12,
-          borderRadius: "999px", // 🔥 square → circle
+          borderRadius: "999px",
           boxShadow: active
-            ? "0 0 16px rgba(16,185,129,0.65)"
-            : "0 0 10px rgba(113,113,122,0.4)",
+            ? `
+              0 0 14px rgba(59,130,246,0.45),
+              0 0 18px rgba(16,185,129,0.65)
+            `
+            : "0 0 10px rgba(113,113,122,0.35)",
         }}
         whileTap={{
           scale: 1.1,

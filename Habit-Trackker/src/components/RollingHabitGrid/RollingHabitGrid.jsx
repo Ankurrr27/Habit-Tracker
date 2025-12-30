@@ -45,7 +45,7 @@ export default function RollingHabitGrid() {
 
   if (loading) {
     return (
-      <div className="h-full flex items-center justify-center text-zinc-500">
+      <div className="h-full flex items-center justify-center text-zinc-600 dark:text-zinc-500">
         Loading habits…
       </div>
     );
@@ -58,7 +58,10 @@ export default function RollingHabitGrid() {
         rounded-xl
         overflow-hidden
         pt-4 pb-2
-        bg-zinc-950
+        transition-colors
+
+        bg-white dark:bg-zinc-950
+        border border-zinc-200 dark:border-zinc-800
       "
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
@@ -70,15 +73,17 @@ export default function RollingHabitGrid() {
           sticky top-0 z-30
           flex items-center justify-between
           px-6 py-3
-          border-b border-zinc-800
-          bg-zinc-950/90 backdrop-blur
+          backdrop-blur
+
+          bg-white/90 dark:bg-zinc-950/90
+          border-b border-zinc-200 dark:border-zinc-800
         "
       >
         <div>
-          <h2 className="text-sm font-semibold text-zinc-200">
+          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-200">
             Habit Timeline
           </h2>
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs text-zinc-600 dark:text-zinc-500">
             10 days back · Today · 15 days ahead
           </p>
         </div>

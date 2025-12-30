@@ -1,13 +1,6 @@
 import { useEffect, useRef } from "react";
 import { DAYS } from "../../constants/days";
 
-/*
-  weekDates: Date[]
-  selectedIndex: number
-  onSelect: (index: number) => void
-  habitCounts: number[]
-*/
-
 export default function WeekCalendar({
   weekDates = [],
   selectedIndex = 0,
@@ -32,7 +25,6 @@ export default function WeekCalendar({
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  /* ===== DATE SEARCH ===== */
   const handleDateSearch = (e) => {
     const value = e.target.value;
     if (!value) return;
@@ -86,7 +78,7 @@ export default function WeekCalendar({
                 ${
                   isSelected
                     ? "bg-indigo-600 text-white"
-                    : "bg-black text-zinc-300 hover:bg-zinc-900"
+                    : "bg-zinc-100 dark:bg-black text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-900"
                 }
               `}
             >
@@ -106,7 +98,7 @@ export default function WeekCalendar({
                     ${
                       isSelected
                         ? "bg-white text-indigo-600"
-                        : "bg-zinc-700 text-zinc-200"
+                        : "bg-zinc-300 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200"
                     }
                   `}
                 >
@@ -120,14 +112,16 @@ export default function WeekCalendar({
 
       {/* ===== DATE SEARCH ===== */}
       <div className="flex items-center gap-2">
-        <span className="text-xs text-zinc-400">
+        <span className="text-xs text-zinc-600 dark:text-zinc-400">
           Jump to date:
         </span>
         <input
           type="date"
           onChange={handleDateSearch}
           className="
-            bg-black border border-zinc-800 text-zinc-300
+            bg-white dark:bg-black
+            border border-zinc-300 dark:border-zinc-800
+            text-zinc-700 dark:text-zinc-300
             rounded-md px-2 py-1 text-xs
             focus:outline-none focus:border-indigo-500
           "

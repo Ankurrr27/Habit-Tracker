@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
 import { Home, LogOut, User } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const { user, loading, logout } = useAuth();
@@ -29,16 +30,30 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-40 bg-black border-b border-zinc-800">
+    <nav
+      className="
+        sticky top-0 z-40
+        bg-white dark:bg-black
+        border-b border-zinc-200 dark:border-zinc-800
+      "
+    >
       <div className="w-full px-6 py-4 flex items-center justify-between">
+
         {/* LOGO */}
         <Link
           to="/"
-          className="text-lg font-semibold text-white flex items-center gap-2"
+          className="
+            text-lg font-semibold
+            text-zinc-900 dark:text-white
+            flex items-center gap-2
+          "
         >
           <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
           HabTrack
         </Link>
+
+        {/* THEME TOGGLE */}
+        <ThemeToggle />
 
         {/* RIGHT SIDE */}
         <div className="relative" ref={menuRef}>
@@ -48,7 +63,6 @@ export default function Navbar() {
             <>
               {/* AVATAR + CARET */}
               <div className="flex items-center gap-2">
-                {/* Avatar → Profile */}
                 <button
                   onClick={() => navigate(`/u/${user.username}`)}
                   className="focus:outline-none"
@@ -56,22 +70,32 @@ export default function Navbar() {
                   <img
                     src={user.avatar || "/avatar-placeholder.png"}
                     alt="avatar"
-                    className="w-8 h-8 rounded-full object-cover border border-zinc-700 hover:opacity-90 transition"
+                    className="
+                      w-8 h-8 rounded-full object-cover
+                      border border-zinc-300 dark:border-zinc-700
+                      hover:opacity-90 transition
+                    "
                   />
                 </button>
 
-                {/* Caret → Menu */}
                 <button
                   onClick={() => setOpen((v) => !v)}
-                  className="text-zinc-400 hover:text-white text-xs px-1"
+                  className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white text-xs px-1"
                 >
                   ▾
                 </button>
               </div>
 
-              {/* DROPDOWN MENU */}
+              {/* DROPDOWN */}
               {open && (
-                <div className="absolute right-0 mt-3 w-44 bg-zinc-900 border border-zinc-800 rounded-lg shadow-lg overflow-hidden">
+                <div
+                  className="
+                    absolute right-0 mt-3 w-44
+                    bg-white dark:bg-zinc-900
+                    border border-zinc-200 dark:border-zinc-800
+                    rounded-lg shadow-lg overflow-hidden
+                  "
+                >
                   <NavItem
                     icon={<Home size={14} />}
                     label="Home"
@@ -102,7 +126,10 @@ export default function Navbar() {
           ) : (
             /* NOT LOGGED IN */
             <div className="flex items-center gap-4">
-              <Link to="/login" className="text-zinc-300 hover:text-white">
+              <Link
+                to="/login"
+                className="text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white"
+              >
                 Login
               </Link>
               <Link
@@ -126,11 +153,14 @@ function NavItem({ icon, label, onClick, danger = false }) {
   return (
     <button
       onClick={onClick}
-      className={`w-full px-4 py-2 flex items-center gap-2 text-sm transition ${
-        danger
-          ? "text-red-400 hover:bg-zinc-800"
-          : "text-zinc-300 hover:text-white hover:bg-zinc-800"
-      }`}
+      className={`
+        w-full px-4 py-2 flex items-center gap-2 text-sm transition
+        ${
+          danger
+            ? "text-red-500 hover:bg-red-500/10"
+            : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white"
+        }
+      `}
     >
       {icon}
       {label}

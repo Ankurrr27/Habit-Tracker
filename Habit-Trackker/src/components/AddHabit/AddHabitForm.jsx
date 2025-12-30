@@ -21,18 +21,29 @@ export default function AddHabitForm({ state, actions }) {
     submit,
   } = actions;
 
+  const inputBase = `
+    w-full p-2 rounded
+    bg-white dark:bg-zinc-800
+    border border-zinc-300 dark:border-zinc-700
+    text-zinc-900 dark:text-zinc-100
+    focus:outline-none focus:ring-2 focus:ring-indigo-500/40
+    disabled:opacity-60
+  `;
+
   return (
     <>
+      {/* TITLE */}
       <input
-        className="w-full bg-zinc-800 border border-zinc-700 p-2 mb-3 rounded"
+        className={`${inputBase} mb-3`}
         placeholder="Habit title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         disabled={loading}
       />
 
+      {/* FREQUENCY */}
       <select
-        className="w-full bg-zinc-800 border border-zinc-700 p-2 mb-3 rounded"
+        className={`${inputBase} mb-3`}
         value={frequency}
         onChange={(e) => setFrequency(e.target.value)}
         disabled={loading}
@@ -42,6 +53,7 @@ export default function AddHabitForm({ state, actions }) {
         <option value="interval">Every N days</option>
       </select>
 
+      {/* WEEKLY DAYS */}
       {frequency === "weekly" && (
         <div className="flex flex-wrap gap-2 mb-4">
           {DAYS.map((day) => {
@@ -51,11 +63,19 @@ export default function AddHabitForm({ state, actions }) {
                 key={day}
                 type="button"
                 onClick={() => toggleDay(day)}
-                className={`px-3 py-1 rounded-md border text-sm ${
-                  active
-                    ? "bg-indigo-600 border-indigo-500 text-white"
-                    : "bg-zinc-800 border-zinc-700 text-zinc-300"
-                }`}
+                className={`
+                  px-3 py-1 rounded-md border text-sm transition
+                  ${
+                    active
+                      ? "bg-indigo-600 border-indigo-500 text-white"
+                      : `
+                        bg-zinc-100 dark:bg-zinc-800
+                        border-zinc-300 dark:border-zinc-700
+                        text-zinc-700 dark:text-zinc-300
+                        hover:bg-zinc-200 dark:hover:bg-zinc-700
+                      `
+                  }
+                `}
               >
                 {day.toUpperCase()}
               </button>
@@ -64,6 +84,7 @@ export default function AddHabitForm({ state, actions }) {
         </div>
       )}
 
+      {/* INTERVAL */}
       {frequency === "interval" && (
         <div className="mb-4 flex items-center gap-2">
           <input
@@ -71,17 +92,20 @@ export default function AddHabitForm({ state, actions }) {
             min={1}
             value={intervalDays}
             onChange={(e) => setIntervalDays(+e.target.value)}
-            className="w-20 bg-zinc-800 border border-zinc-700 p-2 rounded"
+            className={`${inputBase} w-20`}
           />
-          <span className="text-sm text-zinc-300">days</span>
+          <span className="text-sm text-zinc-600 dark:text-zinc-400">
+            days
+          </span>
         </div>
       )}
 
+      {/* DURATION */}
       <div className="mb-4">
         <select
           value={durationType}
           onChange={(e) => setDurationType(e.target.value)}
-          className="w-full bg-zinc-800 border border-zinc-700 p-2 rounded mb-2"
+          className={`${inputBase} mb-2`}
         >
           <option value="forever">Forever</option>
           <option value="custom">Only for X days</option>
@@ -93,16 +117,21 @@ export default function AddHabitForm({ state, actions }) {
             min={1}
             value={durationDays}
             onChange={(e) => setDurationDays(+e.target.value)}
-            className="w-full bg-zinc-800 border border-zinc-700 p-2 rounded"
+            className={inputBase}
           />
         )}
       </div>
 
+      {/* ACTION */}
       <div className="flex justify-end gap-2">
         <button
           onClick={submit}
           disabled={loading}
-          className="px-4 py-2 bg-indigo-600 rounded-md"
+          className="
+            px-4 py-2 rounded-md text-white
+            bg-indigo-600 hover:bg-indigo-700
+            disabled:opacity-60
+          "
         >
           {loading ? "Saving..." : "Save"}
         </button>

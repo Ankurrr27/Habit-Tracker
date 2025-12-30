@@ -16,12 +16,20 @@ function UserCard({ user, compact = false, onClick }) {
       onClick={onClick}
       aria-label={onClick ? `Open ${user.name}'s profile` : undefined}
       className={`
-        w-full text-left transition
+        w-full text-left transition-colors
         ${onClick ? "cursor-pointer" : "cursor-default"}
         ${
           compact
-            ? "flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-zinc-900"
-            : "bg-zinc-900 border border-zinc-800 rounded-xl p-4 hover:border-indigo-500/40"
+            ? `
+              flex items-center gap-2 px-2 py-1.5 rounded-md
+              hover:bg-zinc-200 dark:hover:bg-zinc-900
+            `
+            : `
+              rounded-xl p-4
+              bg-white dark:bg-zinc-900
+              border border-zinc-200 dark:border-zinc-800
+              hover:border-indigo-500/40
+            `
         }
       `}
     >
@@ -31,15 +39,18 @@ function UserCard({ user, compact = false, onClick }) {
           <img
             src={user.avatar}
             alt={user.name}
-            className={`rounded-full object-cover border border-zinc-700 ${
-              compact ? "w-8 h-8" : "w-12 h-12"
-            }`}
+            className={`
+              rounded-full object-cover
+              border border-zinc-300 dark:border-zinc-700
+              ${compact ? "w-8 h-8" : "w-12 h-12"}
+            `}
           />
         ) : (
           <div
             className={`
               rounded-full flex items-center justify-center
-              font-semibold text-white ${color}
+              font-semibold text-white
+              ${color}
               ${compact ? "w-8 h-8 text-xs" : "w-12 h-12 text-lg"}
             `}
           >
@@ -50,16 +61,20 @@ function UserCard({ user, compact = false, onClick }) {
         {/* INFO */}
         <div className="flex-1 min-w-0">
           <p
-            className={`truncate ${
-              compact ? "text-xs font-medium" : "font-medium"
-            } text-white`}
+            className={`
+              truncate
+              ${compact ? "text-xs font-medium" : "font-medium"}
+              text-zinc-900 dark:text-white
+            `}
           >
             {user.name}
           </p>
           <p
-            className={`truncate ${
-              compact ? "text-[10px]" : "text-xs"
-            } text-zinc-400`}
+            className={`
+              truncate
+              ${compact ? "text-[10px]" : "text-xs"}
+              text-zinc-600 dark:text-zinc-400
+            `}
           >
             @{user.username}
           </p>
@@ -67,9 +82,11 @@ function UserCard({ user, compact = false, onClick }) {
 
         {/* SCORE */}
         <div
-          className={`flex items-center gap-1 text-indigo-400 ${
-            compact ? "text-[10px]" : "text-sm"
-          }`}
+          className={`
+            flex items-center gap-1
+            ${compact ? "text-[10px]" : "text-sm"}
+            text-indigo-600 dark:text-indigo-400
+          `}
           title="Credibility score"
         >
           <Shield size={compact ? 10 : 14} />

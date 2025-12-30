@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar/Sidebar";
 
-
-import { Outlet } from "react-router-dom";
-
 export default function DashboardLayout() {
-  const [open, setOpen] = useState(false);
-
   return (
-    <div className="flex min-h-screen bg-black text-white">
+    <div
+      className="
+        flex min-h-screen
+        bg-white text-zinc-900
+        dark:bg-black dark:text-white
+        transition-colors
+      "
+    >
       {/* DESKTOP SIDEBAR */}
       <div className="hidden md:block">
         <Sidebar />
@@ -18,10 +20,6 @@ export default function DashboardLayout() {
       <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
         <Outlet />
       </main>
-
-
-
-      
     </div>
   );
 }

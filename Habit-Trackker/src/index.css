@@ -1,31 +1,55 @@
 @import "tailwindcss";
 
+/* Enable class-based dark mode in Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* =========================
-   DARK THEMED SCROLLBAR
+   THEME-AWARE SCROLLBAR
 ========================= */
 
-/* Chrome, Edge, Safari */
+/* Base scrollbar size */
 ::-webkit-scrollbar {
-  width: 8px;     /* vertical */
-  height: 8px;    /* 🔥 horizontal FIX */
+  width: 8px;
+  height: 8px;
 }
 
-::-webkit-scrollbar-track {
+/* ===== LIGHT MODE (default) ===== */
+:not(.dark) ::-webkit-scrollbar-track {
+  background: #f4f4f5; /* zinc-100 */
+}
+
+:not(.dark) ::-webkit-scrollbar-thumb {
+  background-color: rgba(99, 102, 241, 0.45); /* indigo-500 */
+  border-radius: 9999px;
+  border: 2px solid #f4f4f5;
+}
+
+:not(.dark) ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(79, 70, 229, 0.7); /* indigo-600 */
+}
+
+/* ===== DARK MODE ===== */
+.dark ::-webkit-scrollbar-track {
   background: #09090b; /* zinc-950 */
 }
 
-::-webkit-scrollbar-thumb {
+.dark ::-webkit-scrollbar-thumb {
   background-color: rgba(47, 48, 120, 0.55); /* indigo */
   border-radius: 9999px;
-  border: 2px solid #09090b; /* 🔥 separation from bg */
+  border: 2px solid #09090b;
 }
 
-::-webkit-scrollbar-thumb:hover {
+.dark ::-webkit-scrollbar-thumb:hover {
   background-color: rgba(7, 7, 35, 0.85);
 }
 
-/* Firefox */
-* {
+/* ===== Firefox ===== */
+:not(.dark) * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(15, 16, 58, 0.6) #09090b;
+  scrollbar-color: rgba(99, 102, 241, 0.45) #f4f4f5;
+}
+
+.dark * {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(47, 48, 120, 0.55) #09090b;
 }

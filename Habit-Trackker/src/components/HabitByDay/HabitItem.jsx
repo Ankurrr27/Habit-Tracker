@@ -34,11 +34,11 @@ export default function HabitItem({
         group
         flex items-center justify-between
         rounded-lg
-        bg-zinc-950
-        border border-zinc-800
+        bg-white dark:bg-zinc-950
+        border border-zinc-200 dark:border-zinc-800
         px-3 py-2.5
         transition
-        hover:border-zinc-700
+        hover:border-zinc-300 dark:hover:border-zinc-700
       "
     >
       {/* LEFT: STATUS + TITLE */}
@@ -58,7 +58,7 @@ export default function HabitItem({
             ${
               habit.done
                 ? "bg-emerald-500 border-emerald-400"
-                : "border-zinc-600 group-hover:border-indigo-500"
+                : "border-zinc-400 dark:border-zinc-600 group-hover:border-indigo-500"
             }
             ${!canToggle ? "opacity-40 cursor-not-allowed" : ""}
           `}
@@ -76,7 +76,7 @@ export default function HabitItem({
             ${
               habit.done
                 ? "line-through text-zinc-500"
-                : "text-zinc-100 group-hover:text-white"
+                : "text-zinc-800 dark:text-zinc-100 group-hover:text-zinc-900 dark:group-hover:text-white"
             }
           `}
           title={habit.title}
@@ -95,7 +95,7 @@ export default function HabitItem({
             aria-label="Delete habit"
             className="
               opacity-0 group-hover:opacity-100
-              text-zinc-500 hover:text-red-400
+              text-zinc-500 hover:text-red-500
               transition
               focus:opacity-100
             "

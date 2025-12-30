@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Home, Flame, User, Users, Group, Calendar1Icon } from "lucide-react";
+import {
+  Plus,
+  Home,
+  Flame,
+  User,
+  Users,
+  Group,
+  Calendar1Icon,
+} from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import AddHabitModal from "./../AddHabit";
 import SidebarItem from "./SidebarItem";
@@ -12,10 +20,16 @@ export default function Sidebar() {
 
   return (
     <>
-      <aside className="
-        group bg-black w-16 hover:w-56
-        transition-all flex flex-col
-      ">
+      <aside
+        className="
+          group
+          w-16 hover:w-56
+          transition-all flex flex-col
+
+          bg-white dark:bg-black
+          border-r border-zinc-200 dark:border-zinc-800
+        "
+      >
         {/* NAV */}
         <nav className="px-2 py-4 space-y-2">
           <SidebarItem
@@ -42,7 +56,6 @@ export default function Sidebar() {
             onClick={() => navigate("/dashboard")}
           />
 
-
           <SidebarItem
             icon={<Users />}
             label="Users"
@@ -63,17 +76,22 @@ export default function Sidebar() {
           <button
             onClick={() => setOpen(true)}
             className="
-              w-full flex gap-3
+              w-full flex gap-3 items-center
+              rounded-md
+              transition-colors
+
               bg-indigo-600 hover:bg-indigo-700
-              rounded-md 
+              text-white
             "
           >
-            <Plus className="w-5 h-5 mx-2 my-2 p-0" />
-            <span className="
-              whitespace-nowrap overflow-hidden
-              max-w-0 group-hover:max-w-xs
-              transition-all pt-1
-            ">
+            <Plus className="w-5 h-5 mx-2 my-2" />
+            <span
+              className="
+                whitespace-nowrap overflow-hidden
+                max-w-0 group-hover:max-w-xs
+                transition-all pt-1
+              "
+            >
               Add Habit
             </span>
           </button>

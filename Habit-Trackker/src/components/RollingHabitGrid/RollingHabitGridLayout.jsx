@@ -10,7 +10,12 @@ export default function RollingHabitGridLayout({
   return (
     <div className="overflow-x-auto">
       <div
-        className="grid gap-x-2 gap-y-2 px-6 py-5"
+        className="
+          grid gap-x-2 gap-y-2
+          px-6 py-5
+          bg-transparent
+          text-zinc-800 dark:text-zinc-200
+        "
         style={{
           gridTemplateColumns: `200px repeat(${days.length}, 34px)`,
           gridAutoRows: "38px",

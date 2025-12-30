@@ -7,7 +7,6 @@ export default function StreakBadge({ habitId }) {
   const fetchStreak = async () => {
     if (!habitId) return;
 
-
     try {
       const res = await api.get(`/streak/${habitId}`);
       setStreak(res.data.streak);
@@ -15,7 +14,6 @@ export default function StreakBadge({ habitId }) {
       setStreak(0);
     }
   };
- 
 
   useEffect(() => {
     fetchStreak();
@@ -24,7 +22,6 @@ export default function StreakBadge({ habitId }) {
   // 🔥 REAL-TIME UPDATE
   useEffect(() => {
     const handler = () => fetchStreak();
-
     window.addEventListener("habits-updated", handler);
     return () =>
       window.removeEventListener("habits-updated", handler);
@@ -32,18 +29,22 @@ export default function StreakBadge({ habitId }) {
 
   if (streak === null) {
     return (
-      <span className="text-xs text-zinc-500">…</span>
+      <span className="text-xs text-zinc-600 dark:text-zinc-500">
+        …
+      </span>
     );
   }
 
   return (
-    <span className="
-      text-xs px-2 py-0.5 rounded-full
-       border-emerald-600/30
-      bg-emerald-600/10
-      text-emerald-400
-      font-medium
-    ">
+    <span
+      className="
+        text-xs px-2 py-0.5 rounded-full
+        font-medium
+        border
+        bg-blue-600/10 text-blue-600 border-blue-600/30
+        dark:bg-emerald-600/10 dark:text-emerald-400 dark:border-emerald-600/30
+      "
+    >
       🔥 {streak}
     </span>
   );

@@ -7,36 +7,41 @@ export default function HabitHeatmap() {
   const { days, today, loading, getDailyIntensity } = useHabitHeatmap();
 
   if (loading) {
-    return <div className="p-8 text-zinc-600 text-xs">Loading heatmap…</div>;
+    return (
+      <div className="p-8 text-xs text-zinc-700 dark:text-zinc-600">
+        Loading heatmap…
+      </div>
+    );
   }
 
   return (
     <motion.div
       className="
-        bg-zinc-950
         rounded-2xl
         p-8
+        bg-white dark:bg-zinc-950
+        border border-zinc-200 dark:border-zinc-800
       "
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      {/* ===== HEADER (FULL-WIDTH BORDER) ===== */}
+      {/* ===== HEADER ===== */}
       <div
         className="
-          -mx-8              /* ⬅ stretch to edges */
-          px-8               /* ⬅ restore inner padding */
+          -mx-8
+          px-8
           mb-6
           pb-4
           flex items-start justify-between
-          border-b border-zinc-800
+          border-b border-zinc-200 dark:border-zinc-800
         "
       >
         <div>
-          <h3 className="text-sm font-semibold text-white">
+          <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
             Habit Density
           </h3>
-          <p className="text-[10px] text-zinc-500 uppercase tracking-wide">
+          <p className="text-[10px] uppercase tracking-wide text-zinc-500">
             Last 365 days
           </p>
         </div>

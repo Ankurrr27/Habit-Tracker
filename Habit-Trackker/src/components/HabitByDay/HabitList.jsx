@@ -8,12 +8,16 @@ export default function HabitList({
   onDelete,
 }) {
   if (loading) {
-    return <p className="text-zinc-500 text-sm px-1">Loading…</p>;
+    return (
+      <p className="text-sm px-1 text-zinc-600 dark:text-zinc-500">
+        Loading…
+      </p>
+    );
   }
 
   if (habits.length === 0) {
     return (
-      <p className="text-zinc-600 text-sm px-1">
+      <p className="text-sm px-1 text-zinc-700 dark:text-zinc-600">
         No habits
       </p>
     );

@@ -4,7 +4,11 @@ export default function UsersSkeleton() {
       {Array.from({ length: 6 }).map((_, i) => (
         <div
           key={i}
-          className="h-24 rounded-xl bg-zinc-900 animate-pulse border border-zinc-800"
+          className="
+            h-24 rounded-xl animate-pulse
+            bg-zinc-200 dark:bg-zinc-900
+            border border-zinc-300 dark:border-zinc-800
+          "
         />
       ))}
     </div>

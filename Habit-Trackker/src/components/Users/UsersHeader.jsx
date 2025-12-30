@@ -4,10 +4,10 @@ export default function UsersHeader({ search, onSearch }) {
   return (
     <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
-        <h1 className="text-2xl font-semibold text-white">
+        <h1 className="text-2xl font-semibold text-zinc-900 dark:text-white">
           Community Members
         </h1>
-        <p className="text-sm text-zinc-400 mt-1">
+        <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
           Discover and connect with people on the platform
         </p>
       </div>
@@ -15,7 +15,8 @@ export default function UsersHeader({ search, onSearch }) {
       <div className="relative w-full sm:w-72">
         <Search
           size={16}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"
+          className="absolute left-3 top-1/2 -translate-y-1/2
+                     text-zinc-500 dark:text-zinc-400"
         />
         <input
           type="text"
@@ -23,10 +24,15 @@ export default function UsersHeader({ search, onSearch }) {
           value={search}
           onChange={(e) => onSearch(e.target.value)}
           className="
-            w-full bg-zinc-900 border border-zinc-800 rounded-lg
-            pl-9 pr-3 py-2 text-sm text-white
-            placeholder-zinc-500
-            focus:outline-none focus:border-indigo-500/50
+            w-full rounded-lg
+            pl-9 pr-3 py-2 text-sm
+            bg-white dark:bg-zinc-900
+            text-zinc-900 dark:text-white
+            border border-zinc-300 dark:border-zinc-800
+            placeholder-zinc-400 dark:placeholder-zinc-500
+            focus:outline-none
+            focus:ring-2 focus:ring-indigo-500/30
+            focus:border-indigo-500
           "
         />
       </div>

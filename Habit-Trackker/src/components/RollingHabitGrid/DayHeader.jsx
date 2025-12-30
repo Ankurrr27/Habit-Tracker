@@ -13,20 +13,21 @@ export default function DayHeader({ day, todayKey }) {
         flex flex-col items-center justify-center
         text-[10px] leading-none
         px-1 py-[1px] rounded
+        transition-colors
         ${
           isToday
-            ? "text-violet-300 bg-violet-500/10"
-            : "text-zinc-400"
+            ? "text-indigo-600 bg-indigo-500/10 dark:text-violet-300 dark:bg-violet-500/10"
+            : "text-zinc-600 dark:text-zinc-400"
         }
         ${
           isWeekStart
-            ? "border-l border-zinc-700 ml-1 pl-1"
+            ? "border-l border-zinc-300 dark:border-zinc-700 ml-1 pl-1"
             : ""
         }
       `}
     >
       <span>{weekday}</span>
-      <span className="text-[9px] text-zinc-500">
+      <span className="text-[9px] text-zinc-500 dark:text-zinc-500">
         {day.getUTCDate()}
       </span>
     </div>

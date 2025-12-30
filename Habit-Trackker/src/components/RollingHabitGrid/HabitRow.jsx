@@ -8,15 +8,16 @@ export default function HabitRow({ habit, days, logs, todayKey }) {
       {/* HABIT TITLE — STICKY */}
       <div
         className="
-          sticky  z-20
+          sticky z-20
           flex items-center
           rounded-lg
-          bg-zinc-950
           pr-3 pl-4
-          text-[13px] font-medium text-zinc-200
+          text-[13px] font-medium
           transition-colors
-          
-          group-hover:text-white
+
+          bg-white dark:bg-zinc-950
+          text-zinc-800 dark:text-zinc-200
+          group-hover:text-zinc-900 dark:group-hover:text-white
         "
       >
         {habit.title}
@@ -42,7 +43,6 @@ export default function HabitRow({ habit, days, logs, todayKey }) {
             className="
               flex items-center justify-center
               transition-colors
-             
             "
           >
             <HabitCell

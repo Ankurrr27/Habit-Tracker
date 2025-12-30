@@ -7,8 +7,9 @@ export const DayCell = ({ dateKey, intensity, isToday, colorClass }) => (
     whileHover={{ scale: 1.4, zIndex: 10 }}
     className={`
       aspect-square w-[13px] h-[13px] rounded-[2px]
+      transition-colors
       ${colorClass}
-      ${isToday ? "" : ""}
+      ${isToday ? "ring-1 ring-indigo-500/60" : ""}
     `}
     title={`${dateKey}: ${Math.round(intensity)}%`}
   />

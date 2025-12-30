@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { toDateKey, getIntensityColor } from "./heatmap.utils";
-import {MonthGroup} from "./MonthGroup";
+import { MonthGroup } from "./MonthGroup";
 
 export default function HeatmapGrid({ days, today, getDailyIntensity }) {
   const todayKey = toDateKey(today);
@@ -19,7 +19,7 @@ export default function HeatmapGrid({ days, today, getDailyIntensity }) {
           key,
           label: monthLabel,
           days: [day],
-          startOffset: day.getDay(), // 0 = Sun, 1 = Mon...
+          startOffset: day.getDay(), // 0 = Sun
         });
       } else {
         lastMonth.days.push(day);
@@ -29,11 +29,21 @@ export default function HeatmapGrid({ days, today, getDailyIntensity }) {
   }, [days]);
 
   return (
-    <div className="w-full overflow-x-auto pb-4 custom-scrollbar">
+    <div className="w-full overflow-x-auto pb-4">
       <div className="flex gap-2.75 min-w-max items-end px-2">
-        {/* Optional: Add a Weekday Legend here */}
-        <div className="grid grid-rows-7 gap-1 pb-[2px] pr-2 text-[9px] text-slate-400 uppercase">
-          <div>Sun</div><div></div><div>Tue</div><div></div><div>Thu</div><div></div><div>Sat</div>
+        {/* WEEKDAY LEGEND */}
+        <div className="
+          grid grid-rows-7 gap-1 pb-[2px] pr-2
+          text-[9px] uppercase
+          text-zinc-500 dark:text-zinc-400
+        ">
+          <div>Sun</div>
+          <div></div>
+          <div>Tue</div>
+          <div></div>
+          <div>Thu</div>
+          <div></div>
+          <div>Sat</div>
         </div>
 
         {months.map((month) => (
