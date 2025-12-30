@@ -131,3 +131,32 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({ error: "Profile update failed" });
   }
 };
+
+export const searchUsers = async (req, res) => {
+  try {
+    const q = req.query.q?.trim();
+
+    if (!q || q.length < 2) {
+      return res.json([]);
+    }
+
+    const users = await User.find(
+      {
+        $or: [
+          { name: { $regex: q, $options: "i" } },
+          { username: { $regex: q, $options: "i" } },
+          { email: { $regex: q, $options: "i" } },
+        ],
+        // ❌ REMOVE profilePublic filter
+      },
+      "name username avatar"
+    )
+      .limit(10)
+      .lean();
+
+    res.json(users);
+  } catch (err) {
+    console.error("SEARCH USERS ERROR:", err);
+    res.status(500).json([]);
+  }
+};

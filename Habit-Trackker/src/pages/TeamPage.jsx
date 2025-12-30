@@ -37,7 +37,7 @@ export default function TeamPage() {
 
   return (
     <div className="max-w-9xl mx-auto px-6">
-      {/* ===== TEAM HEADER ===== */}
+      {/* HEADER */}
       <div className="relative mt-4 mb-6">
         <TeamHeader
           name={team.name}
@@ -48,7 +48,10 @@ export default function TeamPage() {
           <div className="absolute top-4 right-4">
             <TeamManageToggle
               canInvite
-              onInviteOpen={() => setInviteOpen(true)}
+              onInviteOpen={() => {
+                setInvite("");
+                setInviteOpen(true);
+              }}
               onLeave={() => console.log("Leave team")}
               onDelete={
                 team.myRole === "owner"
@@ -60,31 +63,29 @@ export default function TeamPage() {
         )}
       </div>
 
-      {/* ===== MAIN CONTENT ===== */}
+      {/* CONTENT */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pb-10">
-        {/* LEFT SIDEBAR — MEMBERS */}
         <aside className="lg:col-span-1">
           <TeamMembers members={team.members} />
         </aside>
 
-        {/* RIGHT — WORKSPACE */}
         <main className="lg:col-span-3 space-y-6">
-          {/* Invite panel */}
           {inviteOpen && (
-            <div className="relative overflow-visible">
-              <TeamInviteCard
-                invite={invite}
-                setInvite={setInvite}
-                sendInvite={() => {
-                  sendInvite();
+            <TeamInviteCard
+              invite={invite}
+              setInvite={setInvite}
+              msg={msg}
+              sendInvite={async () => {
+                await sendInvite();
+
+                // ✅ close AFTER user sees message
+                setTimeout(() => {
                   setInviteOpen(false);
-                }}
-                msg={msg}
-              />
-            </div>
+                }, 1200);
+              }}
+            />
           )}
 
-          {/* Workspace */}
           <TeamWorkspacePlaceholder />
         </main>
       </div>

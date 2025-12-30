@@ -8,6 +8,7 @@ import {
   Workflow,
   User2,
   LogOut,
+  Search,
 } from "lucide-react";
 
 import { useAuth } from "../../context/AuthContext";
@@ -67,8 +68,8 @@ export default function Sidebar() {
           />
 
           <SidebarItem
-            icon={<User2 size={20} />}
-            label="Users"
+            icon={<Search size={20} />}
+            label="Search"
             active={isActive("/users")}
             onClick={() => navigate("/users")}
           />
