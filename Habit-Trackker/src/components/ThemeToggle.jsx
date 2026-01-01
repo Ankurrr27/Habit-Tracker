@@ -1,4 +1,4 @@
-import { Sun, Moon, Heart } from "lucide-react";
+import { Sun, Moon } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 
 export default function ThemeToggle() {
@@ -9,16 +9,17 @@ export default function ThemeToggle() {
       onClick={toggleTheme}
       className="
         p-2 rounded-md
-        bg-bg text-text
-        hover:bg-primary/10
+        text-zinc-600 dark:text-zinc-300
+        hover:bg-zinc-200 dark:hover:bg-zinc-800
         transition
       "
       aria-label="Toggle theme"
-      title={`Current theme: ${theme}`}
     >
-      {theme === "light" && <Moon size={18} />}
-      {theme === "dark" && <Sun size={18} />}
-      {theme === "pink" && <Heart size={18} className="text-primary" />}
+      {theme === "dark" ? (
+        <Sun size={18} className="text-yellow-400" />
+      ) : (
+        <Moon size={18} />
+      )}
     </button>
   );
 }

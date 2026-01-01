@@ -75,23 +75,40 @@ export default function Sidebar() {
           />
 
           {/* PROFILE */}
-          <SidebarItem
-            icon={
-              <img
-                src={user?.avatar || "/avatar-placeholder.png"}
-                alt="Profile"
-                className="
-                  w-6 h-6 rounded-full object-cover
-                  border border-zinc-300 dark:border-zinc-700
-                "
-              />
-            }
-            label="Profile"
-            active={isActive(`/u/${user?.username}`)}
-            onClick={() =>
-              user?.username && navigate(`/u/${user.username}`)
-            }
-          />
+          {/* PROFILE */}
+<SidebarItem
+  icon={
+    user?.avatar ? (
+      <img
+        src={user.avatar}
+        alt="Profile"
+        className="
+          w-6 h-6 rounded-full object-cover
+          border border-zinc-300 dark:border-zinc-700
+        "
+      />
+    ) : (
+      <div
+        className="
+          w-6 h-6 rounded-full
+          flex items-center justify-center
+          bg-indigo-600 text-white
+          text-[11px] font-semibold
+          border border-zinc-300 dark:border-zinc-700
+          select-none
+        "
+      >
+        {(user?.name || user?.username || "?")[0].toUpperCase()}
+      </div>
+    )
+  }
+  label="Profile"
+  active={isActive(`/u/${user?.username}`)}
+  onClick={() =>
+    user?.username && navigate(`/u/${user.username}`)
+  }
+/>
+
         </nav>
 
         {/* FOOTER */}

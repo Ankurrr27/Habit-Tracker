@@ -3,53 +3,92 @@ import { Flame, Shield, Calendar, ArrowRight } from "lucide-react";
 
 export default function IntroPage() {
   return (
-    <div className="relative bg-black text-white overflow-hidden">
-      {/* SOFT BACKGROUND (⚠️ FIXED: pointer-events-none) */}
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-purple-500/10 pointer-events-none" />
+    <div className="relative bg-white text-zinc-900 dark:bg-black dark:text-white overflow-hidden">
+      {/* BACKGROUND ACCENTS */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* LIGHT */}
+        <div className="absolute -top-48 -right-48 w-[600px] h-[600px] rounded-full bg-indigo-500/10 blur-3xl dark:hidden" />
+        <div className="absolute top-1/3 -left-48 w-[520px] h-[520px] rounded-full bg-purple-500/10 blur-3xl dark:hidden" />
+
+        {/* DARK */}
+        <div className="absolute -top-48 -right-48 w-[600px] h-[600px] rounded-full bg-indigo-500/20 blur-3xl hidden dark:block" />
+        <div className="absolute top-1/3 -left-48 w-[520px] h-[520px] rounded-full bg-purple-500/15 blur-3xl hidden dark:block" />
+      </div>
 
       {/* HERO */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 pt-28 pb-32 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <section className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-36 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
         {/* LEFT */}
         <div>
-          <span className="inline-block mb-4 text-xs tracking-widest uppercase text-indigo-400">
+          <span className="inline-flex items-center gap-2 mb-5 text-xs tracking-widest uppercase text-indigo-600 dark:text-indigo-400">
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 dark:bg-indigo-400" />
             Habit discipline system
           </span>
 
-          <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+          <h1 className="text-4xl md:text-6xl font-bold leading-[1.05] tracking-tight">
             Build habits that
             <br />
-            <span className="text-indigo-400">don’t lie.</span>
+            <span className="text-indigo-600 dark:text-indigo-400">
+              don’t lie.
+            </span>
           </h1>
 
-          <p className="mt-6 text-lg text-zinc-400 max-w-xl">
-            HabTrack is not about motivation.  
-            It’s about showing up daily, tracking proof, and earning credibility
-            through consistency.
+          <p className="mt-6 text-lg text-zinc-600 dark:text-zinc-400 max-w-xl leading-relaxed">
+            HabTrack is not about motivation.
+            It’s about showing up daily, tracking proof,
+            and earning credibility through consistency.
           </p>
 
           {/* CTA */}
-          <div className="mt-10 flex flex-wrap gap-4">
+          <div className="mt-12 flex flex-wrap gap-5">
+            {/* PRIMARY */}
             <Link
               to="/register"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-indigo-600 hover:bg-indigo-700 transition font-medium"
+              className="
+                group inline-flex items-center gap-2
+                px-7 py-3.5 rounded-xl
+                bg-indigo-600 text-white
+                shadow-lg shadow-indigo-600/30
+                hover:bg-indigo-500
+                hover:shadow-indigo-500/40
+                transition
+                font-medium
+              "
             >
               Start Tracking
-              <ArrowRight size={16} />
+              <ArrowRight
+                size={16}
+                className="transition group-hover:translate-x-0.5"
+              />
             </Link>
 
+            {/* SECONDARY */}
             <Link
               to="/login"
-              className="inline-flex items-center px-6 py-3 rounded-md border border-zinc-700 hover:bg-zinc-900 transition"
+              className="
+                inline-flex items-center
+                px-7 py-3.5 rounded-xl
+                border border-zinc-300 dark:border-zinc-700
+                text-zinc-700 dark:text-zinc-200
+                hover:bg-zinc-100 dark:hover:bg-zinc-900
+                transition
+              "
             >
               Login
             </Link>
           </div>
         </div>
 
-        {/* RIGHT (VISUAL BLOCK) */}
+        {/* RIGHT VISUAL */}
         <div className="hidden lg:block">
-          <div className="relative bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">
-            <div className="text-sm text-zinc-400 mb-3">
+          <div
+            className="
+              bg-white dark:bg-zinc-900
+              rounded-3xl p-7
+              border border-zinc-200 dark:border-zinc-800
+              shadow-2xl
+            "
+          >
+            <div className="text-sm text-zinc-500 dark:text-zinc-400 mb-5">
               Today’s progress
             </div>
 
@@ -63,13 +102,13 @@ export default function IntroPage() {
       </section>
 
       {/* FEATURES */}
-      <section className="relative z-10 border-t border-zinc-800">
-        <div className="max-w-7xl mx-auto px-6 py-24">
-          <h2 className="text-3xl font-semibold mb-12">
+      <section className="relative z-10 border-t border-zinc-200 dark:border-zinc-800">
+        <div className="max-w-7xl mx-auto px-6 py-28">
+          <h2 className="text-3xl font-semibold mb-14">
             Designed for long-term discipline
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <Feature
               icon={<Flame />}
               title="Streak-Driven Habits"
@@ -91,33 +130,53 @@ export default function IntroPage() {
         </div>
       </section>
 
-      {/* FOOTNOTE */}
-      <footer className="relative z-10 text-center py-10 text-xs text-zinc-500 border-t border-zinc-800">
+      {/* FOOTER */}
+      <footer className="text-center py-12 text-xs text-zinc-500 dark:text-zinc-500 border-t border-zinc-200 dark:border-zinc-800">
         Built for people who value discipline over motivation.
       </footer>
     </div>
   );
 }
 
-/* ------------------ COMPONENTS ------------------ */
+/* ---------------- COMPONENTS ---------------- */
 
 function Feature({ icon, title, desc }) {
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 hover:border-indigo-500/40 transition">
-      <div className="w-10 h-10 flex items-center justify-center rounded-md bg-indigo-500/10 text-indigo-400 mb-4">
+    <div
+      className="
+        bg-white dark:bg-zinc-900
+        rounded-2xl p-7
+        border border-zinc-200 dark:border-zinc-800
+        shadow-sm
+        hover:border-indigo-500/40
+        transition
+      "
+    >
+      <div className="w-11 h-11 flex items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 mb-5">
         {icon}
       </div>
       <h3 className="text-lg font-semibold mb-2">{title}</h3>
-      <p className="text-sm text-zinc-400 leading-relaxed">{desc}</p>
+      <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+        {desc}
+      </p>
     </div>
   );
 }
 
 function MockHabit({ title, streak }) {
   return (
-    <div className="flex items-center justify-between bg-black/40 border border-zinc-800 rounded-lg px-4 py-3">
+    <div
+      className="
+        flex items-center justify-between
+        bg-zinc-50 dark:bg-black/40
+        border border-zinc-200 dark:border-zinc-800
+        rounded-xl px-5 py-3
+      "
+    >
       <span className="text-sm">{title}</span>
-      <span className="text-xs text-indigo-400">{streak} day streak</span>
+      <span className="text-xs text-indigo-600 dark:text-indigo-400 font-medium">
+        {streak} day streak
+      </span>
     </div>
   );
 }

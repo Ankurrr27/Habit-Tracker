@@ -120,10 +120,28 @@ export default function ProfilePage() {
 
           {/* HEADER */}
           <div className="flex gap-6 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 rounded-xl">
-            <img
-              src={preview || user.avatar || "/avatar-placeholder.png"}
-              className="w-24 h-24 rounded-full object-cover border border-zinc-300 dark:border-zinc-700"
-            />
+            <div
+  className="
+    w-24 h-24 rounded-full
+    border border-zinc-300 dark:border-zinc-700
+    overflow-hidden
+    flex items-center justify-center
+    bg-indigo-600 text-white
+    text-3xl font-semibold
+    select-none
+  "
+>
+  {preview || user.avatar ? (
+    <img
+      src={preview || user.avatar}
+      alt="avatar"
+      className="w-full h-full object-cover"
+    />
+  ) : (
+    (user.name || user.username || "?")[0].toUpperCase()
+  )}
+</div>
+
 
             <div className="flex-1">
               <h1 className="text-2xl font-semibold">{user.name}</h1>

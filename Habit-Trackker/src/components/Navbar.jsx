@@ -33,17 +33,21 @@ export default function Navbar() {
     <nav
       className="
         sticky top-0 z-40
-        bg-bg text-text
-        border-b border-black/20
+        bg-white dark:bg-black
+        border-b border-zinc-200 dark:border-zinc-800
       "
     >
       <div className="w-full px-6 py-4 flex items-center justify-between">
         {/* LOGO */}
         <Link
           to="/"
-          className="flex items-center gap-2 font-semibold text-lg"
+          className="
+            text-lg font-semibold
+            text-zinc-900 dark:text-white
+            flex items-center gap-2
+          "
         >
-          <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+          <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
           HabTrack
         </Link>
 
@@ -53,25 +57,41 @@ export default function Navbar() {
         {/* RIGHT SIDE */}
         <div className="relative" ref={menuRef}>
           {loading ? (
-            <span className="opacity-60 text-sm">…</span>
+            <span className="text-zinc-500">…</span>
           ) : user ? (
             <>
-              {/* AVATAR + MENU */}
+              {/* AVATAR + HAMBURGER */}
               <div className="flex items-center gap-2">
-                <button
-                  onClick={() => navigate(`/u/${user.username}`)}
-                  className="focus:outline-none"
-                >
-                  <img
-                    src={user.avatar || "/avatar-placeholder.png"}
-                    alt="avatar"
-                    className="
-                      w-8 h-8 rounded-full object-cover
-                      border border-black/20
-                      hover:opacity-90 transition
-                    "
-                  />
-                </button>
+               <button
+  onClick={() => navigate(`/u/${user.username}`)}
+  className="focus:outline-none"
+>
+  {user.avatar ? (
+    <img
+      src={user.avatar}
+      alt="avatar"
+      className="
+        w-8 h-8 rounded-full object-cover
+        border border-zinc-300 dark:border-zinc-700
+        hover:opacity-90 transition
+      "
+    />
+  ) : (
+    <div
+      className="
+        w-8 h-8 rounded-full
+        flex items-center justify-center
+        bg-indigo-600 text-white
+        text-sm font-semibold
+        border border-zinc-300 dark:border-zinc-700
+        select-none
+      "
+    >
+      {(user.name || user.username || "?")[0].toUpperCase()}
+    </div>
+  )}
+</button>
+
 
                 <button
                   onClick={() => setOpen((v) => !v)}
@@ -81,8 +101,8 @@ export default function Navbar() {
                     p-1.5 rounded transition
                     ${
                       open
-                        ? "bg-primary/10 text-primary"
-                        : "opacity-70 hover:opacity-100 hover:bg-primary/10"
+                        ? "bg-zinc-200 text-zinc-900 dark:bg-zinc-800 dark:text-white"
+                        : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800"
                     }
                   `}
                 >
@@ -95,14 +115,14 @@ export default function Navbar() {
                 <div
                   className="
                     absolute right-0 mt-3 w-44
-                    bg-bg text-text
-                    border border-black/10
+                    bg-white dark:bg-zinc-900
+                    border border-zinc-200 dark:border-zinc-800
                     rounded-lg shadow-lg overflow-hidden
                   "
                 >
                   <NavItem
                     icon={<Home size={14} />}
-                    label="Dashboard"
+                    label="Home"
                     onClick={() => {
                       navigate("/dashboard");
                       setOpen(false);
@@ -132,13 +152,13 @@ export default function Navbar() {
             <div className="flex items-center gap-4">
               <Link
                 to="/login"
-                className="opacity-70 hover:opacity-100 transition"
+                className="text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white"
               >
                 Login
               </Link>
               <Link
                 to="/register"
-                className="px-4 py-1.5 rounded-md bg-primary text-white hover:opacity-90 transition"
+                className="px-4 py-1.5 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white"
               >
                 Sign Up
               </Link>
@@ -162,7 +182,7 @@ function NavItem({ icon, label, onClick, danger = false }) {
         ${
           danger
             ? "text-red-500 hover:bg-red-500/10"
-            : "hover:bg-primary/10 hover:text-primary"
+            : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white"
         }
       `}
     >
