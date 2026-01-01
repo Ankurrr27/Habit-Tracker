@@ -6,11 +6,12 @@ export default function Footer() {
   const [views, setViews] = useState(null);
 
   useEffect(() => {
-    fetch("https://counterapi.dev/increment/habtrack-ankur/website")
-      .then((res) => res.json())
-      .then((data) => setViews(data.value))
-      .catch(() => {});
-  }, []);
+  fetch("http://localhost:5000/views")
+    .then((res) => res.json())
+    .then((data) => setViews(data.count))
+    .catch(() => {});
+}, []);
+
 
   return (
     <footer className="bg-white dark:bg-black">

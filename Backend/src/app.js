@@ -12,6 +12,7 @@ import heatmapRoutes from "./routes/heatmap.routes.js";
 import proofRoutes from "./routes/proof.routes.js";
 import teamRoutes from "./routes/team.routes.js";
 import teamInviteRoutes from "./routes/teamInvite.routes.js";
+import viewsRoutes from "./routes/views.routes.js";
 
 
 const app = express();
@@ -47,6 +48,7 @@ app.use("/heatmap", heatmapRoutes);
 app.use("/proof", proofRoutes);
 app.use("/teams", teamRoutes);
 app.use("/team-invites", teamInviteRoutes);
+app.use("/views", viewsRoutes);
 
 
 app.get("/", (req, res) => {
