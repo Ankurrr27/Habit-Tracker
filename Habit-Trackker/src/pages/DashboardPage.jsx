@@ -9,24 +9,23 @@ const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(true);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-zinc-900 dark:text-white flex flex-col">
+    <div className="min-h-screen bg-bg text-text flex flex-col">
       <div className="flex flex-1 h-[calc(100vh-64px)] overflow-hidden">
         <div className="flex flex-1 overflow-hidden">
-
           {/* 🟦 LEFT HABIT PANEL */}
           <aside
             className={`
               flex flex-col
-              border-r border-zinc-200 dark:border-zinc-950
-              bg-zinc-50 dark:bg-black
+              border-r border-black/10
+              bg-bg
               transition-[width] duration-300 ease-in-out
               ${collapsed ? "w-14" : "w-[260px]"}
             `}
           >
             {/* PANEL HEADER */}
-            <div className="h-12 flex items-center justify-between px-3 border-b border-zinc-200 dark:border-zinc-950">
+            <div className="h-12 flex items-center justify-between px-3 border-b border-black/10">
               {!collapsed && (
-                <span className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
+                <span className="text-xs font-medium opacity-70">
                   Daily Habits
                 </span>
               )}
@@ -35,7 +34,7 @@ const Dashboard = () => {
                 onClick={() => setCollapsed((v) => !v)}
                 className="
                   p-1 rounded-md
-                  hover:bg-zinc-200 dark:hover:bg-zinc-800
+                  hover:bg-primary/10
                   transition
                 "
                 aria-label="Toggle habit panel"
@@ -49,14 +48,33 @@ const Dashboard = () => {
             </div>
 
             {/* PANEL CONTENT */}
-            <div
-              className={`
-                flex-1 overflow-y-auto
-                transition-opacity duration-200
-                ${collapsed ? "opacity-0 pointer-events-none" : "opacity-100"}
-              `}
-            >
-              {!collapsed && (
+            <div className="flex-1 overflow-y-auto">
+              {collapsed ? (
+                <div
+                  onClick={() => setCollapsed(false)}
+                  className="
+      flex-1 flex flex-col items-center justify-center
+      gap-4
+      cursor-pointer select-none
+      text-text/60
+      hover:text-text
+      transition
+    "
+                >
+                  {/* ICON */}
+
+                  {/* VERTICAL TEXT */}
+                  <span
+                    className="
+        text-[14px] pt-4 mt-4 font-medium tracking-wide
+        [writing-mode:vertical-rl]
+        rotate-180
+      "
+                  >
+                    Today’s Habits
+                  </span>
+                </div>
+              ) : (
                 <div className="p-4">
                   <HabitByDay />
                 </div>
@@ -65,14 +83,13 @@ const Dashboard = () => {
           </aside>
 
           {/* 🟩 MAIN CONTENT */}
-          <main className="flex-1 overflow-y-auto p-6 space-y-6 flex flex-col bg-white dark:bg-black">
+          <main className="flex-1 overflow-y-auto p-6 space-y-6 flex flex-col bg-bg">
             {/* WEEKLY GRID */}
             <RollingHabitGrid />
 
             {/* YEAR HEATMAP */}
             <HabitHeatmap />
           </main>
-
         </div>
       </div>
     </div>

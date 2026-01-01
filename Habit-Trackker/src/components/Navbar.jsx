@@ -34,7 +34,7 @@ export default function Navbar() {
       className="
         sticky top-0 z-40
         bg-bg text-text
-        border-b border-black/10
+        border-b border-black/20
       "
     >
       <div className="w-full px-6 py-4 flex items-center justify-between">
