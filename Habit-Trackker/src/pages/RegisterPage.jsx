@@ -90,7 +90,7 @@ export default function RegisterPage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             disabled={loading}
-            placeholder="Ankur Sharma"
+            placeholder="Ankur"
             className="
               w-full pl-10 pr-3 py-2 rounded-md
               bg-white dark:bg-zinc-800
