@@ -18,18 +18,17 @@ import TeamPage from "./pages/TeamPage";
 import TeamsPage from "./pages/TeamsPage";
 import ProjectPage from "./pages/ProjectPage";
 
-
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         {/* 🌍 INTRO PAGE */}
-        <Route element={<AppLayout />}>
-          <Route path="/" element={<IntroPage />} />
-        </Route>
 
         {/* 🔓 AUTH */}
         <Route element={<PublicRoute />}>
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<IntroPage />} />
+          </Route>
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -40,7 +39,6 @@ export default function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
             <Route element={<DashboardLayout />}>
-
               {/* DASHBOARD */}
               <Route path="/dashboard" element={<Dashboard />} />
 
@@ -55,7 +53,6 @@ export default function App() {
               <Route path="/teams" element={<TeamsPage />} />
               <Route path="/projects" element={<ProjectPage />} />
               <Route path="/teams/:teamId" element={<TeamPage />} />
-
             </Route>
           </Route>
         </Route>
@@ -63,4 +60,3 @@ export default function App() {
     </BrowserRouter>
   );
 }
-
