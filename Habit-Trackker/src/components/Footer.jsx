@@ -1,7 +1,17 @@
-import { Github } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Github, Eye } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function Footer() {
+  const [views, setViews] = useState(null);
+
+  useEffect(() => {
+    fetch("https://api.countapi.xyz/hit/habtrack-ankur/website")
+      .then((res) => res.json())
+      .then((data) => setViews(data.value))
+      .catch(() => {});
+  }, []);
+
   return (
     <footer className="bg-white dark:bg-black">
       {/* subtle accent line */}
@@ -50,13 +60,26 @@ export default function Footer() {
             </a>
           </div>
 
-          {/* RIGHT — META */}
-          <div className="text-xs text-zinc-500 text-center sm:text-right">
+          {/* RIGHT — META + VIEW COUNTER */}
+          <div className="text-xs text-zinc-500 text-center sm:text-right space-y-1">
             <p>© {new Date().getFullYear()} HabTrack</p>
+
             <p className="tracking-wide">
               v1.0 • Built by{" "}
-              <span className="text-zinc-700 dark:text-zinc-300">Ankur</span>
+              <span className="text-zinc-700 dark:text-zinc-300">
+                Ankur
+              </span>
             </p>
+
+            {/* VIEW COUNTER */}
+            <div className="flex items-center justify-center sm:justify-end gap-1.5">
+              <Eye size={12} />
+              {views !== null ? (
+                <span>{views.toLocaleString()} views</span>
+              ) : (
+                <span>— views</span>
+              )}
+            </div>
           </div>
 
         </div>

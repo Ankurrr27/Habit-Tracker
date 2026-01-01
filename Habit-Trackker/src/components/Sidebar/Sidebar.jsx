@@ -46,12 +46,12 @@ export default function Sidebar() {
             onClick={() => navigate("/dashboard")}
           />
 
-          <SidebarItem
+          {/* <SidebarItem
             icon={<Flame size={20} />}
             label="Streaks"
             active={isActive("/streaks") || isActive("/dashboard")}
             onClick={() => navigate("/dashboard")}
-          />
+          /> */}
 
           <SidebarItem
             icon={<Users size={20} />}
