@@ -6,8 +6,7 @@ export default function DashboardLayout() {
     <div
       className="
         flex min-h-screen
-        bg-white text-zinc-900
-        dark:bg-black dark:text-white
+        bg-bg text-text
         transition-colors
       "
     >

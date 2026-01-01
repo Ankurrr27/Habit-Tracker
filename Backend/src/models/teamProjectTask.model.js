@@ -1,19 +1,23 @@
 import mongoose from "mongoose";
 
-const teamProjectSchema = new mongoose.Schema(
+const teamProjectTaskSchema = new mongoose.Schema(
   {
-    team: {
+    project: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Team",
+      ref: "TeamProject",
       required: true,
     },
 
     title: {
       type: String,
       required: true,
+      trim: true,
     },
 
-    description: String,
+    completed: {
+      type: Boolean,
+      default: false,
+    },
 
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
@@ -23,4 +27,4 @@ const teamProjectSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("TeamProject", teamProjectSchema);
+export default mongoose.model("TeamProjectTask", teamProjectTaskSchema);

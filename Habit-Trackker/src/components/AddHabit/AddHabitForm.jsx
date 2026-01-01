@@ -23,10 +23,9 @@ export default function AddHabitForm({ state, actions }) {
 
   const inputBase = `
     w-full p-2 rounded
-    bg-white dark:bg-zinc-800
-    border border-zinc-300 dark:border-zinc-700
-    text-zinc-900 dark:text-zinc-100
-    focus:outline-none focus:ring-2 focus:ring-indigo-500/40
+    bg-bg text-text
+    border border-black/20
+    focus:outline-none focus:ring-2 focus:ring-primary/40
     disabled:opacity-60
   `;
 
@@ -67,12 +66,12 @@ export default function AddHabitForm({ state, actions }) {
                   px-3 py-1 rounded-md border text-sm transition
                   ${
                     active
-                      ? "bg-indigo-600 border-indigo-500 text-white"
+                      ? "bg-primary border-primary text-primary-contrast"
                       : `
-                        bg-zinc-100 dark:bg-zinc-800
-                        border-zinc-300 dark:border-zinc-700
-                        text-zinc-700 dark:text-zinc-300
-                        hover:bg-zinc-200 dark:hover:bg-zinc-700
+                        bg-bg
+                        border-black/20
+                        text-text/70
+                        hover:bg-primary/10
                       `
                   }
                 `}
@@ -94,7 +93,7 @@ export default function AddHabitForm({ state, actions }) {
             onChange={(e) => setIntervalDays(+e.target.value)}
             className={`${inputBase} w-20`}
           />
-          <span className="text-sm text-zinc-600 dark:text-zinc-400">
+          <span className="text-sm opacity-70">
             days
           </span>
         </div>
@@ -128,8 +127,9 @@ export default function AddHabitForm({ state, actions }) {
           onClick={submit}
           disabled={loading}
           className="
-            px-4 py-2 rounded-md text-white
-            bg-indigo-600 hover:bg-indigo-700
+            px-4 py-2 rounded-md
+            bg-primary text-primary-contrast
+            hover:opacity-90
             disabled:opacity-60
           "
         >

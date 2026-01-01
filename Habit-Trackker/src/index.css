@@ -4,52 +4,79 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* =========================
+   THEME VARIABLES
+========================= */
+
+/* 🌤 DEFAULT (LIGHT) */
+:root {
+  /* App colors */
+  --bg: 255 255 255;
+  --text: 24 24 27;
+  --primary: 99 102 241;
+
+  /* Scrollbar */
+  --scroll-track: #f4f4f5;
+  --scroll-thumb: rgba(99, 102, 241, 0.45);
+  --scroll-thumb-hover: rgba(79, 70, 229, 0.7);
+}
+
+/* 🌑 DARK */
+.dark {
+  --bg: 9 9 11;
+  --text: 244 244 245;
+  --primary: 129 140 248;
+
+  --scroll-track: #09090b;
+  --scroll-thumb: rgba(47, 48, 120, 0.55);
+  --scroll-thumb-hover: rgba(0, 0, 0, 0.85);
+}
+
+/* 💖 PINK */
+.pink {
+  --bg: 255 240 246;
+  --text: 88 28 64;
+  --primary: 236 72 153;
+
+  --scroll-track: #fff0f6;
+  --scroll-thumb: rgba(236, 72, 153, 0.55);
+  --scroll-thumb-hover: rgba(219, 39, 119, 0.8);
+}
+
+/* =========================
+   BASE STYLES
+========================= */
+
+html,
+body {
+  background-color: rgb(var(--bg));
+  color: rgb(var(--text));
+}
+
+/* =========================
    THEME-AWARE SCROLLBAR
 ========================= */
 
-/* Base scrollbar size */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-/* ===== LIGHT MODE (default) ===== */
-:not(.dark) ::-webkit-scrollbar-track {
-  background: #f4f4f5; /* zinc-100 */
+::-webkit-scrollbar-track {
+  background: var(--scroll-track);
 }
 
-:not(.dark) ::-webkit-scrollbar-thumb {
-  background-color: rgba(99, 102, 241, 0.45); /* indigo-500 */
+::-webkit-scrollbar-thumb {
+  background-color: var(--scroll-thumb);
   border-radius: 9999px;
-  border: 2px solid #f4f4f5;
+  border: 2px solid var(--scroll-track);
 }
 
-:not(.dark) ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(79, 70, 229, 0.7); /* indigo-600 */
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scroll-thumb-hover);
 }
 
-/* ===== DARK MODE ===== */
-.dark ::-webkit-scrollbar-track {
-  background: #09090b; /* zinc-950 */
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background-color: rgba(47, 48, 120, 0.55); /* indigo */
-  border-radius: 9999px;
-  border: 2px solid #ffffff;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(0, 0, 0, 0.85);
-}
-
-/* ===== Firefox ===== */
-:not(.dark) * {
+/* Firefox */
+* {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.45) #f4f4f5;
-}
-
-.dark * {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.55) #09090b;
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
 }

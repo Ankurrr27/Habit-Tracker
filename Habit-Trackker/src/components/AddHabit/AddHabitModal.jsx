@@ -9,7 +9,7 @@ export default function AddHabitModal({ onClose, onAdded }) {
       className="
         fixed inset-0 z-50
         flex items-center justify-center
-        bg-black/40 dark:bg-black/70
+        bg-black/40
         transition-colors
       "
     >
@@ -17,9 +17,8 @@ export default function AddHabitModal({ onClose, onAdded }) {
         className="
           w-96 max-w-[90vw]
           rounded-xl p-6
-          bg-white dark:bg-zinc-900
-          border border-zinc-200 dark:border-zinc-700
-          text-zinc-900 dark:text-white
+          bg-bg text-text
+          border border-black/10
           shadow-xl
         "
       >
@@ -33,8 +32,8 @@ export default function AddHabitModal({ onClose, onAdded }) {
           onClick={onClose}
           className="
             mt-4 text-sm
-            text-zinc-600 hover:text-zinc-900
-            dark:text-zinc-400 dark:hover:text-white
+            opacity-70 hover:opacity-100
+            transition
           "
         >
           Cancel
