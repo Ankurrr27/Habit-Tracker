@@ -6,18 +6,11 @@ export default function Footer() {
   const [views, setViews] = useState(null);
 
   useEffect(() => {
-    const fetchViews = async () => {
-      try {
-        const res = await api.get("/views");
-        setViews(res.data.count);
-      } catch (err) {
-        // silently fail, footer shouldn't break app
-        console.error("Failed to fetch views");
-      }
-    };
-
-    fetchViews();
-  }, []);
+  fetch("https://habit-tracker-ixsb.onrender.com/views")
+    .then((res) => res.json())
+    .then((data) => setViews(data.count))
+    .catch(() => {});
+}, []);
 
 
   return (
