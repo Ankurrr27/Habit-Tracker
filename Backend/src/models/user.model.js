@@ -27,9 +27,16 @@ const userSchema = new mongoose.Schema(
 
     password: {
       type: String,
-      required: true,
+      required: false, // ✅ GOOGLE USERS OK
       select: false,
     },
+
+    provider: {
+  type: String,
+  enum: ["local", "google"],
+  default: "local",
+},
+
 
     avatar: {
       type: String,
@@ -59,10 +66,10 @@ const userSchema = new mongoose.Schema(
         ret.id = ret._id;
         delete ret._id;
         delete ret.__v;
+        delete ret.password;
       },
     },
   }
 );
 
-const User = mongoose.models.User || mongoose.model("User", userSchema);
-export default User;
+export default mongoose.models.User || mongoose.model("User", userSchema);

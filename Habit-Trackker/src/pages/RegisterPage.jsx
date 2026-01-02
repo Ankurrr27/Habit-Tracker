@@ -2,6 +2,7 @@ import { useState } from "react";
 import api from "../api/axios";
 import { useNavigate, Link } from "react-router-dom";
 import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { GoogleLogin } from "@react-oauth/google";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ export default function RegisterPage() {
       });
 
       localStorage.setItem("token", res.data.token);
-      navigate("/");
+      navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Signup failed");
     } finally {
@@ -46,14 +47,12 @@ export default function RegisterPage() {
         min-h-screen flex items-center justify-center px-4 relative overflow-hidden
         bg-white dark:bg-black
         text-zinc-900 dark:text-white
-        transition-colors
       "
     >
-      {/* BACKGROUND GLOW */}
+      {/* BACKGROUND */}
       <div className="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl" />
       <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl" />
 
-      {/* CARD */}
       <form
         onSubmit={submit}
         className="
@@ -65,9 +64,7 @@ export default function RegisterPage() {
       >
         {/* HEADER */}
         <div className="mb-6 text-center">
-          <h1 className="text-2xl font-semibold">
-            Create your account
-          </h1>
+          <h1 className="text-2xl font-semibold">Create your account</h1>
           <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
             Start building habits that stick
           </p>
@@ -80,6 +77,34 @@ export default function RegisterPage() {
           </div>
         )}
 
+        {/* GOOGLE SIGNUP */}
+<div className="mb-5 flex justify-center">
+  <GoogleLogin
+    onSuccess={async (credentialResponse) => {
+      try {
+        const res = await api.post("/auth/google", {
+          credential: credentialResponse.credential, // ✅ FIXED
+        });
+
+        localStorage.setItem("token", res.data.token);
+        navigate("/dashboard");
+      } catch (err) {
+        console.error(err);
+        setError("Google signup failed");
+      }
+    }}
+    onError={() => setError("Google signup failed")}
+  />
+</div>
+
+
+        {/* DIVIDER */}
+        <div className="flex items-center gap-3 mb-5">
+          <div className="flex-1 h-px bg-zinc-200 dark:bg-zinc-700" />
+          <span className="text-xs text-zinc-400">OR</span>
+          <div className="flex-1 h-px bg-zinc-200 dark:bg-zinc-700" />
+        </div>
+
         {/* NAME */}
         <label className="text-xs text-zinc-600 dark:text-zinc-400 mb-1 block">
           Full Name
@@ -90,13 +115,11 @@ export default function RegisterPage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             disabled={loading}
-            placeholder="Ankur"
             className="
               w-full pl-10 pr-3 py-2 rounded-md
               bg-white dark:bg-zinc-800
               border border-zinc-300 dark:border-zinc-700
-              text-zinc-900 dark:text-white
-              focus:outline-none focus:ring-2 focus:ring-indigo-500/50
+              focus:ring-2 focus:ring-indigo-500/50
             "
           />
         </div>
@@ -112,13 +135,11 @@ export default function RegisterPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
-            placeholder="you@example.com"
             className="
               w-full pl-10 pr-3 py-2 rounded-md
               bg-white dark:bg-zinc-800
               border border-zinc-300 dark:border-zinc-700
-              text-zinc-900 dark:text-white
-              focus:outline-none focus:ring-2 focus:ring-indigo-500/50
+              focus:ring-2 focus:ring-indigo-500/50
             "
           />
         </div>
@@ -134,19 +155,17 @@ export default function RegisterPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={loading}
-            placeholder="••••••••"
             className="
               w-full pl-10 pr-10 py-2 rounded-md
               bg-white dark:bg-zinc-800
               border border-zinc-300 dark:border-zinc-700
-              text-zinc-900 dark:text-white
-              focus:outline-none focus:ring-2 focus:ring-indigo-500/50
+              focus:ring-2 focus:ring-indigo-500/50
             "
           />
           <button
             type="button"
             onClick={() => setShowPassword((p) => !p)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 dark:hover:text-white"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400"
           >
             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
@@ -157,8 +176,8 @@ export default function RegisterPage() {
           disabled={loading}
           className="
             w-full bg-indigo-600 hover:bg-indigo-700
+            py-2.5 rounded-md font-medium text-white
             disabled:opacity-60
-            py-2.5 rounded-md font-medium text-white transition
           "
         >
           {loading ? "Creating account…" : "Create Account"}

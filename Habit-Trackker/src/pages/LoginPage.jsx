@@ -3,6 +3,7 @@ import api from "../api/axios";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { GoogleLogin } from "@react-oauth/google";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ export default function LoginPage() {
     if (token) navigate("/dashboard");
   }, [navigate]);
 
-  /* SUBMIT */
+  /* EMAIL/PASSWORD LOGIN */
   const submit = async (e) => {
     e.preventDefault();
     setError("");
@@ -49,33 +50,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div
-      className="
-        min-h-screen flex items-center justify-center px-4 relative overflow-hidden
-        bg-white dark:bg-black
-        text-zinc-900 dark:text-white
-        transition-colors
-      "
-    >
-      {/* BACKGROUND GLOW */}
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden bg-white dark:bg-black text-zinc-900 dark:text-white">
+      {/* BACKGROUND */}
       <div className="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl" />
       <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl" />
 
-      {/* CARD */}
       <form
         onSubmit={submit}
-        className="
-          relative w-full max-w-sm
-          bg-white/90 dark:bg-zinc-900/90 backdrop-blur
-          border border-zinc-200 dark:border-zinc-800
-          p-6 sm:p-8 rounded-2xl shadow-xl
-        "
+        className="relative w-full max-w-sm bg-white/90 dark:bg-zinc-900/90 backdrop-blur border border-zinc-200 dark:border-zinc-800 p-6 sm:p-8 rounded-2xl shadow-xl"
       >
         {/* HEADER */}
         <div className="mb-6 text-center">
-          <h1 className="text-2xl font-semibold">
-            Welcome back
-          </h1>
+          <h1 className="text-2xl font-semibold">Welcome back</h1>
           <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
             Log in to continue your streak
           </p>
@@ -88,6 +74,33 @@ export default function LoginPage() {
           </div>
         )}
 
+        {/* GOOGLE LOGIN */}
+        <div className="mb-5 flex justify-center">
+          <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              try {
+                const res = await api.post("/auth/google", {
+                  credential: credentialResponse.credential,
+                });
+
+                localStorage.setItem("token", res.data.token);
+                setUser(res.data.user);
+                navigate("/dashboard");
+              } catch {
+                setError("Google login failed");
+              }
+            }}
+            onError={() => setError("Google login failed")}
+          />
+        </div>
+
+        {/* DIVIDER */}
+        <div className="flex items-center gap-3 mb-5">
+          <div className="flex-1 h-px bg-zinc-200 dark:bg-zinc-700" />
+          <span className="text-xs text-zinc-400">OR</span>
+          <div className="flex-1 h-px bg-zinc-200 dark:bg-zinc-700" />
+        </div>
+
         {/* IDENTIFIER */}
         <label className="text-xs text-zinc-600 dark:text-zinc-400 mb-1 block">
           Email or Username
@@ -98,14 +111,7 @@ export default function LoginPage() {
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
             disabled={loading}
-            placeholder="you@example.com"
-            className="
-              w-full pl-10 pr-3 py-2 rounded-md
-              bg-white dark:bg-zinc-800
-              border border-zinc-300 dark:border-zinc-700
-              text-zinc-900 dark:text-white
-              focus:outline-none focus:ring-2 focus:ring-indigo-500/50
-            "
+            className="w-full pl-10 pr-3 py-2 rounded-md bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 focus:ring-2 focus:ring-indigo-500/50"
           />
         </div>
 
@@ -120,19 +126,12 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={loading}
-            placeholder="••••••••"
-            className="
-              w-full pl-10 pr-10 py-2 rounded-md
-              bg-white dark:bg-zinc-800
-              border border-zinc-300 dark:border-zinc-700
-              text-zinc-900 dark:text-white
-              focus:outline-none focus:ring-2 focus:ring-indigo-500/50
-            "
+            className="w-full pl-10 pr-10 py-2 rounded-md bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 focus:ring-2 focus:ring-indigo-500/50"
           />
           <button
             type="button"
             onClick={() => setShowPassword((p) => !p)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 dark:hover:text-white"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400"
           >
             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
@@ -141,11 +140,7 @@ export default function LoginPage() {
         {/* SUBMIT */}
         <button
           disabled={loading}
-          className="
-            w-full bg-indigo-600 hover:bg-indigo-700
-            disabled:opacity-60
-            py-2.5 rounded-md font-medium text-white transition
-          "
+          className="w-full bg-indigo-600 hover:bg-indigo-700 py-2.5 rounded-md font-medium text-white disabled:opacity-60"
         >
           {loading ? "Logging in…" : "Login"}
         </button>
