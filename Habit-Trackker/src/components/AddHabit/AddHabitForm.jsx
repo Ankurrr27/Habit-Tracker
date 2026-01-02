@@ -22,10 +22,11 @@ export default function AddHabitForm({ state, actions }) {
   } = actions;
 
   const inputBase = `
-    w-full p-2 rounded
-    bg-bg text-text
-    border border-black/20
-    focus:outline-none focus:ring-2 focus:ring-primary/40
+    w-full p-2 rounded-md
+    bg-white dark:bg-zinc-900
+    text-zinc-900 dark:text-zinc-100
+    border border-zinc-300 dark:border-zinc-700
+    focus:outline-none focus:ring-2 focus:ring-indigo-500/40
     disabled:opacity-60
   `;
 
@@ -63,16 +64,11 @@ export default function AddHabitForm({ state, actions }) {
                 type="button"
                 onClick={() => toggleDay(day)}
                 className={`
-                  px-3 py-1 rounded-md border text-sm transition
+                  px-3 py-1 rounded-md text-sm border transition
                   ${
                     active
-                      ? "bg-primary border-primary text-primary-contrast"
-                      : `
-                        bg-bg
-                        border-black/20
-                        text-text/70
-                        hover:bg-primary/10
-                      `
+                      ? "bg-indigo-600 border-indigo-600 text-white"
+                      : "bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-indigo-50 dark:hover:bg-zinc-800"
                   }
                 `}
               >
@@ -91,9 +87,9 @@ export default function AddHabitForm({ state, actions }) {
             min={1}
             value={intervalDays}
             onChange={(e) => setIntervalDays(+e.target.value)}
-            className={`${inputBase} w-20`}
+            className={`${inputBase} w-24`}
           />
-          <span className="text-sm opacity-70">
+          <span className="text-sm text-zinc-600 dark:text-zinc-400">
             days
           </span>
         </div>
@@ -122,14 +118,14 @@ export default function AddHabitForm({ state, actions }) {
       </div>
 
       {/* ACTION */}
-      <div className="flex justify-end gap-2">
+      <div className="flex justify-end">
         <button
           onClick={submit}
           disabled={loading}
           className="
             px-4 py-2 rounded-md
-            bg-primary text-primary-contrast
-            hover:opacity-90
+            bg-indigo-600 text-white
+            hover:bg-indigo-700
             disabled:opacity-60
           "
         >

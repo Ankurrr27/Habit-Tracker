@@ -10,15 +10,15 @@ export default function AddHabitModal({ onClose, onAdded }) {
         fixed inset-0 z-50
         flex items-center justify-center
         bg-black/40
-        transition-colors
       "
     >
       <div
         className="
           w-96 max-w-[90vw]
           rounded-xl p-6
-          bg-bg text-text
-          border border-black/10
+          bg-white dark:bg-zinc-950
+          text-zinc-900 dark:text-zinc-100
+          border border-zinc-200 dark:border-zinc-800
           shadow-xl
         "
       >
@@ -32,7 +32,8 @@ export default function AddHabitModal({ onClose, onAdded }) {
           onClick={onClose}
           className="
             mt-4 text-sm
-            opacity-70 hover:opacity-100
+            text-zinc-500 hover:text-zinc-800
+            dark:text-zinc-400 dark:hover:text-zinc-200
             transition
           "
         >

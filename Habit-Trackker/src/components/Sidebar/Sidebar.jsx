@@ -3,10 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import {
   Plus,
   Home,
-  Flame,
   Users,
   Workflow,
-  User2,
   LogOut,
   Search,
 } from "lucide-react";
@@ -22,8 +20,13 @@ export default function Sidebar() {
   const location = useLocation();
 
   const isActive = (path) =>
-    location.pathname === path ||
-    location.pathname.startsWith(path + "/");
+    location.pathname === path || location.pathname.startsWith(path + "/");
+
+  // 🔥 CORRECT LOGOUT HANDLER
+  const handleLogout = () => {
+    logout();                    // clear auth state
+    navigate("/", { replace: true }); // redirect to root safely
+  };
 
   return (
     <>
@@ -45,13 +48,6 @@ export default function Sidebar() {
             active={isActive("/dashboard")}
             onClick={() => navigate("/dashboard")}
           />
-
-          {/* <SidebarItem
-            icon={<Flame size={20} />}
-            label="Streaks"
-            active={isActive("/streaks") || isActive("/dashboard")}
-            onClick={() => navigate("/dashboard")}
-          /> */}
 
           <SidebarItem
             icon={<Users size={20} />}
@@ -75,40 +71,24 @@ export default function Sidebar() {
           />
 
           {/* PROFILE */}
-          {/* PROFILE */}
-<SidebarItem
-  icon={
-    user?.avatar ? (
-      <img
-        src={user.avatar}
-        alt="Profile"
-        className="
-          w-6 h-6 rounded-full object-cover
-          border border-zinc-300 dark:border-zinc-700
-        "
-      />
-    ) : (
-      <div
-        className="
-          w-6 h-6 rounded-full
-          flex items-center justify-center
-          bg-indigo-600 text-white
-          text-[11px] font-semibold
-          border border-zinc-300 dark:border-zinc-700
-          select-none
-        "
-      >
-        {(user?.name || user?.username || "?")[0].toUpperCase()}
-      </div>
-    )
-  }
-  label="Profile"
-  active={isActive(`/u/${user?.username}`)}
-  onClick={() =>
-    user?.username && navigate(`/u/${user.username}`)
-  }
-/>
-
+          <SidebarItem
+            icon={
+              user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt="Profile"
+                  className="w-6 h-6 rounded-full object-cover border"
+                />
+              ) : (
+                <div className="w-6 h-6 rounded-full flex items-center justify-center bg-indigo-600 text-white text-[11px] font-semibold">
+                  {(user?.name || user?.username || "?")[0].toUpperCase()}
+                </div>
+              )
+            }
+            label="Profile"
+            active={isActive(`/u/${user?.username}`)}
+            onClick={() => user?.username && navigate(`/u/${user.username}`)}
+          />
         </nav>
 
         {/* FOOTER */}
@@ -118,46 +98,29 @@ export default function Sidebar() {
             onClick={() => setOpen(true)}
             className="
               w-full h-11 flex items-center gap-3
-              rounded-md
-              bg-indigo-600 hover:bg-indigo-700
-              text-white
-              transition-colors
+              rounded-md bg-indigo-600 hover:bg-indigo-700
+              text-white transition-colors
             "
           >
             <Plus className="w-5 h-5 ml-3 shrink-0" />
-            <span
-              className="
-                whitespace-nowrap overflow-hidden
-                max-w-0 group-hover:max-w-xs
-                transition-all duration-200
-                text-sm font-medium
-              "
-            >
+            <span className="max-w-0 group-hover:max-w-xs overflow-hidden transition-all text-sm font-medium">
               Add Habit
             </span>
           </button>
 
           {/* LOGOUT */}
           <button
-            onClick={logout}
+            onClick={handleLogout}
             className="
               w-full h-11 flex items-center gap-3
-              rounded-md
-              text-red-500 hover:bg-red-500/10
+              rounded-md text-red-500 hover:bg-red-500/10
               transition-all duration-200
               opacity-0 pointer-events-none
               group-hover:opacity-100 group-hover:pointer-events-auto
             "
           >
             <LogOut className="w-5 h-5 ml-3 shrink-0" />
-            <span
-              className="
-                whitespace-nowrap overflow-hidden
-                max-w-0 group-hover:max-w-xs
-                transition-all duration-200
-                text-sm font-medium
-              "
-            >
+            <span className="max-w-0 group-hover:max-w-xs overflow-hidden transition-all text-sm font-medium">
               Logout
             </span>
           </button>

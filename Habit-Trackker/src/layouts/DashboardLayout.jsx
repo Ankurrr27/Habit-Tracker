@@ -11,7 +11,7 @@ export default function DashboardLayout() {
       "
     >
       {/* DESKTOP SIDEBAR */}
-      <div className="hidden md:block">
+      <div className="hidden fix md:block">
         <Sidebar />
       </div>
 
