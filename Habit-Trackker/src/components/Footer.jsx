@@ -6,7 +6,7 @@ export default function Footer() {
   const [views, setViews] = useState(null);
 
   useEffect(() => {
-  fetch("http://localhost:5000/views")
+  fetch("https://habit-tracker-ixsb.onrender.com/views")
     .then((res) => res.json())
     .then((data) => setViews(data.count))
     .catch(() => {});
