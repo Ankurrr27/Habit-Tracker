@@ -92,7 +92,7 @@ export default function Navbar() {
                   )}
                 </button>
 
-                <button
+                {/* <button
                   onClick={() => setOpen((v) => !v)}
                   aria-label="Open menu"
                   aria-expanded={open}
@@ -106,7 +106,7 @@ export default function Navbar() {
                   `}
                 >
                   <Menu size={18} />
-                </button>
+                </button> */}
               </div>
 
               {/* DROPDOWN */}
