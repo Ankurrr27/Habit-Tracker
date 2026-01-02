@@ -62,23 +62,23 @@ export default function Navbar() {
             <>
               {/* AVATAR + HAMBURGER */}
               <div className="flex items-center gap-2">
-               <button
-  onClick={() => navigate(`/u/${user.username}`)}
-  className="focus:outline-none"
->
-  {user.avatar ? (
-    <img
-      src={user.avatar}
-      alt="avatar"
-      className="
+                <button
+                  onClick={() => navigate(`/u/${user.username}`)}
+                  className="focus:outline-none"
+                >
+                  {user.avatar ? (
+                    <img
+                      src={user.avatar}
+                      alt="avatar"
+                      className="
         w-8 h-8 rounded-full object-cover
         border border-zinc-300 dark:border-zinc-700
         hover:opacity-90 transition
       "
-    />
-  ) : (
-    <div
-      className="
+                    />
+                  ) : (
+                    <div
+                      className="
         w-8 h-8 rounded-full
         flex items-center justify-center
         bg-indigo-600 text-white
@@ -86,12 +86,11 @@ export default function Navbar() {
         border border-zinc-300 dark:border-zinc-700
         select-none
       "
-    >
-      {(user.name || user.username || "?")[0].toUpperCase()}
-    </div>
-  )}
-</button>
-
+                    >
+                      {(user.name || user.username || "?")[0].toUpperCase()}
+                    </div>
+                  )}
+                </button>
 
                 <button
                   onClick={() => setOpen((v) => !v)}
@@ -111,7 +110,7 @@ export default function Navbar() {
               </div>
 
               {/* DROPDOWN */}
-              {open && (
+              {/* {open && (
                 <div
                   className="
                     absolute right-0 mt-3 w-44
@@ -145,7 +144,7 @@ export default function Navbar() {
                     onClick={handleLogout}
                   />
                 </div>
-              )}
+              )} */}
             </>
           ) : (
             /* NOT LOGGED IN */
