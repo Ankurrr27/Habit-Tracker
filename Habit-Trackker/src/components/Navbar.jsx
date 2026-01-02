@@ -92,7 +92,7 @@ export default function Navbar() {
                   )}
                 </button>
 
-                {/* <button
+                <button
                   onClick={() => setOpen((v) => !v)}
                   aria-label="Open menu"
                   aria-expanded={open}
@@ -106,11 +106,11 @@ export default function Navbar() {
                   `}
                 >
                   <Menu size={18} />
-                </button> */}
+                </button>
               </div>
 
               {/* DROPDOWN */}
-              {/* {open && (
+              {open && (
                 <div
                   className="
                     absolute right-0 mt-3 w-44
@@ -119,14 +119,14 @@ export default function Navbar() {
                     rounded-lg shadow-lg overflow-hidden
                   "
                 >
-                  <NavItem
+                  {/* <NavItem
                     icon={<Home size={14} />}
                     label="Home"
                     onClick={() => {
                       navigate("/dashboard");
                       setOpen(false);
                     }}
-                  />
+                  /> */}
 
                   <NavItem
                     icon={<User size={14} />}
@@ -144,7 +144,7 @@ export default function Navbar() {
                     onClick={handleLogout}
                   />
                 </div>
-              )} */}
+              )}
             </>
           ) : (
             /* NOT LOGGED IN */
