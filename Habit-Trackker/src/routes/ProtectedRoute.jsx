@@ -5,7 +5,7 @@ export default function ProtectedRoute() {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return null; // or a loader component
+    return <div />; // or a loader
   }
 
   if (!user) {

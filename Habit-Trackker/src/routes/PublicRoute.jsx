@@ -5,7 +5,7 @@ export default function PublicRoute() {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return null;
+    return <div />;
   }
 
   if (user) {
