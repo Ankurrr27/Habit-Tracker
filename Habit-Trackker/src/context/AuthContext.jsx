@@ -9,21 +9,32 @@ export function AuthProvider({ children }) {
 
   // 🔄 Load user on refresh
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setLoading(false);
-      return;
-    }
+  let mounted = true;
 
-    api
-      .get("/auth/me")
-      .then((res) => setUser(res.data))
-      .catch(() => {
-        localStorage.removeItem("token");
-        setUser(null);
-      })
-      .finally(() => setLoading(false));
-  }, []);
+  const token = localStorage.getItem("token");
+  if (!token) {
+    setLoading(false);
+    return;
+  }
+
+  api
+    .get("/auth/me")
+    .then((res) => {
+      if (mounted) setUser(res.data);
+    })
+    .catch(() => {
+      localStorage.removeItem("token");
+      if (mounted) setUser(null);
+    })
+    .finally(() => {
+      if (mounted) setLoading(false);
+    });
+
+  return () => {
+    mounted = false;
+  };
+}, []);
+
 
   const logout = () => {
     localStorage.removeItem("token");
