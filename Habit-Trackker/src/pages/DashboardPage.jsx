@@ -9,7 +9,7 @@ const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(true);
 
   return (
-    <div className="min-h-screen bg-bg text-text flex flex-col">
+    <div className=" bg-bg text-text flex flex-col">
       <div className="flex flex-1 h-[calc(100vh-64px)] overflow-hidden">
         <div className="flex flex-1 overflow-hidden">
           {/* 🟦 LEFT HABIT PANEL */}
