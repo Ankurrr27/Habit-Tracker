@@ -1,5 +1,5 @@
 import { Trash2, Check } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import StreakBadge from "./StreakBadge";
 
 export default function HabitItem({
@@ -24,7 +24,7 @@ export default function HabitItem({
   const canToggle = !disabled && !habit.done;
 
   return (
-    <motion.div
+    <Motion.div
       layout
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
@@ -105,6 +105,6 @@ export default function HabitItem({
           </button>
         )}
       </div>
-    </motion.div>
+    </Motion.div>
   );
 }

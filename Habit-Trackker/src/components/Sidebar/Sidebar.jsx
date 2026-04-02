@@ -3,13 +3,14 @@ import { useNavigate, useLocation } from "react-router-dom";
 import {
   Plus,
   Home,
+  CalendarDays,
   Users,
   Workflow,
   LogOut,
   Search,
 } from "lucide-react";
 
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 import AddHabitModal from "../AddHabit";
 import SidebarItem from "./SidebarItem";
 
@@ -54,6 +55,13 @@ export default function Sidebar() {
             label="Teams"
             active={isActive("/teams")}
             onClick={() => navigate("/teams")}
+          />
+
+          <SidebarItem
+            icon={<CalendarDays size={20} />}
+            label="Calendar"
+            active={isActive("/calendar")}
+            onClick={() => navigate("/calendar")}
           />
 
           <SidebarItem

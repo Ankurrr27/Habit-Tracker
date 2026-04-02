@@ -4,6 +4,7 @@ import api from "../../api/axios";
 
 export function useCreateTeam() {
   const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -19,7 +20,10 @@ export function useCreateTeam() {
       setLoading(true);
       setError("");
 
-      const res = await api.post("/teams", { name });
+      const res = await api.post("/teams", {
+        name: name.trim(),
+        description: description.trim(),
+      });
 
       navigate(`/teams/${res.data._id}`);
     } catch (err) {
@@ -33,11 +37,13 @@ export function useCreateTeam() {
   return {
     state: {
       name,
+      description,
       loading,
       error,
     },
     actions: {
       setName,
+      setDescription,
       submit,
     },
   };

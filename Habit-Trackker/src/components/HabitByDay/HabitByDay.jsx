@@ -21,18 +21,16 @@ export default function HabitByDay() {
         weekDates={weekDates}
         selectedIndex={selectedIndex}
         onSelect={setSelectedIndex}
-        habitCounts={weekDates.map((_, i) =>
-          i === selectedIndex ? habits.length : 0
+        habitCounts={weekDates.map((_, index) =>
+          index === selectedIndex ? habits.length : 0
         )}
       />
 
-      {/* DATE LABEL */}
-      <div className="text-sm px-1 text-zinc-600 dark:text-zinc-400">
+      <div className="px-1 text-sm text-zinc-600 dark:text-zinc-400">
         {isToday ? "Today" : selectedDate.toDateString()}
       </div>
 
-      {/* HABIT LIST */}
-      <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-1 pb-24">
+      <div className="max-h-[60vh] space-y-2 overflow-y-auto pb-24 pr-1">
         <HabitList
           habits={habits}
           loading={loading}

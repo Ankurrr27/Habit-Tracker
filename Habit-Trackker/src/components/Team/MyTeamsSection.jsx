@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Crown } from "lucide-react";
+import { Crown, Users } from "lucide-react";
 
 export default function MyTeamsSection({ teams }) {
   const location = useLocation();
@@ -13,32 +13,32 @@ export default function MyTeamsSection({ teams }) {
         px-4 py-4
       "
     >
-      {/* HEADER */}
-      <div className="mb-3">
-        <h2 className="text-xs font-semibold tracking-wider text-zinc-500 dark:text-zinc-400 uppercase">
+      <div className="mb-4">
+        <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
           Your teams
         </h2>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          Open a workspace, review role access, and jump back into collaboration.
+        </p>
       </div>
 
-      {/* EMPTY STATE */}
       {teams.length === 0 ? (
         <div
           className="
             text-sm text-zinc-500 dark:text-zinc-400
-            px-3 py-6
+            px-3 py-8
             rounded-xl
             bg-zinc-50 dark:bg-zinc-900
             border border-dashed border-zinc-200 dark:border-zinc-800
             text-center
           "
         >
-          No teams yet
+          No teams yet. Create one to invite people and coordinate habits together.
         </div>
       ) : (
-        <ul className="space-y-1.5">
+        <ul className="space-y-2">
           {teams.map((team) => {
-            const isActive =
-              location.pathname === `/teams/${team._id}`;
+            const isActive = location.pathname === `/teams/${team._id}`;
             const isOwner = team.myRole === "owner";
 
             return (
@@ -46,66 +46,37 @@ export default function MyTeamsSection({ teams }) {
                 <Link
                   to={`/teams/${team._id}`}
                   className={`
-                    group relative
-                    flex items-center justify-between
-                    px-3 py-2.5
-                    rounded-xl
-                    text-sm
-                    transition-all
+                    block rounded-2xl border px-4 py-3 transition
                     ${
                       isActive
-                        ? `
-                          bg-indigo-50 text-indigo-700
-                          dark:bg-emerald-500/10 dark:text-emerald-400
-                        `
-                        : `
-                          text-zinc-700 dark:text-zinc-300
-                          hover:bg-zinc-100 dark:hover:bg-zinc-900
-                        `
+                        ? "border-indigo-300 bg-indigo-50 text-indigo-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300"
+                        : "border-zinc-200 bg-zinc-50 text-zinc-800 hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:border-zinc-700"
                     }
                   `}
                 >
-                  {/* LEFT ACCENT */}
-                  {isActive && (
-                    <span
-                      className="
-                        absolute left-0 top-1/2 -translate-y-1/2
-                        w-1 h-6
-                        rounded-r-full
-                        bg-indigo-500 dark:bg-emerald-400
-                      "
-                    />
-                  )}
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="font-semibold truncate">{team.name}</div>
+                      <div className="mt-1 text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2">
+                        {team.description || "No description yet."}
+                      </div>
+                    </div>
 
-                  {/* TEAM NAME */}
-                  <span
-                    className={`
-                      truncate
-                      ${isOwner ? "font-semibold" : "font-medium"}
-                    `}
-                  >
-                    {team.name}
-                  </span>
+                    {isOwner && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-1 text-[10px] font-medium text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">
+                        <Crown size={11} />
+                        Owner
+                      </span>
+                    )}
+                  </div>
 
-                  {/* OWNER BADGE */}
-                  {isOwner && (
-                    <span
-                      className="
-                        ml-2
-                        flex items-center gap-1
-                        text-[10px]
-                        text-amber-600 dark:text-amber-400
-                        bg-amber-100 dark:bg-amber-500/10
-                        px-2 py-0.5
-                        rounded-full
-                        shrink-0
-                      "
-                      title="You own this team"
-                    >
-                      <Crown size={12} />
-                      Owner
+                  <div className="mt-3 flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
+                    <Users size={13} />
+                    <span>{team.membersCount || 0} members</span>
+                    <span className="rounded-full bg-zinc-200 px-2 py-0.5 dark:bg-zinc-800">
+                      {team.myRole}
                     </span>
-                  )}
+                  </div>
                 </Link>
               </li>
             );

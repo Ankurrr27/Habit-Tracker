@@ -15,22 +15,24 @@ export default function TeamManageToggle({
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
-  // Close on outside click
   useEffect(() => {
-    const handler = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) {
+    const handler = (event) => {
+      if (ref.current && !ref.current.contains(event.target)) {
         setOpen(false);
       }
     };
+
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Close on Esc
   useEffect(() => {
-    const handler = (e) => {
-      if (e.key === "Escape") setOpen(false);
+    const handler = (event) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
     };
+
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
   }, []);
@@ -38,12 +40,14 @@ export default function TeamManageToggle({
   return (
     <div ref={ref} className="relative">
       <button
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setOpen((value) => !value)}
         className={`
           p-1.5 rounded transition
-          ${open
-            ? "bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
-            : "text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800"}
+          ${
+            open
+              ? "bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
+              : "text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+          }
         `}
         title="Team actions"
       >
@@ -61,12 +65,10 @@ export default function TeamManageToggle({
             z-30
           "
         >
-          {/* Header */}
           <div className="px-3 py-2 text-xs font-medium text-zinc-500 dark:text-zinc-400">
             Team actions
           </div>
 
-          {/* Invite */}
           {canInvite && (
             <MenuItem
               icon={UserPlus}
@@ -80,14 +82,12 @@ export default function TeamManageToggle({
 
           <div className="my-1 border-t border-zinc-200 dark:border-zinc-800" />
 
-          {/* Leave */}
           <MenuItem
             icon={LogOut}
             label="Leave team"
             onClick={onLeave}
           />
 
-          {/* Delete (danger) */}
           {onDelete && (
             <MenuItem
               icon={Trash2}
@@ -102,7 +102,7 @@ export default function TeamManageToggle({
   );
 }
 
-function MenuItem({ icon: Icon, label, onClick, danger }) {
+function MenuItem({ icon: IconComponent, label, onClick, danger }) {
   return (
     <button
       onClick={onClick}
@@ -116,7 +116,7 @@ function MenuItem({ icon: Icon, label, onClick, danger }) {
         }
       `}
     >
-      <Icon size={14} />
+      {IconComponent ? <IconComponent size={14} /> : null}
       {label}
     </button>
   );

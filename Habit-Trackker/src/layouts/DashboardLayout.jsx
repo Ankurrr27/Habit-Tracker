@@ -10,13 +10,11 @@ export default function DashboardLayout() {
         transition-colors
       "
     >
-      {/* DESKTOP SIDEBAR */}
-      <div className="hidden fix md:block">
+      <div className="hidden md:block">
         <Sidebar />
       </div>
 
-      {/* PAGE CONTENT */}
-      <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
+      <main className="min-w-0 flex-1 overflow-y-auto pb-20 md:pb-0">
         <Outlet />
       </main>
     </div>

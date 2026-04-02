@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import { useHabitHeatmap } from "./useHabitHeatmap";
 import HeatmapGrid from "./HeatmapGrid";
 import HeatmapLegend from "./HeatmapLegend";
@@ -9,13 +9,13 @@ export default function HabitHeatmap() {
   if (loading) {
     return (
       <div className="p-8 text-xs text-zinc-700 dark:text-zinc-600">
-        Loading heatmap…
+        Loading heatmap...
       </div>
     );
   }
 
   return (
-    <motion.div
+    <Motion.div
       className="
         rounded-2xl
         p-8
@@ -26,7 +26,6 @@ export default function HabitHeatmap() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      {/* ===== HEADER ===== */}
       <div
         className="
           -mx-8
@@ -49,12 +48,11 @@ export default function HabitHeatmap() {
         <HeatmapLegend />
       </div>
 
-      {/* ===== GRID ===== */}
       <HeatmapGrid
         days={days}
         today={today}
         getDailyIntensity={getDailyIntensity}
       />
-    </motion.div>
+    </Motion.div>
   );
 }

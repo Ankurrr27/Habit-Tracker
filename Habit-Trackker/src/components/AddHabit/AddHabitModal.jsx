@@ -14,7 +14,7 @@ export default function AddHabitModal({ onClose, onAdded }) {
     >
       <div
         className="
-          w-96 max-w-[90vw]
+          w-[28rem] max-w-[92vw]
           rounded-xl p-6
           bg-white dark:bg-zinc-950
           text-zinc-900 dark:text-zinc-100
@@ -22,9 +22,12 @@ export default function AddHabitModal({ onClose, onAdded }) {
           shadow-xl
         "
       >
-        <h2 className="text-lg font-semibold mb-4">
+        <h2 className="text-lg font-semibold mb-1">
           Add Habit
         </h2>
+        <p className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">
+          Manual habits and auto-tracked coding hobbies both start here.
+        </p>
 
         <AddHabitForm state={state} actions={actions} />
 

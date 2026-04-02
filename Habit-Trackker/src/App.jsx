@@ -11,6 +11,7 @@ import UsersPage from "./pages/UsersPage";
 import TeamsPage from "./pages/TeamsPage";
 import TeamPage from "./pages/TeamPage";
 import ProjectPage from "./pages/ProjectPage";
+import CalendarPage from "./pages/CalendarPage";
 
 /* ROUTES */
 import PublicRoute from "./routes/PublicRoute";
@@ -58,6 +59,9 @@ export default function App() {
 
               {/* USERS */}
               <Route path="/users" element={<UsersPage />} />
+
+              {/* CALENDAR */}
+              <Route path="/calendar" element={<CalendarPage />} />
 
               {/* TEAMS & PROJECTS */}
               <Route path="/teams" element={<TeamsPage />} />

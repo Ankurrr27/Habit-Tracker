@@ -3,34 +3,55 @@ import api from "../../api/axios";
 
 export default function StreakBadge({ habitId }) {
   const [streak, setStreak] = useState(null);
+  const [refreshTick, setRefreshTick] = useState(0);
 
-  const fetchStreak = async () => {
-    if (!habitId) return;
-
-    try {
-      const res = await api.get(`/streak/${habitId}`);
-      setStreak(res.data.streak);
-    } catch {
-      setStreak(0);
+  useEffect(() => {
+    if (!habitId) {
+      return undefined;
     }
-  };
+
+    let isCancelled = false;
+
+    const loadStreak = async () => {
+      try {
+        const res = await api.get(`/streak/${habitId}`);
+        if (!isCancelled) {
+          setStreak(res.data.streak);
+        }
+      } catch {
+        if (!isCancelled) {
+          setStreak(0);
+        }
+      }
+    };
+
+    void loadStreak();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [habitId, refreshTick]);
 
   useEffect(() => {
-    fetchStreak();
-  }, [habitId]);
+    const handleHabitsUpdated = () => {
+      setRefreshTick((tick) => tick + 1);
+    };
 
-  // 🔥 REAL-TIME UPDATE
-  useEffect(() => {
-    const handler = () => fetchStreak();
-    window.addEventListener("habits-updated", handler);
-    return () =>
-      window.removeEventListener("habits-updated", handler);
-  }, [habitId]);
+    window.addEventListener("habits-updated", handleHabitsUpdated);
+    return () => {
+      window.removeEventListener(
+        "habits-updated",
+        handleHabitsUpdated
+      );
+    };
+  }, []);
 
-  if (streak === null) {
+  const displayStreak = habitId ? streak : 0;
+
+  if (displayStreak === null) {
     return (
       <span className="text-xs text-zinc-600 dark:text-zinc-500">
-        …
+        ...
       </span>
     );
   }
@@ -45,7 +66,7 @@ export default function StreakBadge({ habitId }) {
         dark:bg-emerald-600/10 dark:text-emerald-400 dark:border-emerald-600/30
       "
     >
-      🔥 {streak}
+      Fire {displayStreak}
     </span>
   );
 }

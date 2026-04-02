@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import { getHeatColor } from "../HabitHeatmap/heatmap";
 
 export default function HabitCell({ isScheduled, isPast, log }) {
@@ -15,7 +15,7 @@ export default function HabitCell({ isScheduled, isPast, log }) {
       }`}
       style={{ perspective: 600 }}
     >
-      <motion.div
+      <Motion.div
         className={`
           w-[22px] h-[22px]
           rounded

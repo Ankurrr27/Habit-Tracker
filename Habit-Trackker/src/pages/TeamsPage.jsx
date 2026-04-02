@@ -1,147 +1,102 @@
-import { useState } from "react";
-import { Plus } from "lucide-react";
-
+import { useMemo, useState } from "react";
+import { Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useTeamsDashboard } from "../components/Team/useTeamsDashboard";
 import { useCreateTeam } from "../components/Team/useCreateTeam";
-
 import TeamInvitesSection from "../components/Team/TeamInvitesSection";
 import MyTeamsSection from "../components/Team/MyTeamsSection";
 import CreateTeamForm from "../components/Team/CreateTeamForm";
 
 export default function TeamsPage() {
+  const navigate = useNavigate();
   const { state, actions } = useTeamsDashboard();
   const { teams, invites, loading } = state;
   const { acceptInvite, rejectInvite } = actions;
-
   const create = useCreateTeam();
 
   const [query, setQuery] = useState("");
   const [showCreate, setShowCreate] = useState(false);
 
+  const filteredTeams = useMemo(
+    () =>
+      teams.filter((team) =>
+        `${team.name} ${team.description || ""}`
+          .toLowerCase()
+          .includes(query.toLowerCase())
+      ),
+    [query, teams]
+  );
+
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-6 py-6 text-sm text-zinc-500">
-        Loading teams…
+      <div className="max-w-4xl mx-auto px-6 py-10 text-sm text-zinc-500">
+        Loading teams...
       </div>
     );
   }
 
-  const filteredTeams = teams.filter((t) =>
-    t.name.toLowerCase().includes(query.toLowerCase())
-  );
-
   return (
-    <div className="max-w-9xl mx-auto px-6 py-6 space-y-6">
-      {/* ===== PAGE SEARCH (TOP, GLOBAL) ===== */}
-      <div>
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search teams…"
-          className="
-            w-full max-w-md
-            px-4 py-2.5 text-sm
-            rounded-md
-            bg-white dark:bg-zinc-950
-            border border-zinc-300 dark:border-zinc-700
-            text-zinc-900 dark:text-zinc-100
-            placeholder:text-zinc-400
-            focus:outline-none focus:ring-1 focus:ring-indigo-500
-          "
-        />
-      </div>
+    <div className="max-w-4xl mx-auto px-6 py-8 space-y-6">
+      <section className="rounded-3xl border border-zinc-200 bg-white px-6 py-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+        <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100">
+          Teams
+        </h1>
+        <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+          Join a team, create a team, or open one you already have.
+        </p>
 
-      {/* ===== MAIN GRID ===== */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-        {/* ===== LEFT: TEAMS LIST ===== */}
-        <aside className="lg:col-span-1">
-          <MyTeamsSection teams={filteredTeams} />
-        </aside>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <button
+            onClick={() => setShowCreate((value) => !value)}
+            className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+          >
+            {showCreate ? "Cancel" : "Create team"}
+          </button>
+          <span className="self-center text-sm text-zinc-500 dark:text-zinc-400">
+            {teams.length} teams • {invites.length} invites
+          </span>
+        </div>
 
-        {/* ===== RIGHT: INVITES + CREATE ===== */}
-        <main className="lg:col-span-4">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* TEAM INVITES */}
-            <section
-              className="
-                min-h-[260px]
-                bg-white dark:bg-zinc-950
-                border border-zinc-200 dark:border-zinc-800
-                rounded-xl
-                px-6 py-5
-              "
-            >
-              <TeamInvitesSection
-                invites={invites}
-                onAccept={acceptInvite}
-                onReject={rejectInvite}
-              />
-            </section>
-
-            {/* CREATE TEAM */}
-            <section
-              className="
-                min-h-[260px]
-                bg-white dark:bg-zinc-950
-                border border-zinc-200 dark:border-zinc-800
-                rounded-xl
-                px-6 py-5
-                flex flex-col
-              "
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-                    Create a team
-                  </h2>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                    Start collaborating with others.
-                  </p>
-                </div>
-
-                <button
-                  onClick={() => setShowCreate((v) => !v)}
-                  className="
-                    flex items-center gap-2
-                    px-3 py-2 rounded-md
-                    text-sm font-medium
-                    bg-indigo-600 text-white
-                    hover:bg-indigo-700
-                  "
-                >
-                  <Plus size={16} />
-                  New
-                </button>
-              </div>
-
-              {showCreate ? (
-                <CreateTeamForm
-                  state={create.state}
-                  actions={create.actions}
-                />
-              ) : (
-                <div className="flex-1 flex items-center justify-center text-sm text-zinc-500 dark:text-zinc-400">
-                  Create a new team to get started
-                </div>
-              )}
-            </section>
-
-            {/* RESERVED / FUTURE */}
-            <section
-              className="
-                min-h-[260px]
-                bg-zinc-50 dark:bg-zinc-950
-                border border-dashed border-zinc-300 dark:border-zinc-800
-                rounded-xl
-                flex items-center justify-center
-                text-sm text-zinc-500 dark:text-zinc-400
-              "
-            >
-              Team workspace overview
-            </section>
+        {showCreate && (
+          <div className="mt-5 rounded-2xl border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900">
+            <CreateTeamForm state={create.state} actions={create.actions} />
           </div>
-        </main>
-      </div>
+        )}
+      </section>
+
+      <section className="rounded-3xl border border-zinc-200 bg-white px-6 py-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+        <TeamInvitesSection
+          invites={invites}
+          onAccept={async (inviteId) => {
+            const result = await acceptInvite(inviteId);
+            if (result?.teamId) {
+              navigate(`/teams/${result.teamId}`);
+            }
+          }}
+          onReject={rejectInvite}
+        />
+      </section>
+
+      <section className="rounded-3xl border border-zinc-200 bg-white px-6 py-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+        <div className="relative mb-4">
+          <Search
+            size={16}
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"
+          />
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search team"
+            className="
+              w-full rounded-xl border border-zinc-300 bg-white py-2.5 pl-10 pr-4 text-sm
+              text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-indigo-500
+              dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100
+            "
+          />
+        </div>
+
+        <MyTeamsSection teams={filteredTeams} />
+      </section>
     </div>
   );
 }

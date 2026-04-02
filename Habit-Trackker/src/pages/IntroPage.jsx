@@ -1,182 +1,267 @@
 import { Link } from "react-router-dom";
-import { Flame, Shield, Calendar, ArrowRight } from "lucide-react";
+import {
+  ArrowRight,
+  Calendar,
+  CheckCircle2,
+  Clock3,
+  Flame,
+  Shield,
+  Sparkles,
+  Users,
+  Workflow,
+} from "lucide-react";
 
 export default function IntroPage() {
   return (
-    <div className="relative bg-white text-zinc-900 dark:bg-black dark:text-white overflow-hidden">
-      {/* BACKGROUND ACCENTS */}
-      <div className="absolute inset-0 pointer-events-none">
-        {/* LIGHT */}
-        <div className="absolute -top-48 -right-48 w-[600px] h-[600px] rounded-full bg-indigo-500/10 blur-3xl dark:hidden" />
-        <div className="absolute top-1/3 -left-48 w-[520px] h-[520px] rounded-full bg-purple-500/10 blur-3xl dark:hidden" />
-
-        {/* DARK */}
-        <div className="absolute -top-48 -right-48 w-[600px] h-[600px] rounded-full bg-indigo-500/20 blur-3xl hidden dark:block" />
-        <div className="absolute top-1/3 -left-48 w-[520px] h-[520px] rounded-full bg-purple-500/15 blur-3xl hidden dark:block" />
+    <div className="relative overflow-hidden bg-white text-zinc-900 dark:bg-black dark:text-white">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-40 right-[-8rem] h-[32rem] w-[32rem] rounded-full bg-indigo-500/12 blur-3xl dark:bg-indigo-500/18" />
+        <div className="absolute bottom-[-10rem] left-[-8rem] h-[28rem] w-[28rem] rounded-full bg-sky-500/10 blur-3xl dark:bg-sky-500/12" />
       </div>
 
-      {/* HERO */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-36 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-        {/* LEFT */}
+      <section className="relative z-10 mx-auto grid max-w-7xl gap-14 px-6 pb-24 pt-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
         <div>
-          <span className="inline-flex items-center gap-2 mb-5 text-xs tracking-widest uppercase text-indigo-600 dark:text-indigo-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 dark:bg-indigo-400" />
-            Habit discipline system
-          </span>
+          <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white/85 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-600 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/70 dark:text-zinc-300">
+            Simple habit system for people who want structure
+          </div>
 
-          <h1 className="text-4xl md:text-6xl font-bold leading-[1.05] tracking-tight">
-            Build habits that
-            <br />
-            <span className="text-indigo-600 dark:text-indigo-400">
-              don’t lie.
-            </span>
+          <h1 className="mt-6 max-w-3xl text-5xl font-semibold leading-tight tracking-tight md:text-6xl">
+            Build routines, plan your week, and keep your team moving without a confusing setup.
           </h1>
 
-          <p className="mt-6 text-lg text-zinc-600 dark:text-zinc-400 max-w-xl leading-relaxed">
-            HabTrack is not about motivation.
-            It’s about showing up daily, tracking proof,
-            and earning credibility through consistency.
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-zinc-600 dark:text-zinc-400">
+            HabTrack gives you one place for daily habits, a proper weekly calendar, auto-tracked
+            coding hobbies, team tasks, and progress you can actually see. It is designed to feel
+            clear from day one, even if you are not used to productivity apps.
           </p>
 
-          {/* CTA */}
-          <div className="mt-12 flex flex-wrap gap-5">
-            {/* PRIMARY */}
+          <div className="mt-8 flex flex-wrap gap-3">
             <Link
               to="/register"
               className="
-                group inline-flex items-center gap-2
-                px-7 py-3.5 rounded-xl
-                bg-indigo-600 text-white
-                shadow-lg shadow-indigo-600/30
-                hover:bg-indigo-500
-                hover:shadow-indigo-500/40
-                transition
-                font-medium
+                inline-flex items-center gap-2 rounded-full bg-indigo-600 px-5 py-3 text-sm font-semibold text-white
+                shadow-lg shadow-indigo-600/20 transition hover:bg-indigo-700
               "
             >
-              Start Tracking
-              <ArrowRight
-                size={16}
-                className="transition group-hover:translate-x-0.5"
-              />
+              Start in a minute
+              <ArrowRight size={16} />
             </Link>
 
-            {/* SECONDARY */}
             <Link
               to="/login"
               className="
-                inline-flex items-center
-                px-7 py-3.5 rounded-xl
-                border border-zinc-300 dark:border-zinc-700
-                text-zinc-700 dark:text-zinc-200
-                hover:bg-zinc-100 dark:hover:bg-zinc-900
-                transition
+                inline-flex items-center gap-2 rounded-full border border-zinc-300 px-5 py-3 text-sm font-semibold text-zinc-700
+                transition hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900
               "
             >
-              Login
+              Log in
             </Link>
           </div>
-        </div>
 
-        {/* RIGHT VISUAL */}
-        <div className="hidden lg:block">
-          <div
-            className="
-              bg-white dark:bg-zinc-900
-              rounded-3xl p-7
-              border border-zinc-200 dark:border-zinc-800
-              shadow-2xl
-            "
-          >
-            <div className="text-sm text-zinc-500 dark:text-zinc-400 mb-5">
-              Today’s progress
-            </div>
+          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            <MiniStat label="Daily clarity" value="1 dashboard" />
+            <MiniStat label="Weekly planning" value="Calendar + schedule" />
+            <MiniStat label="Auto-tracking" value="4 coding platforms" />
+          </div>
 
-            <div className="space-y-4">
-              <MockHabit title="Workout" streak={18} />
-              <MockHabit title="Reading" streak={42} />
-              <MockHabit title="Meditation" streak={7} />
-            </div>
+          <div className="mt-8 grid gap-3 sm:grid-cols-2">
+            <QuickPoint
+              icon={<CheckCircle2 size={16} />}
+              title="Easy first step"
+              description="Add one habit, one coding hobby, or one team task and the app starts making sense immediately."
+            />
+            <QuickPoint
+              icon={<Clock3 size={16} />}
+              title="Less mental load"
+              description="See what is due today, what is planned this week, and what your team still needs without digging."
+            />
           </div>
         </div>
-      </section>
 
-      {/* FEATURES */}
-      <section className="relative z-10 border-t border-zinc-200 dark:border-zinc-800">
-        <div className="max-w-7xl mx-auto px-6 py-28">
-          <h2 className="text-3xl font-semibold mb-14">
-            Designed for long-term discipline
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <Feature
-              icon={<Flame />}
-              title="Streak-Driven Habits"
-              desc="Miss a day and the streak breaks. No excuses. Just truth."
+        <div className="grid gap-5">
+          <HeroCard />
+          <div className="grid gap-5 md:grid-cols-2">
+            <SmallCard
+              icon={<Workflow size={18} />}
+              title="Personal + team flow"
+              description="Use it alone first, then invite a team later without learning a second system."
             />
-
-            <Feature
-              icon={<Calendar />}
-              title="Daily Proof System"
-              desc="Every habit is logged day by day. Consistency is visible."
-            />
-
-            <Feature
-              icon={<Shield />}
-              title="Credibility Score"
-              desc="Your discipline compounds into a public credibility signal."
+            <SmallCard
+              icon={<CheckCircle2 size={18} />}
+              title="Manual and automatic proof"
+              description="Tick habits yourself or let coding activity mark the work for you."
             />
           </div>
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="text-center py-12 text-xs text-zinc-500 dark:text-zinc-500 border-t border-zinc-200 dark:border-zinc-800">
-        Built for people who value discipline over motivation.
-      </footer>
+      <section className="relative z-10 border-y border-zinc-200/80 bg-zinc-50/80 dark:border-zinc-800 dark:bg-zinc-950/60">
+        <div className="mx-auto max-w-7xl px-6 py-20">
+          <div className="max-w-2xl">
+            <h2 className="text-3xl font-semibold">More than a streak counter</h2>
+            <p className="mt-3 text-sm leading-6 text-zinc-500 dark:text-zinc-400">
+              The app works best when your habits, schedule, proof, and teamwork all live in one
+              place.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+            <Feature
+              icon={<Flame size={18} />}
+              title="Streak-driven discipline"
+              desc="Daily, weekly, and interval habits all surface in one consistent system."
+            />
+            <Feature
+              icon={<Calendar size={18} />}
+              title="Weekly schedule view"
+              desc="Open the calendar to see what is planned on each day instead of guessing what comes next."
+            />
+            <Feature
+              icon={<Shield size={18} />}
+              title="Credibility over hype"
+              desc="Progress compounds into something more trustworthy than motivation talk."
+            />
+            <Feature
+              icon={<Users size={18} />}
+              title="Teams that stay lightweight"
+              desc="Create a team, invite members, assign work, and keep the process readable for everyone."
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="relative z-10 mx-auto max-w-7xl px-6 py-20">
+        <div className="mb-8 flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300">
+            <Sparkles size={18} />
+          </div>
+          <div>
+            <h2 className="text-2xl font-semibold">How people usually use it</h2>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+              Start small, then expand into calendar planning and team work when you need it.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid gap-8 lg:grid-cols-3">
+          <Step
+            index="01"
+            title="Define the routine"
+            desc="Create manual habits or coding hobbies with daily, weekly, or interval schedules."
+          />
+          <Step
+            index="02"
+            title="Capture the proof"
+            desc="Mark progress yourself or let platform activity fill in today's work automatically."
+          />
+          <Step
+            index="03"
+            title="Stay aligned"
+            desc="Use teams, projects, and assigned tasks to keep accountability visible without making the workflow heavy."
+          />
+        </div>
+      </section>
     </div>
   );
 }
 
-/* ---------------- COMPONENTS ---------------- */
-
-function Feature({ icon, title, desc }) {
+function HeroCard() {
   return (
-    <div
-      className="
-        bg-white dark:bg-zinc-900
-        rounded-2xl p-7
-        border border-zinc-200 dark:border-zinc-800
-        shadow-sm
-        hover:border-indigo-500/40
-        transition
-      "
-    >
-      <div className="w-11 h-11 flex items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 mb-5">
+    <div className="rounded-[2rem] border border-zinc-200 bg-white p-6 shadow-xl shadow-zinc-200/40 dark:border-zinc-800 dark:bg-zinc-950 dark:shadow-black/20">
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="text-xs uppercase tracking-[0.18em] text-zinc-500 dark:text-zinc-400">
+            Today overview
+          </div>
+          <div className="mt-2 text-2xl font-semibold">4 of 5 completed</div>
+        </div>
+        <div className="rounded-2xl bg-emerald-100 px-3 py-2 text-sm font-medium text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">
+          80%
+        </div>
+      </div>
+
+      <div className="mt-6 space-y-3">
+        <MockHabit title="Ship focused work block" meta="Manual habit" status="Done" />
+        <MockHabit title="Solve LeetCode daily" meta="Auto-tracked hobby" status="Detected" />
+        <MockHabit title="Team standup" meta="Shared workspace" status="Planned" />
+      </div>
+    </div>
+  );
+}
+
+function MockHabit({ title, meta, status }) {
+  return (
+    <div className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 dark:border-zinc-800 dark:bg-black/30">
+      <div>
+        <div className="text-sm font-medium">{title}</div>
+        <div className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{meta}</div>
+      </div>
+      <div className="rounded-full bg-zinc-900 px-3 py-1 text-xs font-medium text-white dark:bg-zinc-100 dark:text-zinc-900">
+        {status}
+      </div>
+    </div>
+  );
+}
+
+function SmallCard({ icon, title, description }) {
+  return (
+    <div className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+      <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300">
         {icon}
       </div>
-      <h3 className="text-lg font-semibold mb-2">{title}</h3>
-      <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-        {desc}
+      <h3 className="mt-4 text-base font-semibold">{title}</h3>
+      <p className="mt-2 text-sm leading-6 text-zinc-500 dark:text-zinc-400">
+        {description}
       </p>
     </div>
   );
 }
 
-function MockHabit({ title, streak }) {
+function Feature({ icon, title, desc }) {
   return (
-    <div
-      className="
-        flex items-center justify-between
-        bg-zinc-50 dark:bg-black/40
-        border border-zinc-200 dark:border-zinc-800
-        rounded-xl px-5 py-3
-      "
-    >
-      <span className="text-sm">{title}</span>
-      <span className="text-xs text-indigo-600 dark:text-indigo-400 font-medium">
-        {streak} day streak
-      </span>
+    <div className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300">
+        {icon}
+      </div>
+      <h3 className="mt-5 text-lg font-semibold">{title}</h3>
+      <p className="mt-2 text-sm leading-6 text-zinc-500 dark:text-zinc-400">{desc}</p>
+    </div>
+  );
+}
+
+function Step({ index, title, desc }) {
+  return (
+    <div className="rounded-3xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
+      <div className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-400">{index}</div>
+      <h3 className="mt-4 text-xl font-semibold">{title}</h3>
+      <p className="mt-3 text-sm leading-6 text-zinc-500 dark:text-zinc-400">{desc}</p>
+    </div>
+  );
+}
+
+function MiniStat({ label, value }) {
+  return (
+    <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+      <div className="text-xs uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+        {label}
+      </div>
+      <div className="mt-2 text-lg font-semibold">{value}</div>
+    </div>
+  );
+}
+
+function QuickPoint({ icon, title, description }) {
+  return (
+    <div className="rounded-2xl border border-zinc-200/80 bg-white/80 px-4 py-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/80">
+      <div className="flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-white">
+        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300">
+          {icon}
+        </span>
+        {title}
+      </div>
+      <p className="mt-2 text-sm leading-6 text-zinc-500 dark:text-zinc-400">
+        {description}
+      </p>
     </div>
   );
 }
