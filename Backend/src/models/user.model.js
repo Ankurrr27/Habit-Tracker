@@ -43,6 +43,29 @@ const userSchema = new mongoose.Schema(
       default: "",
     },
 
+    externalProfiles: {
+      github: {
+        type: String,
+        trim: true,
+        default: "",
+      },
+      leetcode: {
+        type: String,
+        trim: true,
+        default: "",
+      },
+      codeforces: {
+        type: String,
+        trim: true,
+        default: "",
+      },
+      codechef: {
+        type: String,
+        trim: true,
+        default: "",
+      },
+    },
+
     profilePublic: {
       type: Boolean,
       default: false,
@@ -67,6 +90,12 @@ const userSchema = new mongoose.Schema(
         delete ret._id;
         delete ret.__v;
         delete ret.password;
+        ret.externalProfiles = ret.externalProfiles || {
+          github: "",
+          leetcode: "",
+          codeforces: "",
+          codechef: "",
+        };
       },
     },
   }

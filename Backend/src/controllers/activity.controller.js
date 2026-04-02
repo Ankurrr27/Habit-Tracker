@@ -3,8 +3,11 @@ import Habit from "../models/habit.model.js";
 import {
   getUTCStartOfDay,
   getUTCEndOfDay,
-  getUTCDayKey,
 } from "../utils/date.js";
+import {
+  isHabitScheduledOnDate,
+  syncAutoVerifiedHabitsForDate,
+} from "../services/platformSync.service.js";
 
 export const getStatusByDate = async (req, res) => {
   try {
@@ -18,12 +21,13 @@ export const getStatusByDate = async (req, res) => {
     const target = new Date(date);
     const start = getUTCStartOfDay(target);
     const end = getUTCEndOfDay(target);
-    const dayKey = getUTCDayKey(target);
 
-    const habits = await Habit.find({
-      user: userId,
-      $or: [{ frequency: "daily" }, { frequency: "weekly", days: dayKey }],
-    });
+    await syncAutoVerifiedHabitsForDate(userId, target);
+
+    const allHabits = await Habit.find({ user: userId });
+    const habits = allHabits.filter((habit) =>
+      isHabitScheduledOnDate(habit, target)
+    );
 
     const logs = await ActivityLog.find({
       user: userId,
@@ -31,7 +35,7 @@ export const getStatusByDate = async (req, res) => {
     });
 
     const response = habits.map((habit) => {
-      const log = logs.find((l) => l.habit.toString() === habit._id.toString());
+      const log = logs.find((entry) => entry.habit.toString() === habit._id.toString());
 
       return {
         habitId: habit._id,
@@ -72,7 +76,7 @@ export const toggleHabitByDate = async (req, res) => {
     await ActivityLog.create({
       user: userId,
       habit: habitId,
-      habitType: habit.type, // ✅ THIS WAS MISSING
+      habitType: habit.type,
       date: target,
       status: "done",
       confidence: 30,
@@ -100,16 +104,14 @@ export const getActivityRange = async (req, res) => {
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
 
-    // 1️⃣ Fetch habits
-    const habits = await Habit.find({ user: userId }).lean();
+    await syncAutoVerifiedHabitsForDate(userId, today);
 
-    // 2️⃣ Fetch logs in range
+    const habits = await Habit.find({ user: userId }).lean();
     const logs = await ActivityLog.find({
       user: userId,
       date: { $gte: start, $lte: today },
     }).lean();
 
-    // 3️⃣ Map logs → fast lookup
     const logMap = {};
     for (const log of logs) {
       const key = `${log.habit}_${log.date.toISOString().slice(0, 10)}`;
@@ -138,7 +140,6 @@ export const completeHabitToday = async (req, res) => {
       return res.status(404).json({ message: "Habit not found" });
     }
 
-    // ✅ UTC DAY (REAL FIX)
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
 
@@ -157,6 +158,7 @@ export const completeHabitToday = async (req, res) => {
     const log = await ActivityLog.create({
       user: userId,
       habit: habitId,
+      habitType: habit.type,
       date: today,
       status: "done",
       confidence: 30,

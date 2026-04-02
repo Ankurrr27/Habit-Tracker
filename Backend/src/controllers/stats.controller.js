@@ -3,50 +3,47 @@ import Habit from "../models/habit.model.js";
 import {
   getUTCStartOfDay,
   getUTCEndOfDay,
-  getUTCDayKey,
 } from "../utils/date.js";
-
-
+import {
+  isHabitScheduledOnDate,
+  syncAutoVerifiedHabitsForDate,
+} from "../services/platformSync.service.js";
 
 export const getUserLevel = async (req, res) => {
   try {
     const userId = req.user.id;
-
     const logs = await ActivityLog.find({ user: userId });
 
     if (!logs.length) {
       return res.json({ level: 0, streak: 0, avgConfidence: 0 });
     }
 
-    // average confidence
     const avgConfidence = Math.round(
-      logs.reduce((sum, l) => sum + (l.confidence || 0), 0) / logs.length
+      logs.reduce((sum, log) => sum + (log.confidence || 0), 0) / logs.length
     );
 
-    // streak (overall, not per habit for now)
     const sorted = logs
-      .filter((l) => l.status === "done")
-      .sort((a, b) => b.date - a.date);
+      .filter((log) => log.status === "done")
+      .sort((left, right) => right.date - left.date);
 
     let streak = 0;
     let current = new Date();
     current.setHours(0, 0, 0, 0);
 
     for (const log of sorted) {
-      const d = new Date(log.date);
-      d.setHours(0, 0, 0, 0);
+      const date = new Date(log.date);
+      date.setHours(0, 0, 0, 0);
 
-      const diff = (current - d) / (1000 * 60 * 60 * 24);
+      const diff = (current - date) / (1000 * 60 * 60 * 24);
 
       if (diff === 0 || diff === 1) {
-        streak++;
+        streak += 1;
         current.setDate(current.getDate() - 1);
       } else {
         break;
       }
     }
 
-    // level logic
     let level = 1;
     if (streak >= 30 && avgConfidence >= 85) level = 5;
     else if (streak >= 14 && avgConfidence >= 75) level = 4;
@@ -59,9 +56,6 @@ export const getUserLevel = async (req, res) => {
   }
 };
 
-
-
-
 export const getWeeklyStatus = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -73,10 +67,9 @@ export const getWeeklyStatus = async (req, res) => {
 
     const start = getUTCStartOfDay(new Date(startDate));
     const end = new Date(start);
-    end.setUTCDate(end.getUTCDate() + 28); // 🔥 4 WEEKS
+    end.setUTCDate(end.getUTCDate() + 28);
 
     const habits = await Habit.find({ user: userId });
-
     const logs = await ActivityLog.find({
       user: userId,
       date: { $gte: start, $lt: end },
@@ -86,7 +79,6 @@ export const getWeeklyStatus = async (req, res) => {
 
     logs.forEach((log) => {
       const dateKey = log.date.toISOString().slice(0, 10);
-
       logMap[`${log.habit}_${dateKey}`] = {
         done: log.status === "done",
         confidence: log.confidence ?? 30,
@@ -102,37 +94,19 @@ export const getWeeklyStatus = async (req, res) => {
   }
 };
 
-
-
-
 export const getTodayStatus = async (req, res) => {
   try {
     const userId = req.user.id;
-
     const today = new Date();
     const start = getUTCStartOfDay(today);
     const end = getUTCEndOfDay(today);
-    const dayKey = getUTCDayKey(today);
 
-    const habits = await Habit.find({
-  user: userId,
-  $and: [
-    {
-      $or: [
-        { frequency: "daily" },
-        { frequency: "weekly", days: dayKey },
-        { frequency: "interval" }, // 👈 include interval
-      ],
-    },
-    {
-      $or: [
-        { endDate: null },
-        { endDate: { $gte: start } }, // 👈 active habits only
-      ],
-    },
-  ],
-});
+    await syncAutoVerifiedHabitsForDate(userId, today);
 
+    const allHabits = await Habit.find({ user: userId });
+    const habits = allHabits.filter((habit) =>
+      isHabitScheduledOnDate(habit, today)
+    );
 
     const logs = await ActivityLog.find({
       user: userId,
@@ -140,9 +114,7 @@ export const getTodayStatus = async (req, res) => {
     });
 
     const response = habits.map((habit) => {
-      const log = logs.find(
-        (l) => l.habit.toString() === habit._id.toString()
-      );
+      const log = logs.find((entry) => entry.habit.toString() === habit._id.toString());
 
       return {
         habitId: habit._id,

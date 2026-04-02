@@ -1,5 +1,25 @@
 import User from "../models/user.model.js";
 import cloudinary from "../config/cloudinary.js";
+import FriendRequest from "../models/friendRequest.model.js";
+
+const emptyExternalProfiles = () => ({
+  github: "",
+  leetcode: "",
+  codeforces: "",
+  codechef: "",
+});
+
+const normalizeExternalProfiles = (value) => {
+  const source =
+    typeof value === "string" ? JSON.parse(value || "{}") : value || {};
+
+  return {
+    github: String(source.github || "").trim(),
+    leetcode: String(source.leetcode || "").trim(),
+    codeforces: String(source.codeforces || "").trim(),
+    codechef: String(source.codechef || "").trim(),
+  };
+};
 
 export const getUserByUsername = async (req, res) => {
   try {
@@ -19,10 +39,14 @@ export const getUserByUsername = async (req, res) => {
       id: user.id,
       name: user.name,
       username: user.username,
+      email: isOwner ? user.email : undefined,
       avatar: user.avatar,
       profilePublic: user.profilePublic,
       credibilityScore: user.credibilityScore,
       createdAt: user.createdAt,
+      externalProfiles: isOwner
+        ? user.externalProfiles || emptyExternalProfiles()
+        : undefined,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -31,28 +55,61 @@ export const getUserByUsername = async (req, res) => {
 
 export const getUsers = async (req, res) => {
   try {
+    const currentUserId = req.user.id;
     const users = await User.find(
       {},
-      "name username avatar profilePublic credibilityScore",
+      "name username avatar profilePublic credibilityScore"
     ).lean();
 
-    const formatted = users.map((u) => {
-      if (!u.profilePublic) {
+    const friendRequests = await FriendRequest.find({
+      $or: [{ sender: currentUserId }, { receiver: currentUserId }],
+    }).lean();
+
+    const friendshipMap = new Map();
+
+    friendRequests.forEach((request) => {
+      const otherUserId =
+        request.sender.toString() === currentUserId
+          ? request.receiver.toString()
+          : request.sender.toString();
+
+      if (request.status === "accepted") {
+        friendshipMap.set(otherUserId, "friends");
+      } else if (request.status === "pending") {
+        friendshipMap.set(
+          otherUserId,
+          request.sender.toString() === currentUserId
+            ? "request_sent"
+            : "request_received"
+        );
+      }
+    });
+
+    const formatted = users.map((user) => {
+      const friendshipStatus =
+        user._id.toString() === currentUserId
+          ? "self"
+          : friendshipMap.get(user._id.toString()) || "none";
+
+      if (!user.profilePublic) {
         return {
-          name: u.name,
-          username: u.username,
-          avatar: u.avatar,
+          _id: user._id,
+          name: user.name,
+          username: user.username,
+          avatar: user.avatar,
           profilePublic: false,
+          friendshipStatus,
         };
       }
 
       return {
-        name: u.name,
-        username: u.username,
-        avatar: u.avatar,
+        _id: user._id,
+        name: user.name,
+        username: user.username,
+        avatar: user.avatar,
         profilePublic: true,
-        credibilityScore: u.credibilityScore,
-        // streak will come later from activity logs
+        credibilityScore: user.credibilityScore,
+        friendshipStatus,
       };
     });
 
@@ -74,12 +131,10 @@ export const updateProfile = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    /* NAME */
     if (req.body.name) {
       user.name = req.body.name.trim();
     }
 
-    /* USERNAME */
     if (req.body.username) {
       const username = req.body.username.toLowerCase().trim();
 
@@ -99,12 +154,20 @@ export const updateProfile = async (req, res) => {
       user.username = username;
     }
 
-    /* PROFILE VISIBILITY (🔥 FIX) */
     if (req.body.profilePublic !== undefined) {
-      user.profilePublic = req.body.profilePublic === "true";
+      if (typeof req.body.profilePublic === "boolean") {
+        user.profilePublic = req.body.profilePublic;
+      } else {
+        user.profilePublic = req.body.profilePublic === "true";
+      }
     }
 
-    /* AVATAR */
+    if (req.body.externalProfiles !== undefined) {
+      user.externalProfiles = normalizeExternalProfiles(
+        req.body.externalProfiles
+      );
+    }
+
     if (req.file) {
       const upload = await cloudinary.uploader.upload(req.file.path, {
         folder: "avatars",
@@ -124,6 +187,7 @@ export const updateProfile = async (req, res) => {
         email: user.email,
         avatar: user.avatar,
         profilePublic: user.profilePublic,
+        externalProfiles: user.externalProfiles || emptyExternalProfiles(),
       },
     });
   } catch (err) {
@@ -147,7 +211,6 @@ export const searchUsers = async (req, res) => {
           { username: { $regex: q, $options: "i" } },
           { email: { $regex: q, $options: "i" } },
         ],
-        // ❌ REMOVE profilePublic filter
       },
       "name username avatar"
     )
@@ -158,5 +221,108 @@ export const searchUsers = async (req, res) => {
   } catch (err) {
     console.error("SEARCH USERS ERROR:", err);
     res.status(500).json([]);
+  }
+};
+
+export const getFriendRequests = async (req, res) => {
+  try {
+    const requests = await FriendRequest.find({
+      receiver: req.user.id,
+      status: "pending",
+    })
+      .populate("sender", "name username avatar credibilityScore")
+      .sort({ createdAt: -1 });
+
+    res.json(requests);
+  } catch (err) {
+    console.error("GET FRIEND REQUESTS ERROR:", err);
+    res.status(500).json([]);
+  }
+};
+
+export const sendFriendRequest = async (req, res) => {
+  try {
+    const senderId = req.user.id;
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User is required" });
+    }
+
+    if (senderId === userId) {
+      return res.status(400).json({ message: "You cannot add yourself" });
+    }
+
+    const existing = await FriendRequest.findOne({
+      $or: [
+        { sender: senderId, receiver: userId },
+        { sender: userId, receiver: senderId },
+      ],
+    });
+
+    if (existing?.status === "accepted") {
+      return res.status(400).json({ message: "Already friends" });
+    }
+
+    if (existing?.status === "pending") {
+      return res.status(400).json({
+        message: "Friend request already pending",
+      });
+    }
+
+    if (existing?.status === "rejected") {
+      existing.sender = senderId;
+      existing.receiver = userId;
+      existing.status = "pending";
+      await existing.save();
+      return res.json({ message: "Friend request sent" });
+    }
+
+    await FriendRequest.create({
+      sender: senderId,
+      receiver: userId,
+      status: "pending",
+    });
+
+    res.status(201).json({ message: "Friend request sent" });
+  } catch (err) {
+    console.error("SEND FRIEND REQUEST ERROR:", err);
+    res.status(500).json({ message: "Failed to send friend request" });
+  }
+};
+
+export const acceptFriendRequest = async (req, res) => {
+  try {
+    const request = await FriendRequest.findById(req.params.requestId);
+
+    if (!request || request.receiver.toString() !== req.user.id) {
+      return res.status(404).json({ message: "Request not found" });
+    }
+
+    request.status = "accepted";
+    await request.save();
+
+    res.json({ message: "Friend request accepted" });
+  } catch (err) {
+    console.error("ACCEPT FRIEND REQUEST ERROR:", err);
+    res.status(500).json({ message: "Failed to accept request" });
+  }
+};
+
+export const rejectFriendRequest = async (req, res) => {
+  try {
+    const request = await FriendRequest.findById(req.params.requestId);
+
+    if (!request || request.receiver.toString() !== req.user.id) {
+      return res.status(404).json({ message: "Request not found" });
+    }
+
+    request.status = "rejected";
+    await request.save();
+
+    res.json({ message: "Friend request rejected" });
+  } catch (err) {
+    console.error("REJECT FRIEND REQUEST ERROR:", err);
+    res.status(500).json({ message: "Failed to reject request" });
   }
 };

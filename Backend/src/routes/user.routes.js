@@ -3,36 +3,24 @@ import {
   updateProfile,
   getUserByUsername,
   getUsers,
-  searchUsers,          // ✅ ADD THIS
+  searchUsers,
+  getFriendRequests,
+  sendFriendRequest,
+  acceptFriendRequest,
+  rejectFriendRequest,
 } from "../controllers/user.controller.js";
 import auth from "../middleware/auth.middleware.js";
 import upload from "../middleware/upload.middleware.js";
 
 const router = express.Router();
 
-/* =====================
-   USER SEARCH (🔥 MUST BE FIRST)
-===================== */
 router.get("/search", auth, searchUsers);
-
-/* =====================
-   LIST USERS
-===================== */
+router.get("/friend-requests", auth, getFriendRequests);
+router.post("/friend-requests", auth, sendFriendRequest);
+router.post("/friend-requests/:requestId/accept", auth, acceptFriendRequest);
+router.post("/friend-requests/:requestId/reject", auth, rejectFriendRequest);
 router.get("/", auth, getUsers);
-
-/* =====================
-   GET PROFILE BY USERNAME
-===================== */
 router.get("/:username", auth, getUserByUsername);
-
-/* =====================
-   UPDATE PROFILE
-===================== */
-router.put(
-  "/profile",
-  auth,
-  upload.single("avatar"), // 🔥 REQUIRED for PFP
-  updateProfile
-);
+router.put("/profile", auth, upload.single("avatar"), updateProfile);
 
 export default router;

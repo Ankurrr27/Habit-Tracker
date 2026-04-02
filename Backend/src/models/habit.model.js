@@ -65,9 +65,21 @@ const habitSchema = new mongoose.Schema(
     // 🔐 VERIFICATION
     verificationRule: {
       type: String,
-      enum: ["manual", "github", "link"],
+      enum: ["manual", "github", "link", "platform"],
       default: "manual",
       required: true,
+    },
+
+    platformSource: {
+      type: String,
+      enum: ["github", "leetcode", "codeforces", "codechef", null],
+      default: null,
+      validate: {
+        validator: function (value) {
+          return this.verificationRule !== "platform" || !!value;
+        },
+        message: "Platform source required for platform verification",
+      },
     },
 
     githubRepo: {

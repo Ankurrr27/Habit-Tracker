@@ -3,7 +3,6 @@ import User from "../models/user.model.js";
 import cloudinary from "../config/cloudinary.js";
 import { generateToken } from "../utils/jwt.js";
 
-
 export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -17,7 +16,6 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // 🔥 Generate unique username
     const baseUsername = name.toLowerCase().replace(/\s+/g, "_");
     let username = baseUsername;
     let count = 1;
@@ -63,11 +61,9 @@ export const register = async (req, res) => {
   }
 };
 
-
 export const login = async (req, res) => {
   try {
     const { identifier, password } = req.body;
-    // identifier = email OR username
 
     if (!identifier || !password) {
       return res.status(400).json({ message: "All fields are required" });
@@ -104,7 +100,6 @@ export const login = async (req, res) => {
   }
 };
 
-
 export const me = async (req, res) => {
   const user = await User.findById(req.user.id);
 
@@ -116,5 +111,6 @@ export const me = async (req, res) => {
     avatar: user.avatar,
     profilePublic: user.profilePublic,
     credibilityScore: user.credibilityScore,
+    externalProfiles: user.externalProfiles,
   });
 };

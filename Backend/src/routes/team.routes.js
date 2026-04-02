@@ -5,20 +5,17 @@ import {
   getMyTeams,
   getTeamById,
   updateMeetingLink,
+  leaveTeam,
+  deleteTeam,
 } from "../controllers/team.controller.js";
 
 const router = express.Router();
 
-/* CREATE TEAM */
 router.post("/", auth, createTeam);
-
-/* GET MY TEAMS */
 router.get("/my", auth, getMyTeams);
-
-/* GET SINGLE TEAM */
 router.get("/:teamId", auth, getTeamById);
-
-/* UPDATE MEETING LINK */
 router.put("/:teamId/meeting", auth, updateMeetingLink);
+router.post("/:teamId/leave", auth, leaveTeam);
+router.delete("/:teamId", auth, deleteTeam);
 
 export default router;
