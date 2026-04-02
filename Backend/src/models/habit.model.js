@@ -72,7 +72,7 @@ const habitSchema = new mongoose.Schema(
 
     platformSource: {
       type: String,
-      enum: ["github", "leetcode", "codeforces", "codechef", null],
+      enum: ["github", "leetcode", "codeforces", "codechef", "gfg", null],
       default: null,
       validate: {
         validator: function (value) {

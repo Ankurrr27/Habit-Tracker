@@ -1,12 +1,12 @@
 import ActivityLog from "../models/activityLog.model.js";
 import Habit from "../models/habit.model.js";
 import User from "../models/user.model.js";
-import { getUTCDayKey, getUTCStartOfDay } from "../utils/date.js";
+import { getAppDateKey, getUTCDayKey, getUTCStartOfDay } from "../utils/date.js";
 
-const AUTO_PLATFORMS = ["github", "leetcode", "codeforces", "codechef"];
+const AUTO_PLATFORMS = ["github", "leetcode", "codeforces", "codechef", "gfg"];
 
 function isSameUTCDate(left, right) {
-  return left.toISOString().slice(0, 10) === right.toISOString().slice(0, 10);
+  return getAppDateKey(left) === getAppDateKey(right);
 }
 
 function isHabitScheduledOnDate(habit, date) {
@@ -181,11 +181,34 @@ async function hasCodeChefActivity(handle, targetDate) {
   );
 }
 
+async function hasGfgActivity(handle, targetDate) {
+  const response = await fetch(
+    `https://auth.geeksforgeeks.org/user/${encodeURIComponent(handle)}/`,
+    {
+      headers: {
+        "User-Agent": "habit-tracker-sync",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`GFG sync failed with status ${response.status}`);
+  }
+
+  const rawText = await response.text();
+  const dateCandidates = extractPotentialDates(rawText);
+
+  return dateCandidates.some((value) =>
+    isSameUTCDate(new Date(value.replace(" ", "T")), targetDate)
+  );
+}
+
 const platformCheckers = {
   github: hasGithubActivity,
   leetcode: hasLeetCodeActivity,
   codeforces: hasCodeforcesActivity,
   codechef: hasCodeChefActivity,
+  gfg: hasGfgActivity,
 };
 
 export async function syncAutoVerifiedHabitsForDate(userId, date = new Date()) {

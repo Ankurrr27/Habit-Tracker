@@ -1,6 +1,7 @@
 import ActivityLog from "../models/activityLog.model.js";
 import Habit from "../models/habit.model.js";
 import {
+  getAppDateKey,
   getUTCStartOfDay,
   getUTCDayKey,
 } from "../utils/date.js";
@@ -27,11 +28,7 @@ export const getHabitStreak = async (req, res) => {
       return res.json({ habitId, streak: 0 });
     }
 
-    const logDates = new Set(
-      logs.map((l) =>
-        getUTCStartOfDay(l.date).toISOString()
-      )
-    );
+    const logDates = new Set(logs.map((l) => getAppDateKey(l.date)));
 
     let streak = 0;
     let cursor = getUTCStartOfDay(new Date());
@@ -45,7 +42,7 @@ export const getHabitStreak = async (req, res) => {
     }
 
     while (true) {
-      const cursorISO = cursor.toISOString();
+      const cursorISO = getAppDateKey(cursor);
       const dayKey = getUTCDayKey(cursor);
 
       // 🧠 DAILY

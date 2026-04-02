@@ -2,6 +2,7 @@ import ActivityLog from "../models/activityLog.model.js";
 import Habit from "../models/habit.model.js";
 import User from "../models/user.model.js";
 import {
+  getAppDateKey,
   getUTCStartOfDay,
   getUTCEndOfDay,
 } from "../utils/date.js";
@@ -161,7 +162,7 @@ export const getActivityRange = async (req, res) => {
 
     const logMap = {};
     for (const log of logs) {
-      const key = `${log.habit}_${log.date.toISOString().slice(0, 10)}`;
+      const key = `${log.habit}_${getAppDateKey(log.date)}`;
       logMap[key] = {
         done: log.status === "done",
         confidence: log.confidence ?? 0,
@@ -187,8 +188,7 @@ export const completeHabitToday = async (req, res) => {
       return res.status(404).json({ message: "Habit not found" });
     }
 
-    const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
+    const today = getUTCStartOfDay(new Date());
 
     const exists = await ActivityLog.findOne({
       user: userId,

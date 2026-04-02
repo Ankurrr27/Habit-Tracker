@@ -1,6 +1,7 @@
 import ActivityLog from "../models/activityLog.model.js";
 import Habit from "../models/habit.model.js";
 import {
+  getAppDateKey,
   getUTCStartOfDay,
   getUTCEndOfDay,
 } from "../utils/date.js";
@@ -27,12 +28,10 @@ export const getUserLevel = async (req, res) => {
       .sort((left, right) => right.date - left.date);
 
     let streak = 0;
-    let current = new Date();
-    current.setHours(0, 0, 0, 0);
+    let current = getUTCStartOfDay(new Date());
 
     for (const log of sorted) {
-      const date = new Date(log.date);
-      date.setHours(0, 0, 0, 0);
+      const date = getUTCStartOfDay(log.date);
 
       const diff = (current - date) / (1000 * 60 * 60 * 24);
 
@@ -78,7 +77,7 @@ export const getWeeklyStatus = async (req, res) => {
     const logMap = {};
 
     logs.forEach((log) => {
-      const dateKey = log.date.toISOString().slice(0, 10);
+      const dateKey = getAppDateKey(log.date);
       logMap[`${log.habit}_${dateKey}`] = {
         done: log.status === "done",
         confidence: log.confidence ?? 30,
