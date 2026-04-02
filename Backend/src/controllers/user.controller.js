@@ -7,6 +7,8 @@ const emptyExternalProfiles = () => ({
   leetcode: "",
   codeforces: "",
   codechef: "",
+  gfg: "",
+  codolio: "",
 });
 
 const normalizeExternalProfiles = (value) => {
@@ -18,6 +20,8 @@ const normalizeExternalProfiles = (value) => {
     leetcode: String(source.leetcode || "").trim(),
     codeforces: String(source.codeforces || "").trim(),
     codechef: String(source.codechef || "").trim(),
+    gfg: String(source.gfg || "").trim(),
+    codolio: String(source.codolio || "").trim(),
   };
 };
 
@@ -47,6 +51,28 @@ export const getUserByUsername = async (req, res) => {
       externalProfiles: isOwner
         ? user.externalProfiles || emptyExternalProfiles()
         : undefined,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const getPublicUserByUsername = async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.params.username }).lean();
+
+    if (!user || !user.profilePublic) {
+      return res.status(404).json({ message: "Public profile not found" });
+    }
+
+    res.json({
+      id: user._id,
+      name: user.name,
+      username: user.username,
+      avatar: user.avatar,
+      profilePublic: true,
+      credibilityScore: user.credibilityScore,
+      createdAt: user.createdAt,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

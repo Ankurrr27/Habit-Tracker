@@ -64,6 +64,16 @@ const userSchema = new mongoose.Schema(
         trim: true,
         default: "",
       },
+      gfg: {
+        type: String,
+        trim: true,
+        default: "",
+      },
+      codolio: {
+        type: String,
+        trim: true,
+        default: "",
+      },
     },
 
     profilePublic: {
@@ -95,6 +105,8 @@ const userSchema = new mongoose.Schema(
           leetcode: "",
           codeforces: "",
           codechef: "",
+          gfg: "",
+          codolio: "",
         };
       },
     },

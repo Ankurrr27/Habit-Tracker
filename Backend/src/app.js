@@ -23,10 +23,23 @@ const app = express();
 ===================== */
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://habit-tracker-ybku.vercel.app",
-    ],
+    origin(origin, callback) {
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "https://habit-tracker-ybku.vercel.app",
+      ];
+
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        origin.startsWith("chrome-extension://") ||
+        origin.startsWith("moz-extension://")
+      ) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   })
 );

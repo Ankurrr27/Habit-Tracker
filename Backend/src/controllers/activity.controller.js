@@ -1,5 +1,6 @@
 import ActivityLog from "../models/activityLog.model.js";
 import Habit from "../models/habit.model.js";
+import User from "../models/user.model.js";
 import {
   getUTCStartOfDay,
   getUTCEndOfDay,
@@ -41,6 +42,52 @@ export const getStatusByDate = async (req, res) => {
         habitId: habit._id,
         title: habit.title,
         done: log?.status === "done",
+      };
+    });
+
+    res.json(response);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const getPublicStatusByUsername = async (req, res) => {
+  try {
+    const { username } = req.params;
+    const { date } = req.query;
+
+    if (!date) {
+      return res.status(400).json({ message: "Date required" });
+    }
+
+    const user = await User.findOne({ username }).lean();
+
+    if (!user || !user.profilePublic) {
+      return res.status(404).json({ message: "Public profile not found" });
+    }
+
+    const target = new Date(date);
+    const start = getUTCStartOfDay(target);
+    const end = getUTCEndOfDay(target);
+
+    await syncAutoVerifiedHabitsForDate(user._id, target);
+
+    const allHabits = await Habit.find({ user: user._id });
+    const habits = allHabits.filter((habit) => isHabitScheduledOnDate(habit, target));
+
+    const logs = await ActivityLog.find({
+      user: user._id,
+      date: { $gte: start, $lt: end },
+    });
+
+    const response = habits.map((habit) => {
+      const log = logs.find((entry) => entry.habit.toString() === habit._id.toString());
+
+      return {
+        habitId: habit._id,
+        title: habit.title,
+        done: log?.status === "done",
+        type: habit.type,
       };
     });
 

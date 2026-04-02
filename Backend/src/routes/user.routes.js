@@ -2,6 +2,7 @@ import express from "express";
 import {
   updateProfile,
   getUserByUsername,
+  getPublicUserByUsername,
   getUsers,
   searchUsers,
   getFriendRequests,
@@ -14,6 +15,7 @@ import upload from "../middleware/upload.middleware.js";
 
 const router = express.Router();
 
+router.get("/public/:username", getPublicUserByUsername);
 router.get("/search", auth, searchUsers);
 router.get("/friend-requests", auth, getFriendRequests);
 router.post("/friend-requests", auth, sendFriendRequest);
