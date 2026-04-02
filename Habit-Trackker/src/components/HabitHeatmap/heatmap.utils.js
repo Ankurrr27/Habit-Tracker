@@ -1,9 +1,11 @@
-export const toDateKey = (d) => d.toISOString().slice(0, 10);
+import { getAppWeekdayIndex, toDateKey } from "../../utils/date";
+
+export { toDateKey };
 
 export const WEEKDAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 
 export const getDayKey = (date) =>
-  WEEKDAYS[date.getUTCDay()];
+  WEEKDAYS[getAppWeekdayIndex(date)];
 
 export function getIntensityColor(percentage) {
   if (percentage === 0)

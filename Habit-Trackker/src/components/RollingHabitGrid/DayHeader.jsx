@@ -1,11 +1,12 @@
-import { toDateKey } from "../../utils/date";
+import { getAppDayOfMonth, getAppWeekdayIndex, toDateKey } from "../../utils/date";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export default function DayHeader({ day, todayKey }) {
   const isToday = toDateKey(day) === todayKey;
-  const weekday = WEEKDAYS[day.getUTCDay()];
-  const isWeekStart = day.getUTCDay() === 0;
+  const weekdayIndex = getAppWeekdayIndex(day);
+  const weekday = WEEKDAYS[weekdayIndex];
+  const isWeekStart = weekdayIndex === 0;
 
   return (
     <div
@@ -28,7 +29,7 @@ export default function DayHeader({ day, todayKey }) {
     >
       <span>{weekday}</span>
       <span className="text-[9px] text-zinc-500 dark:text-zinc-500">
-        {day.getUTCDate()}
+        {getAppDayOfMonth(day)}
       </span>
     </div>
   );

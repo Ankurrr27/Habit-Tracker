@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import { getNDays, toUTCDateKey } from "./habitByDay.utils";
+import { startOfAppDay } from "../../utils/date";
 
 export function useHabitByDay() {
   const weekDates = getNDays(30);
 
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
+  const today = startOfAppDay(new Date());
 
   const todayIndex = weekDates.findIndex(
     (date) => toUTCDateKey(date) === toUTCDateKey(today)

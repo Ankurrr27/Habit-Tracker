@@ -3,6 +3,7 @@ export const PLATFORM_OPTIONS = [
   { value: "leetcode", label: "LeetCode" },
   { value: "codeforces", label: "Codeforces" },
   { value: "codechef", label: "CodeChef" },
+  { value: "gfg", label: "GFG" },
 ];
 
 export function validateHabit({

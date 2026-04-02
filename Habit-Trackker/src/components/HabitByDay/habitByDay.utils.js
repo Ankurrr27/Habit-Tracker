@@ -1,23 +1,10 @@
-export const toUTCDateKey = (d) =>
-  `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(
-    d.getUTCDate()
-  ).padStart(2, "0")}`;
+import { addAppDays, getAppWeekdayIndex, startOfAppDay, toDateKey } from "../../utils/date";
+
+export const toUTCDateKey = toDateKey;
 
 export function getNDays(count = 30) {
-  const now = new Date();
-  now.setUTCHours(0, 0, 0, 0);
+  const now = startOfAppDay(new Date());
+  const start = addAppDays(now, -getAppWeekdayIndex(now));
 
-  const start = new Date(
-    Date.UTC(
-      now.getUTCFullYear(),
-      now.getUTCMonth(),
-      now.getUTCDate() - now.getUTCDay()
-    )
-  );
-
-  return Array.from({ length: count }, (_, i) => {
-    const d = new Date(start);
-    d.setUTCDate(start.getUTCDate() + i);
-    return d;
-  });
+  return Array.from({ length: count }, (_, i) => addAppDays(start, i));
 }

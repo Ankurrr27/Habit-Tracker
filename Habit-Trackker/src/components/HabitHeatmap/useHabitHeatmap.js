@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import api from "../../api/axios";
 import { toDateKey, getDayKey } from "./heatmap.utils";
+import { addAppDays, startOfAppDay } from "../../utils/date";
 
 export function useHabitHeatmap() {
   const [habits, setHabits] = useState([]);
@@ -8,20 +9,12 @@ export function useHabitHeatmap() {
   const [loading, setLoading] = useState(true);
 
   const today = useMemo(() => {
-    const date = new Date();
-    date.setUTCHours(0, 0, 0, 0);
-    return date;
+    return startOfAppDay(new Date());
   }, []);
 
   const days = useMemo(() => {
-    const start = new Date(today);
-    start.setUTCDate(today.getUTCDate() - 364);
-
-    return Array.from({ length: 365 }, (_, index) => {
-      const date = new Date(start);
-      date.setUTCDate(start.getUTCDate() + index);
-      return date;
-    });
+    const start = addAppDays(today, -364);
+    return Array.from({ length: 365 }, (_, index) => addAppDays(start, index));
   }, [today]);
 
   useEffect(() => {
