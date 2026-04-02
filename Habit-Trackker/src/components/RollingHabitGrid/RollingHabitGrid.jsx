@@ -49,12 +49,12 @@ export default function RollingHabitGrid() {
     <Motion.div
       className="
         w-full h-full
-        rounded-xl
+        rounded-[1.5rem]
         overflow-hidden
-        pt-4 pb-2
+        pt-3 pb-2
         transition-colors
         bg-white dark:bg-zinc-950
-        border border-zinc-200 dark:border-zinc-800
+        shadow-sm
       "
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
@@ -64,17 +64,17 @@ export default function RollingHabitGrid() {
         className="
           sticky top-0 z-30
           flex items-center justify-between
-          px-6 py-3
+          px-4 py-3 sm:px-6
           backdrop-blur
           bg-white/90 dark:bg-zinc-950/90
-          border-b border-zinc-200 dark:border-zinc-800
+          border-b border-zinc-200/70 dark:border-zinc-800
         "
       >
         <div>
           <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-200">
             Habit Timeline
           </h2>
-          <p className="text-xs text-zinc-600 dark:text-zinc-500">
+          <p className="text-[11px] text-zinc-600 dark:text-zinc-500">
             10 days back - Today - 15 days ahead
           </p>
         </div>

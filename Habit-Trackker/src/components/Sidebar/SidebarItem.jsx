@@ -1,57 +1,36 @@
-export default function SidebarItem({ icon, label, onClick, active }) {
+export default function SidebarItem({ icon, label, onClick, active, compact = false }) {
   return (
     <button
       onClick={onClick}
       className={`
-        w-full h-11
-        flex items-center gap-3
-        px-2 rounded-md
-        text-sm
-        transition
-
+        relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition
+        ${compact ? "justify-center px-1.5 py-2.5" : ""}
         ${
           active
             ? `
-              bg-indigo-50 text-indigo-700
-              dark:bg-emerald-500/10 dark:text-emerald-400
+              bg-indigo-50 text-indigo-700 shadow-sm
+              dark:bg-indigo-500/10 dark:text-indigo-300
             `
             : `
-              text-zinc-700 dark:text-zinc-300
-              hover:bg-zinc-100 dark:hover:bg-zinc-800
+              text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900
+              dark:text-zinc-300 dark:hover:bg-zinc-900 dark:hover:text-white
             `
         }
       `}
     >
-      {/* ICON */}
+      {active && <span className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-indigo-600 dark:bg-indigo-400" />}
+
       <span
         className={`
-          shrink-0 flex items-center justify-center w-8
-          ${
-            active
-              ? `
-                text-indigo-600
-                dark:text-emerald-400
-              `
-              : `
-                text-zinc-500
-                dark:text-zinc-400
-              `
-          }
+          relative z-10 flex shrink-0 items-center justify-center
+          ${compact ? "w-7" : "w-9"}
+          ${active ? "text-indigo-600 dark:text-indigo-300" : "text-zinc-400 dark:text-zinc-500"}
         `}
       >
         {icon}
       </span>
 
-      {/* LABEL */}
-      <span
-        className="
-          whitespace-nowrap overflow-hidden
-          max-w-0 group-hover:max-w-xs
-          transition-all duration-200
-        "
-      >
-        {label}
-      </span>
+      {!compact && <span className="truncate">{label}</span>}
     </button>
   );
 }

@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import api from "../api/axios";
 import {
-  Flame,
-  CheckCircle,
   Calendar,
-  Shield,
+  CheckCircle,
   Eye,
   EyeOff,
-  Sparkles,
+  Flame,
   Link2,
+  Mail,
+  Shield,
+  Sparkles,
   UserRound,
 } from "lucide-react";
 import { useParams } from "react-router-dom";
@@ -19,6 +20,8 @@ const emptyExternalProfiles = {
   leetcode: "",
   codeforces: "",
   codechef: "",
+  gfg: "",
+  codolio: "",
 };
 
 const profileFields = [
@@ -26,6 +29,8 @@ const profileFields = [
   { key: "leetcode", label: "LeetCode ID" },
   { key: "codeforces", label: "Codeforces ID" },
   { key: "codechef", label: "CodeChef ID" },
+  { key: "gfg", label: "GFG Link or ID" },
+  { key: "codolio", label: "Codolio Link or ID" },
 ];
 
 export default function ProfilePage() {
@@ -35,9 +40,7 @@ export default function ProfilePage() {
   const [user, setUser] = useState(null);
   const [name, setName] = useState("");
   const [profilePublic, setProfilePublic] = useState(false);
-  const [externalProfiles, setExternalProfiles] = useState(
-    emptyExternalProfiles
-  );
+  const [externalProfiles, setExternalProfiles] = useState(emptyExternalProfiles);
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -60,9 +63,7 @@ export default function ProfilePage() {
         setUser(nextUser);
         setName(nextUser.name || "");
         setProfilePublic(Boolean(nextUser.profilePublic));
-        setExternalProfiles(
-          nextUser.externalProfiles || emptyExternalProfiles
-        );
+        setExternalProfiles(nextUser.externalProfiles || emptyExternalProfiles);
       })
       .catch(() => setError("Profile not found"))
       .finally(() => setLoading(false));
@@ -76,6 +77,22 @@ export default function ProfilePage() {
 
     return () => URL.revokeObjectURL(url);
   }, [file]);
+
+  const joinedDate = useMemo(() => {
+    if (!user?.createdAt) return "Recently joined";
+    return new Date(user.createdAt).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }, [user?.createdAt]);
+
+  const completionRate = useMemo(() => {
+    const completed = Number(user?.completedCount || 0);
+    const activeDays = Number(user?.activeDays || 0);
+    if (!activeDays) return "0%";
+    return `${Math.min(100, Math.round((completed / activeDays) * 100))}%`;
+  }, [user?.activeDays, user?.completedCount]);
 
   const handleProfileChange = (key, value) => {
     setExternalProfiles((prev) => ({
@@ -103,10 +120,7 @@ export default function ProfilePage() {
         const formData = new FormData();
         formData.append("name", name);
         formData.append("profilePublic", String(profilePublic));
-        formData.append(
-          "externalProfiles",
-          JSON.stringify(externalProfiles)
-        );
+        formData.append("externalProfiles", JSON.stringify(externalProfiles));
         formData.append("avatar", file);
         res = await api.put("/users/profile", formData);
       }
@@ -117,9 +131,7 @@ export default function ProfilePage() {
       };
 
       setUser(updatedUser);
-      setExternalProfiles(
-        res.data.user.externalProfiles || emptyExternalProfiles
-      );
+      setExternalProfiles(res.data.user.externalProfiles || emptyExternalProfiles);
       setAuthUser((prev) =>
         prev
           ? {
@@ -140,7 +152,7 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-zinc-500">
+      <div className="flex min-h-screen items-center justify-center text-zinc-500">
         Loading profile...
       </div>
     );
@@ -148,7 +160,7 @@ export default function ProfilePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-red-500">
+      <div className="flex min-h-screen items-center justify-center text-red-500">
         {error}
       </div>
     );
@@ -157,148 +169,202 @@ export default function ProfilePage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-[91vh] bg-white px-6 py-10 text-zinc-900 transition-colors dark:bg-black dark:text-white">
+    <div className="min-h-screen bg-white px-4 py-6 text-zinc-900 transition-colors dark:bg-black dark:text-white sm:px-6 sm:py-8">
       <div className="mx-auto max-w-6xl space-y-6">
-        <section className="relative overflow-hidden rounded-[2rem] border border-zinc-200 bg-zinc-50 p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute -right-16 top-0 h-40 w-40 rounded-full bg-indigo-500/15 blur-3xl" />
-            <div className="absolute bottom-0 left-0 h-40 w-40 rounded-full bg-sky-500/10 blur-3xl" />
-          </div>
-
-          <div className="relative grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
-              <div
-                className="
-                  h-28 w-28 shrink-0 overflow-hidden rounded-[1.5rem]
-                  border border-zinc-300 bg-indigo-600 text-4xl font-semibold text-white
-                  shadow-lg shadow-indigo-500/10 dark:border-zinc-700
-                  flex items-center justify-center select-none
-                "
-              >
-                {preview || user.avatar ? (
-                  <img
-                    src={preview || user.avatar}
-                    alt="avatar"
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  (user.name || user.username || "?")[0].toUpperCase()
-                )}
-              </div>
-
-              <div className="flex-1">
-                <div className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-zinc-600 shadow-sm dark:bg-zinc-900 dark:text-zinc-300">
-                  <Sparkles size={13} />
-                  {isOwnProfile ? "Your profile" : "Public profile"}
-                </div>
-                <h1 className="mt-4 text-3xl font-semibold tracking-tight">
-                  {user.name}
-                </h1>
-                <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                  @{user.username}
-                </p>
-                <p className="mt-4 max-w-2xl text-sm leading-6 text-zinc-600 dark:text-zinc-400">
-                  {isOwnProfile
-                    ? "Keep your profile polished, connect coding handles, and decide how visible your progress should be."
-                    : "This profile shows how consistent this user has been on the platform."}
-                </p>
-
-                {isOwnProfile && (
-                  <label className="mt-4 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800">
-                    <UserRound size={15} />
-                    Change avatar
-                    <input
-                      type="file"
-                      hidden
-                      accept="image/*"
-                      onChange={(event) => setFile(event.target.files[0])}
-                    />
-                  </label>
-                )}
-              </div>
+        <section className="overflow-hidden rounded-[2rem] bg-white shadow-sm dark:bg-zinc-950">
+          <div className="relative bg-zinc-50/80 px-5 py-6 dark:bg-zinc-900/70 sm:px-6">
+            <div className="pointer-events-none absolute inset-0">
+              <div className="absolute -right-16 top-0 h-40 w-40 rounded-full bg-indigo-500/15 blur-3xl" />
+              <div className="absolute bottom-0 left-0 h-40 w-40 rounded-full bg-sky-500/10 blur-3xl" />
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-              <Stat icon={<Flame size={18} />} label="Streak" value={user.currentStreak} />
-              <Stat icon={<CheckCircle size={18} />} label="Completed" value={user.completedCount} />
-              <Stat icon={<Calendar size={18} />} label="Active Days" value={user.activeDays} />
-              <Stat icon={<Shield size={18} />} label="Credibility" value={user.credibilityScore} />
+            <div className="relative grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+              <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
+                <div
+                  className="
+                    flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-[1.5rem]
+                    bg-indigo-600 text-4xl font-semibold text-white shadow-lg shadow-indigo-500/10 select-none
+                  "
+                >
+                  {preview || user.avatar ? (
+                    <img
+                      src={preview || user.avatar}
+                      alt="avatar"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    (user.name || user.username || "?")[0].toUpperCase()
+                  )}
+                </div>
+
+                <div className="flex-1">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-white/90 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-zinc-600 shadow-sm dark:bg-zinc-950 dark:text-zinc-300">
+                    <Sparkles size={13} />
+                    {isOwnProfile ? "Your profile" : "Public profile"}
+                  </div>
+                  <h1 className="mt-4 text-3xl font-semibold tracking-tight">{user.name}</h1>
+                  <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">@{user.username}</p>
+                  <p className="mt-4 max-w-2xl text-sm leading-6 text-zinc-600 dark:text-zinc-400">
+                    {isOwnProfile
+                      ? "Keep your profile polished, connect coding handles, and make your progress easy to read."
+                      : "This profile shows how consistent this user has been on the platform."}
+                  </p>
+
+                  <div className="mt-4 flex flex-wrap gap-3 text-sm text-zinc-500 dark:text-zinc-400">
+                    <MetaPill icon={<Mail size={14} />} text={user.email || "No email"} />
+                    <MetaPill icon={<Calendar size={14} />} text={`Joined ${joinedDate}`} />
+                  </div>
+
+                  {isOwnProfile && (
+                    <label className="mt-5 inline-flex cursor-pointer items-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-medium text-zinc-700 shadow-sm transition hover:bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800">
+                      <UserRound size={15} />
+                      Change avatar
+                      <input
+                        type="file"
+                        hidden
+                        accept="image/*"
+                        onChange={(event) => setFile(event.target.files[0])}
+                      />
+                    </label>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <StatCard icon={<Flame size={18} />} label="Current streak" value={user.currentStreak} />
+                <StatCard icon={<CheckCircle size={18} />} label="Completed" value={user.completedCount} />
+                <StatCard icon={<Calendar size={18} />} label="Active days" value={user.activeDays} />
+                <StatCard icon={<Shield size={18} />} label="Credibility" value={user.credibilityScore} />
+              </div>
             </div>
           </div>
         </section>
 
-        <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-          <section className="rounded-[2rem] border border-zinc-200 bg-zinc-50 p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
-            <div className="flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-              <Link2 size={16} />
-              Coding profiles
-            </div>
-            <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-              These IDs are used for auto-tracked hobbies and visible identity across the app.
-            </p>
+        <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+          <section className="space-y-6">
+            <section className="rounded-[1.75rem] bg-white px-5 py-6 shadow-sm dark:bg-zinc-950 sm:px-6">
+              <div className="flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300">
+                  <UserRound size={18} />
+                </span>
+                <div>
+                  <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                    Profile info
+                  </h2>
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                    Core account details and visibility settings.
+                  </p>
+                </div>
+              </div>
 
-            <div className="mt-5 grid gap-4 md:grid-cols-2">
-              {profileFields.map((field) => (
-                <label
-                  key={field.key}
-                  className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"
-                >
-                  <span className="block text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-                    {field.label}
-                  </span>
-                  {isOwnProfile ? (
-                    <input
-                      value={externalProfiles[field.key] || ""}
-                      onChange={(event) =>
-                        handleProfileChange(field.key, event.target.value)
-                      }
-                      className="
-                        mt-3 w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm
-                        text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-indigo-500
-                        dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100
-                      "
-                      placeholder={`Add ${field.label}`}
-                    />
-                  ) : (
-                    <p className="mt-3 text-sm text-zinc-700 dark:text-zinc-300">
-                      {externalProfiles[field.key] || "Not shared"}
-                    </p>
-                  )}
-                </label>
-              ))}
-            </div>
+              <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                <InfoRow label="Name" value={user.name} />
+                <InfoRow label="Email" value={user.email || "Not available"} />
+                <InfoRow label="Username" value={`@${user.username}`} />
+                <InfoRow label="Joined" value={joinedDate} />
+              </div>
+            </section>
+
+            <section className="rounded-[1.75rem] bg-white px-5 py-6 shadow-sm dark:bg-zinc-950 sm:px-6">
+              <div className="flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">
+                  <Flame size={18} />
+                </span>
+                <div>
+                  <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                    Habit stats
+                  </h2>
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                    A quick read on consistency and recent activity.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                <Metric label="Streak" value={user.currentStreak ?? 0} />
+                <Metric label="Completion rate" value={completionRate} />
+                <Metric label="Completed habits" value={user.completedCount ?? 0} />
+                <Metric label="Active days" value={user.activeDays ?? 0} />
+              </div>
+            </section>
+
+            <section className="rounded-[1.75rem] bg-white px-5 py-6 shadow-sm dark:bg-zinc-950 sm:px-6">
+              <div className="flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">
+                  <Link2 size={18} />
+                </span>
+                <div>
+                  <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                    Coding profiles
+                  </h2>
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                    These IDs are used for auto-tracked hobbies and visible identity across the app.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-5 grid gap-4 md:grid-cols-2">
+                {profileFields.map((field) => (
+                  <label key={field.key} className="rounded-2xl bg-zinc-50 px-4 py-4 dark:bg-zinc-900">
+                    <span className="block text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+                      {field.label}
+                    </span>
+                    {isOwnProfile ? (
+                      <input
+                        value={externalProfiles[field.key] || ""}
+                        onChange={(event) => handleProfileChange(field.key, event.target.value)}
+                        className="
+                          mt-3 w-full rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm
+                          text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30
+                          dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100
+                        "
+                        placeholder={`Add ${field.label}`}
+                      />
+                    ) : (
+                      <p className="mt-3 text-sm text-zinc-700 dark:text-zinc-300">
+                        {externalProfiles[field.key] || "Not shared"}
+                      </p>
+                    )}
+                  </label>
+                ))}
+              </div>
+            </section>
           </section>
 
           {isOwnProfile && (
             <aside className="space-y-6">
-              <section className="rounded-[2rem] border border-zinc-200 bg-zinc-50 p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
-                <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                  Basic settings
+              <section className="rounded-[1.75rem] bg-white px-5 py-6 shadow-sm dark:bg-zinc-950 sm:px-6">
+                <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                  Account settings
                 </h2>
-                <label className="mt-4 block">
+                <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+                  Update how your profile appears and how much is visible to others.
+                </p>
+
+                <label className="mt-5 block">
                   <span className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-                    Name
+                    Display name
                   </span>
                   <input
                     value={name}
                     onChange={(event) => setName(event.target.value)}
                     className="
-                      mt-3 w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm
-                      text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-indigo-500
-                      dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100
+                      mt-3 w-full rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm
+                      text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30
+                      dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100
                     "
                   />
                 </label>
 
                 <button
                   onClick={() => setProfilePublic((value) => !value)}
-                  className="mt-4 flex w-full items-center justify-between rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                  className="mt-4 flex w-full items-center justify-between rounded-2xl bg-zinc-50 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800"
                 >
                   <span className="flex items-center gap-2">
                     {profilePublic ? <Eye size={16} /> : <EyeOff size={16} />}
                     Profile visibility
                   </span>
-                  <span className="rounded-full bg-zinc-100 px-2 py-1 text-xs dark:bg-zinc-800">
+                  <span className="rounded-full bg-white px-2.5 py-1 text-xs dark:bg-zinc-950">
                     {profilePublic ? "Public" : "Private"}
                   </span>
                 </button>
@@ -306,16 +372,23 @@ export default function ProfilePage() {
                 <button
                   onClick={submit}
                   disabled={saving}
-                  className="mt-5 w-full rounded-2xl bg-indigo-600 px-4 py-3 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+                  className="mt-5 w-full rounded-full bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-50"
                 >
                   {saving ? "Saving..." : "Save changes"}
                 </button>
 
-                {msg && (
-                  <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">
-                    {msg}
-                  </p>
-                )}
+                {msg && <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">{msg}</p>}
+              </section>
+
+              <section className="rounded-[1.75rem] bg-white px-5 py-6 shadow-sm dark:bg-zinc-950 sm:px-6">
+                <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                  Account activity
+                </h2>
+                <div className="mt-4 space-y-3">
+                  <ActivityRow label="Joined platform" value={joinedDate} />
+                  <ActivityRow label="Credibility score" value={user.credibilityScore ?? 0} />
+                  <ActivityRow label="Current visibility" value={profilePublic ? "Public" : "Private"} />
+                </div>
               </section>
             </aside>
           )}
@@ -325,9 +398,9 @@ export default function ProfilePage() {
   );
 }
 
-function Stat({ icon, label, value }) {
+function StatCard({ icon, label, value }) {
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="rounded-2xl bg-white px-4 py-4 shadow-sm dark:bg-zinc-950">
       <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
         <span className="text-indigo-500">{icon}</span>
         {label}
@@ -335,6 +408,46 @@ function Stat({ icon, label, value }) {
       <div className="mt-3 text-2xl font-semibold text-zinc-900 dark:text-zinc-100">
         {value ?? "-"}
       </div>
+    </div>
+  );
+}
+
+function Metric({ label, value }) {
+  return (
+    <div className="rounded-2xl bg-zinc-50 px-4 py-4 dark:bg-zinc-900">
+      <p className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+        {label}
+      </p>
+      <p className="mt-2 text-2xl font-semibold text-zinc-900 dark:text-zinc-100">{value}</p>
+    </div>
+  );
+}
+
+function InfoRow({ label, value }) {
+  return (
+    <div className="rounded-2xl bg-zinc-50 px-4 py-4 dark:bg-zinc-900">
+      <p className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+        {label}
+      </p>
+      <p className="mt-2 text-sm font-medium text-zinc-900 dark:text-zinc-100">{value}</p>
+    </div>
+  );
+}
+
+function MetaPill({ icon, text }) {
+  return (
+    <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 shadow-sm dark:bg-zinc-950">
+      {icon}
+      <span>{text}</span>
+    </div>
+  );
+}
+
+function ActivityRow({ label, value }) {
+  return (
+    <div className="flex items-center justify-between rounded-2xl bg-zinc-50 px-4 py-3 text-sm dark:bg-zinc-900">
+      <span className="text-zinc-500 dark:text-zinc-400">{label}</span>
+      <span className="font-medium text-zinc-900 dark:text-zinc-100">{value}</span>
     </div>
   );
 }

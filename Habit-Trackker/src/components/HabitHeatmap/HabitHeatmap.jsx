@@ -17,10 +17,10 @@ export default function HabitHeatmap() {
   return (
     <Motion.div
       className="
-        rounded-2xl
-        p-8
+        rounded-[1.5rem]
+        p-5 sm:p-8
         bg-white dark:bg-zinc-950
-        border border-zinc-200 dark:border-zinc-800
+        shadow-sm
       "
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
@@ -28,12 +28,10 @@ export default function HabitHeatmap() {
     >
       <div
         className="
-          -mx-8
-          px-8
-          mb-6
+          -mx-5 mb-5 px-5 sm:-mx-8 sm:mb-6 sm:px-8
           pb-4
-          flex items-start justify-between
-          border-b border-zinc-200 dark:border-zinc-800
+          flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between
+          border-b border-zinc-200/70 dark:border-zinc-800
         "
       >
         <div>

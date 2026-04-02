@@ -3,7 +3,10 @@ import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 import api from "../api/axios";
 
 function toDateKey(date) {
-  return date.toISOString().slice(0, 10);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 function startOfWeek(date) {
@@ -101,8 +104,8 @@ export default function CalendarPage() {
   }, [selectedKey, weekDates]);
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-8 space-y-6">
-      <section className="rounded-[2rem] border border-zinc-200 bg-zinc-50 px-6 py-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+    <div className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">
+      <section className="rounded-[2rem] bg-zinc-50 px-5 py-6 shadow-sm dark:bg-zinc-950 sm:px-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-zinc-600 shadow-sm dark:bg-zinc-900 dark:text-zinc-300">
@@ -117,14 +120,14 @@ export default function CalendarPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => {
                 const previous = new Date(weekAnchor);
                 previous.setDate(previous.getDate() - 7);
                 setWeekAnchor(previous);
               }}
-              className="rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              className="rounded-xl bg-white px-3 py-2 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800"
             >
               <ChevronLeft size={16} />
             </button>
@@ -135,7 +138,7 @@ export default function CalendarPage() {
                 setWeekAnchor(today);
                 setSelectedDate(today);
               }}
-              className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+              className="rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
             >
               This week
             </button>
@@ -145,7 +148,7 @@ export default function CalendarPage() {
                 next.setDate(next.getDate() + 7);
                 setWeekAnchor(next);
               }}
-              className="rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              className="rounded-xl bg-white px-3 py-2 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800"
             >
               <ChevronRight size={16} />
             </button>
@@ -153,7 +156,7 @@ export default function CalendarPage() {
         </div>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-7">
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-7">
         {weekDates.map((date) => {
           const dateKey = toDateKey(date);
           const isSelected = dateKey === selectedKey;
@@ -165,11 +168,11 @@ export default function CalendarPage() {
               key={dateKey}
               onClick={() => setSelectedDate(date)}
               className={`
-                rounded-3xl border px-4 py-5 text-left transition
+                rounded-3xl px-4 py-5 text-left shadow-sm transition
                 ${
                   isSelected
-                    ? "border-indigo-300 bg-indigo-50 text-indigo-700 dark:border-indigo-500/30 dark:bg-indigo-500/10 dark:text-indigo-300"
-                    : "border-zinc-200 bg-white text-zinc-800 hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:border-zinc-700"
+                    ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300"
+                    : "bg-white text-zinc-800 hover:-translate-y-0.5 dark:bg-zinc-950 dark:text-zinc-200"
                 }
               `}
             >
@@ -198,7 +201,7 @@ export default function CalendarPage() {
         })}
       </section>
 
-      <section className="rounded-[2rem] border border-zinc-200 bg-white px-6 py-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+      <section className="rounded-[2rem] bg-white px-5 py-6 shadow-sm dark:bg-zinc-950 sm:px-6">
         <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
           <div>
             <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
@@ -218,7 +221,7 @@ export default function CalendarPage() {
         {loading ? (
           <div className="mt-5 text-sm text-zinc-500">Loading schedule...</div>
         ) : selectedDayHabits.length === 0 ? (
-          <div className="mt-5 rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 px-5 py-8 text-sm text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
+          <div className="mt-5 rounded-2xl bg-zinc-50 px-5 py-8 text-sm text-zinc-500 dark:bg-zinc-900 dark:text-zinc-400">
             Nothing is scheduled for this date.
           </div>
         ) : (
@@ -226,7 +229,7 @@ export default function CalendarPage() {
             {selectedDayHabits.map((habit) => (
               <div
                 key={habit.habitId}
-                className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-4 dark:border-zinc-800 dark:bg-zinc-900"
+                className="flex items-center justify-between rounded-2xl bg-zinc-50 px-4 py-4 shadow-sm dark:bg-zinc-900"
               >
                 <div>
                   <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">

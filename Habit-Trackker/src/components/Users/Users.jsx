@@ -21,7 +21,7 @@ export default function Users() {
       <UsersHeader search={search} onSearch={setSearch} />
 
       {requests.length > 0 && !loading && (
-        <section className="rounded-[2rem] border border-zinc-200 bg-zinc-50 p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+        <section className="rounded-[2rem] bg-zinc-50 p-5 shadow-sm dark:bg-zinc-950">
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
             Friend requests
           </h2>
@@ -33,7 +33,7 @@ export default function Users() {
             {requests.map((request) => (
               <div
                 key={request._id}
-                className="rounded-2xl border border-zinc-200 bg-white px-4 py-4 dark:border-zinc-800 dark:bg-zinc-900"
+                className="rounded-2xl bg-white px-4 py-4 shadow-sm dark:bg-zinc-900"
               >
                 <div className="flex items-center gap-3">
                   {request.sender?.avatar ? (
@@ -62,7 +62,7 @@ export default function Users() {
                     onClick={() =>
                       acceptRequest(request._id, request.sender?._id)
                     }
-                    className="flex-1 rounded-xl bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+                    className="flex-1 rounded-full bg-emerald-600 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
                   >
                     Accept
                   </button>
@@ -70,7 +70,7 @@ export default function Users() {
                     onClick={() =>
                       rejectRequest(request._id, request.sender?._id)
                     }
-                    className="flex-1 rounded-xl border border-zinc-200 px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                    className="flex-1 rounded-full bg-white px-3 py-2 text-sm font-semibold text-zinc-700 shadow-sm hover:bg-zinc-100 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800"
                   >
                     Reject
                   </button>
@@ -90,7 +90,7 @@ export default function Users() {
       )}
 
       {!loading && !error && users.length === 0 && (
-        <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5 text-zinc-700 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400">
+        <div className="rounded-2xl bg-zinc-50 p-5 text-zinc-700 shadow-sm dark:bg-zinc-950 dark:text-zinc-400">
           No matching users found
         </div>
       )}

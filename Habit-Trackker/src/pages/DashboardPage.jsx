@@ -8,52 +8,42 @@ const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(true);
 
   return (
-    <div className="flex flex-col bg-bg text-text">
-      <div className="flex h-[calc(100vh-64px)] flex-1 overflow-hidden">
-        <div className="flex flex-1 overflow-hidden">
-          <aside
-            className={`
-              flex flex-col border-r border-black/10 bg-bg
-              transition-[width] duration-300 ease-in-out
-              ${collapsed ? "w-16" : "w-[320px]"}
-            `}
-          >
-            <div className="flex h-14 items-center justify-between border-b border-black/10 px-3">
+    <div className="bg-bg text-text">
+      <div className="flex min-h-screen flex-col lg:h-screen lg:flex-row lg:overflow-hidden">
+        <aside
+          className={`
+            bg-bg/95 transition-[width] duration-300 ease-in-out lg:shrink-0
+            ${collapsed ? "lg:w-20" : "lg:w-[320px]"}
+          `}
+        >
+          <div className="mx-4 mt-4 overflow-hidden rounded-[1.75rem] bg-white shadow-sm dark:bg-zinc-950 lg:mx-0 lg:mt-0 lg:h-full lg:rounded-none lg:shadow-none">
+            <div className="flex items-center justify-between px-4 py-4 lg:border-b lg:border-zinc-200/70 lg:dark:border-zinc-800">
               {!collapsed && (
-                <span className="text-xs font-medium uppercase tracking-wide opacity-70">
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500 dark:text-zinc-400">
                   Daily habits
                 </span>
               )}
 
               <button
                 onClick={() => setCollapsed((value) => !value)}
-                className="rounded-md p-1 transition hover:bg-primary/10"
+                className="rounded-xl p-2 transition hover:bg-zinc-100 dark:hover:bg-zinc-900"
                 aria-label="Toggle habit panel"
               >
-                {collapsed ? (
-                  <ChevronRight size={16} />
-                ) : (
-                  <ChevronLeft size={16} />
-                )}
+                {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto">
+            <div className="lg:h-[calc(100%-64px)] lg:overflow-y-auto">
               {collapsed ? (
                 <button
                   onClick={() => setCollapsed(false)}
                   className="
-                    flex h-full w-full flex-col items-center justify-center gap-4
-                    cursor-pointer select-none text-text/60 transition hover:text-text
+                    flex w-full items-center justify-center gap-3 px-4 pb-5 pt-2 text-sm font-medium text-text/60 transition hover:text-text
+                    lg:h-full lg:flex-col lg:gap-4
                   "
                 >
-                  <span
-                    className="
-                      mt-4 rotate-180 pt-4 text-[14px] font-medium tracking-wide
-                      [writing-mode:vertical-rl]
-                    "
-                  >
-                    Today's habits
+                  <span className="lg:mt-4 lg:rotate-180 lg:pt-4 lg:text-[14px] lg:tracking-wide lg:[writing-mode:vertical-rl]">
+                    Today&apos;s habits
                   </span>
                 </button>
               ) : (
@@ -62,13 +52,15 @@ const Dashboard = () => {
                 </div>
               )}
             </div>
-          </aside>
+          </div>
+        </aside>
 
-          <main className="flex flex-1 flex-col space-y-6 overflow-y-auto bg-bg p-6">
+        <main className="flex-1 overflow-y-auto px-4 pb-6 pt-2 sm:px-6 lg:px-6 lg:py-6">
+          <div className="space-y-6">
             <RollingHabitGrid />
             <HabitHeatmap />
-          </main>
-        </div>
+          </div>
+        </main>
       </div>
     </div>
   );
