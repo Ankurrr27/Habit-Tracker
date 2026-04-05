@@ -8,11 +8,10 @@ import ProfilePage from "./pages/ProfilePage";
 import IntroPage from "./pages/IntroPage";
 import Dashboard from "./pages/DashboardPage";
 import UsersPage from "./pages/UsersPage";
-import TeamsPage from "./pages/TeamsPage";
-import TeamPage from "./pages/TeamPage";
-import ProjectPage from "./pages/ProjectPage";
 import CalendarPage from "./pages/CalendarPage";
 import ExtensionPage from "./pages/ExtensionPage";
+import AboutPage from "./pages/AboutPage";
+import HowToUsePage from "./pages/HowToUsePage";
 
 /* ROUTES */
 import PublicRoute from "./routes/PublicRoute";
@@ -67,10 +66,9 @@ export default function App() {
               {/* EXTENSION */}
               <Route path="/extension" element={<ExtensionPage />} />
 
-              {/* TEAMS & PROJECTS */}
-              <Route path="/teams" element={<TeamsPage />} />
-              <Route path="/teams/:teamId" element={<TeamPage />} />
-              <Route path="/projects" element={<ProjectPage />} />
+              {/* INFO PAGES */}
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/how-to-use" element={<HowToUsePage />} />
             </Route>
           </Route>
         </Route>

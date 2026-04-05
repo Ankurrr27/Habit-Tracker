@@ -18,11 +18,11 @@ export const MonthGroup = ({
 
       <div
         className="grid grid-flow-col grid-rows-7 gap-1"
-        style={{ gridAutoColumns: "13px" }}
+        style={{ gridAutoColumns: "16px" }}
       >
         {/* Spacer cells */}
         {[...Array(month.startOffset)].map((_, i) => (
-          <div key={`spacer-${i}`} className="w-[13px] h-[13px]" />
+          <div key={`spacer-${i}`} className="w-[16px] h-[16px]" />
         ))}
 
         {month.days.map((day) => {

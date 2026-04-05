@@ -26,11 +26,11 @@ export default function HabitByDay() {
         )}
       />
 
-      <div className="px-1 text-sm text-zinc-600 dark:text-zinc-400">
+      <div className="text-sm text-zinc-600 dark:text-zinc-400">
         {isToday ? "Today" : selectedDate.toDateString()}
       </div>
 
-      <div className="max-h-[60vh] space-y-2 overflow-y-auto pb-24 pr-1">
+      <div className="max-h-[60vh] space-y-2 overflow-y-auto pb-24">
         <HabitList
           habits={habits}
           loading={loading}

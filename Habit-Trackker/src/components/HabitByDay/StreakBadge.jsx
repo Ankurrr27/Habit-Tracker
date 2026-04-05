@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
+import { useSync } from "../../context/SyncContext";
 
 export default function StreakBadge({ habitId }) {
+  const { syncVersion } = useSync();
   const [streak, setStreak] = useState(null);
-  const [refreshTick, setRefreshTick] = useState(0);
 
   useEffect(() => {
     if (!habitId) {
@@ -30,21 +31,7 @@ export default function StreakBadge({ habitId }) {
     return () => {
       isCancelled = true;
     };
-  }, [habitId, refreshTick]);
-
-  useEffect(() => {
-    const handleHabitsUpdated = () => {
-      setRefreshTick((tick) => tick + 1);
-    };
-
-    window.addEventListener("habits-updated", handleHabitsUpdated);
-    return () => {
-      window.removeEventListener(
-        "habits-updated",
-        handleHabitsUpdated
-      );
-    };
-  }, []);
+  }, [habitId, syncVersion]);
 
   const displayStreak = habitId ? streak : 0;
 

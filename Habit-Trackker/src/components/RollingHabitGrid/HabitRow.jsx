@@ -2,7 +2,7 @@ import { toDateKey } from "../../utils/date";
 import { isHabitScheduledOnDate } from "./habitSchedule";
 import HabitCell from "./HabitCell";
 
-export default function HabitRow({ habit, days, logs, todayKey }) {
+export default function HabitRow({ habit, days, logs, todayKey, onToggle }) {
   return (
     <div className="contents group">
       {/* HABIT TITLE — STICKY */}
@@ -49,6 +49,7 @@ export default function HabitRow({ habit, days, logs, todayKey }) {
               isScheduled={isScheduled}
               isPast={isPast}
               log={log}
+              onClick={() => isScheduled && onToggle(habit._id, dateKey)}
             />
           </div>
         );

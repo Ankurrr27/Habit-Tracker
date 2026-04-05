@@ -28,17 +28,12 @@ export default function HabitItem({
       layout
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: 1.01 }}
       transition={{ type: "spring", stiffness: 300, damping: 24 }}
       className="
         group
         flex items-center justify-between
-        rounded-lg
-        bg-white dark:bg-zinc-950
-        border border-zinc-200 dark:border-zinc-800
-        px-3 py-2.5
+        py-2
         transition
-        hover:border-zinc-300 dark:hover:border-zinc-700
       "
     >
       {/* LEFT: STATUS + TITLE */}
@@ -57,14 +52,14 @@ export default function HabitItem({
             focus:outline-none focus:ring-2 focus:ring-indigo-500/50
             ${
               habit.done
-                ? "bg-blue-500 border-blue-400"
+                ? "bg-indigo-500 border-indigo-400"
                 : "border-zinc-400 dark:border-zinc-600 group-hover:border-indigo-500"
             }
             ${!canToggle ? "opacity-40 cursor-not-allowed" : ""}
           `}
         >
           {habit.done && (
-            <Check size={12} className="text-black" />
+            <Check size={12} className="text-white" />
           )}
         </button>
 
@@ -76,7 +71,7 @@ export default function HabitItem({
             ${
               habit.done
                 ? "line-through text-zinc-500"
-                : "text-zinc-800 dark:text-zinc-100 group-hover:text-zinc-900 dark:group-hover:text-white"
+                : "text-zinc-800 dark:text-zinc-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400"
             }
           `}
           title={habit.title}

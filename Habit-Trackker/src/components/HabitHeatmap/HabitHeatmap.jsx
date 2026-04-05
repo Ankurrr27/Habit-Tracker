@@ -8,20 +8,26 @@ export default function HabitHeatmap() {
 
   if (loading) {
     return (
-      <div className="p-8 text-xs text-zinc-700 dark:text-zinc-600">
-        Loading heatmap...
+      <div className="w-full h-full p-8 animate-pulse">
+        <div className="flex items-start justify-between mb-8 pb-4">
+          <div className="space-y-4">
+            <div className="h-6 w-48 bg-zinc-100 dark:bg-zinc-900 rounded-md" />
+            <div className="h-3 w-40 bg-zinc-50 dark:bg-zinc-900/40 rounded-md" />
+          </div>
+          <div className="h-3 w-40 bg-zinc-50 dark:bg-zinc-900/40 rounded-md" />
+        </div>
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(16px,16px))] gap-[3px]">
+          {Array.from({ length: 180 }).map((_, i) => (
+            <div key={i} className="h-[16px] w-[16px] bg-zinc-100 dark:bg-zinc-900 rounded-[3px] animate-pulse" />
+          ))}
+        </div>
       </div>
     );
   }
 
   return (
     <Motion.div
-      className="
-        rounded-[1.5rem]
-        p-5 sm:p-8
-        bg-white dark:bg-zinc-950
-        shadow-sm
-      "
+      className="w-full h-full p-5 sm:p-8"
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
@@ -31,7 +37,6 @@ export default function HabitHeatmap() {
           -mx-5 mb-5 px-5 sm:-mx-8 sm:mb-6 sm:px-8
           pb-4
           flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between
-          border-b border-zinc-200/70 dark:border-zinc-800
         "
       >
         <div>
@@ -39,7 +44,7 @@ export default function HabitHeatmap() {
             Habit Density
           </h3>
           <p className="text-[10px] uppercase tracking-wide text-zinc-500">
-            Last 365 days
+            Last 6 months
           </p>
         </div>
 

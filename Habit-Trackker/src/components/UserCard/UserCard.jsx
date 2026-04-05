@@ -1,6 +1,7 @@
 import { memo } from "react";
-import { Shield, ArrowUpRight, Sparkles } from "lucide-react";
+import { Shield, ArrowUpRight, Sparkles, Flame, UserPlus } from "lucide-react";
 import { getAvatarColor, getInitial } from "./avatar.utils";
+import { motion as Motion } from "framer-motion";
 
 function UserCard({ user, compact = false, onClick, onAddFriend }) {
   if (!user) return null;
@@ -8,7 +9,7 @@ function UserCard({ user, compact = false, onClick, onAddFriend }) {
   const hasAvatar = Boolean(user.avatar);
   const color = getAvatarColor(user.name);
   const initial = getInitial(user.name);
-  const Wrapper = onClick ? "button" : "div";
+  const Wrapper = onClick ? Motion.button : Motion.div;
 
   const friendshipLabelMap = {
     none: "Add friend",
@@ -19,157 +20,161 @@ function UserCard({ user, compact = false, onClick, onAddFriend }) {
   };
 
   const friendshipStyleMap = {
-    none: "bg-indigo-600 text-white hover:bg-indigo-700",
+    none: "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 hover:bg-indigo-700",
     request_sent:
-      "border border-zinc-200 bg-white text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300",
+      "border border-zinc-200 bg-white text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-zinc-400",
     request_received:
-      "border border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-300",
+      "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400",
     friends:
-      "border border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-300",
+      "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400 font-extrabold",
     self:
-      "border border-zinc-200 bg-zinc-50 text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400",
+      "bg-zinc-100 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-500",
   };
 
   const canSendFriendRequest =
     user.friendshipStatus === "none" && typeof onAddFriend === "function";
 
+  const cardVariants = {
+    initial: { opacity: 0, y: 8 },
+    animate: { opacity: 1, y: 0 },
+    hover: { y: -4, borderColor: "rgba(99, 102, 241, 0.4)" },
+  };
+
   return (
     <Wrapper
+      initial="initial"
+      animate="animate"
+      whileHover="hover"
+      variants={cardVariants}
       onClick={onClick}
-      aria-label={onClick ? `Open ${user.name}'s profile` : undefined}
       className={`
-        w-full text-left transition
+        relative w-full text-left transition-all duration-300
         ${onClick ? "cursor-pointer" : "cursor-default"}
         ${
           compact
-            ? `
-              flex items-center gap-2 rounded-md px-2 py-1.5
-              hover:bg-zinc-200 dark:hover:bg-zinc-900
-            `
-            : `
-              overflow-hidden rounded-[1.75rem]
-              border border-zinc-200 bg-white shadow-sm
-              hover:-translate-y-0.5 hover:border-indigo-400/40
-              dark:border-zinc-800 dark:bg-zinc-950
-            `
+            ? "flex items-center gap-3 rounded-2xl px-3 py-3 hover:bg-zinc-100 dark:hover:bg-zinc-900/50"
+            : "overflow-hidden rounded-[2rem] border border-zinc-100 bg-white dark:border-zinc-800 dark:bg-[#030712] shadow-xl shadow-zinc-200/20 dark:shadow-none"
         }
       `}
     >
       {!compact && (
-        <div className="relative border-b border-zinc-200 bg-zinc-50 px-5 py-5 dark:border-zinc-800 dark:bg-zinc-900/80">
-          <div className="pointer-events-none absolute right-0 top-0 h-24 w-24 rounded-full bg-indigo-500/10 blur-2xl" />
-          <div className="pointer-events-none absolute bottom-0 left-0 h-20 w-20 rounded-full bg-sky-500/10 blur-2xl" />
+        <>
+          {/* Accent mesh background */}
+          <div className="absolute inset-x-0 top-0 h-24 overflow-hidden -z-0">
+            <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-indigo-500/15 blur-3xl" />
+            <div className="absolute -top-8 -left-8 h-24 w-24 rounded-full bg-sky-500/10 blur-2xl" />
+          </div>
 
-          <div className="relative flex items-start justify-between gap-4">
-            <div className="flex items-center gap-4">
-              {hasAvatar ? (
-                <img
-                  src={user.avatar}
-                  alt={user.name}
-                  className="h-16 w-16 rounded-2xl border border-zinc-300 object-cover dark:border-zinc-700"
-                />
-              ) : (
-                <div
-                  className={`
-                    flex h-16 w-16 items-center justify-center rounded-2xl text-xl font-semibold text-white
-                    ${color}
-                  `}
-                >
-                  {initial}
+          <div className="relative z-10 p-6 flex flex-col gap-5">
+            {/* Top Row: Avatar + Identity */}
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  {hasAvatar ? (
+                    <img
+                      src={user.avatar}
+                      alt={user.name}
+                      className="h-16 w-16 rounded-2xl object-cover shadow-lg shadow-black/10"
+                    />
+                  ) : (
+                    <div className={`flex h-16 w-16 items-center justify-center rounded-2xl text-2xl font-extrabold text-white shadow-lg ${color}`}>
+                      {initial}
+                    </div>
+                  )}
+                  {/* Active status indicator if needed */}
+                  <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-white dark:border-[#030712] bg-emerald-500" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100">
+                    {user.name}
+                  </h3>
+                  <p className="text-sm font-medium text-zinc-400">@{user.username}</p>
+                </div>
+              </div>
+
+              {user.friendshipStatus === "friends" && (
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                  <Sparkles size={18} />
                 </div>
               )}
+            </div>
 
-              <div className="min-w-0">
-                <p className="truncate text-lg font-semibold text-zinc-900 dark:text-white">
-                  {user.name}
-                </p>
-                <p className="truncate text-sm text-zinc-600 dark:text-zinc-400">
-                  @{user.username}
-                </p>
+            {/* Social Signal: Streak & Credibility */}
+            <div className="flex items-center gap-4 border-y border-zinc-50 dark:border-zinc-800/50 py-4">
+              <div className="flex-1 space-y-1">
+                <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">Streak</p>
+                <div className="flex items-center gap-1.5 font-extrabold text-orange-500">
+                   <Flame size={14} strokeWidth={3} />
+                   <span className="text-lg tabular-nums tracking-tighter">
+                     {user.currentStreak || 0}
+                   </span>
+                </div>
+              </div>
+              <div className="h-8 w-px bg-zinc-100 dark:bg-zinc-800" />
+              <div className="flex-1 space-y-1">
+                <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">Credibility</p>
+                <div className="flex items-center gap-1.5 font-extrabold text-indigo-500">
+                   <Shield size={14} strokeWidth={2.5} />
+                   <span className="text-lg tabular-nums tracking-tighter">
+                     {user.credibilityScore || 0}
+                   </span>
+                </div>
               </div>
             </div>
 
-            <div className="inline-flex items-center gap-1 rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-zinc-600 shadow-sm dark:bg-zinc-950 dark:text-zinc-300">
-              <Sparkles size={12} />
-              Profile
+            {/* Action Row */}
+            <div className={`flex items-center gap-3 ${onClick ? 'justify-between' : 'justify-start'}`}>
+              {!onClick && user.friendshipStatus && (
+                <button
+                  type="button"
+                  disabled={!canSendFriendRequest}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (canSendFriendRequest) onAddFriend(user._id);
+                  }}
+                  className={`
+                    flex flex-1 items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold transition-all active:scale-95
+                    ${friendshipStyleMap[user.friendshipStatus]}
+                    ${canSendFriendRequest ? "" : "cursor-default opacity-80"}
+                  `}
+                >
+                  {canSendFriendRequest && <UserPlus size={14} />}
+                  {friendshipLabelMap[user.friendshipStatus]}
+                </button>
+              )}
+              
+              {onClick && (
+                <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-auto">
+                   View Profile
+                   <ArrowUpRight size={12} strokeWidth={3} />
+                </div>
+              )}
             </div>
           </div>
-        </div>
+        </>
       )}
 
-      <div className={compact ? "flex items-center gap-2" : "p-5"}>
-        {compact && (
-          <>
-            {hasAvatar ? (
-              <img
-                src={user.avatar}
-                alt={user.name}
-                className="h-8 w-8 rounded-full border border-zinc-300 object-cover dark:border-zinc-700"
-              />
-            ) : (
-              <div
-                className={`
-                  flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold text-white
-                  ${color}
-                `}
-              >
-                {initial}
-              </div>
-            )}
-          </>
-        )}
-
-        <div className="flex-1 min-w-0">
-          {compact && (
-            <>
-              <p className="truncate text-xs font-medium text-zinc-900 dark:text-white">
-                {user.name}
-              </p>
-              <p className="truncate text-[10px] text-zinc-600 dark:text-zinc-400">
-                @{user.username}
-              </p>
-            </>
-          )}
-
-          {!compact && (
-            <div className="flex items-center justify-between gap-3">
-              <div
-                className="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 dark:text-indigo-400"
-                title="Credibility score"
-              >
-                <Shield size={15} />
-                {user.credibilityScore ?? 0} credibility
-              </div>
-
-              <div className="inline-flex items-center gap-1 text-xs text-zinc-500 dark:text-zinc-400">
-                View profile
-                <ArrowUpRight size={12} />
-              </div>
+      {compact && (
+        <>
+          {hasAvatar ? (
+            <img
+              src={user.avatar}
+              alt={user.name}
+              className="h-10 w-10 rounded-xl object-cover"
+            />
+          ) : (
+            <div className={`flex h-10 w-10 items-center justify-center rounded-xl text-sm font-bold text-white ${color}`}>
+              {initial}
             </div>
           )}
-        </div>
-      </div>
-
-      {!compact && user.friendshipStatus && (
-        <div className="px-5 pb-5">
-          <button
-            type="button"
-            disabled={!canSendFriendRequest}
-            onClick={(event) => {
-              event.stopPropagation();
-              if (canSendFriendRequest) {
-                onAddFriend(user._id);
-              }
-            }}
-            className={`
-              inline-flex items-center justify-center rounded-full px-3.5 py-2 text-xs font-semibold transition
-              ${friendshipStyleMap[user.friendshipStatus]}
-              ${canSendFriendRequest ? "" : "cursor-default"}
-            `}
-          >
-            {friendshipLabelMap[user.friendshipStatus]}
-          </button>
-        </div>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-bold text-zinc-900 dark:text-zinc-100">{user.name}</p>
+            <p className="truncate text-[11px] text-zinc-400">@{user.username}</p>
+          </div>
+          {user.friendshipStatus === "friends" && (
+            <Sparkles size={12} className="text-indigo-400 ml-auto" />
+          )}
+        </>
       )}
     </Wrapper>
   );

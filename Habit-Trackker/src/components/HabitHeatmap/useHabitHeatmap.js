@@ -2,8 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import api from "../../api/axios";
 import { toDateKey, getDayKey } from "./heatmap.utils";
 import { addAppDays, startOfAppDay } from "../../utils/date";
+import { useSync } from "../../context/SyncContext";
 
 export function useHabitHeatmap() {
+  const { syncVersion } = useSync();
   const [habits, setHabits] = useState([]);
   const [logs, setLogs] = useState({});
   const [loading, setLoading] = useState(true);
@@ -13,13 +15,13 @@ export function useHabitHeatmap() {
   }, []);
 
   const days = useMemo(() => {
-    const start = addAppDays(today, -364);
-    return Array.from({ length: 365 }, (_, index) => addAppDays(start, index));
+    const start = addAppDays(today, -179);
+    return Array.from({ length: 180 }, (_, index) => addAppDays(start, index));
   }, [today]);
 
   useEffect(() => {
     const startDate = toDateKey(
-      new Date(today.getTime() - 364 * 24 * 60 * 60 * 1000)
+      new Date(today.getTime() - 179 * 24 * 60 * 60 * 1000)
     );
     let isCancelled = false;
 
@@ -40,7 +42,7 @@ export function useHabitHeatmap() {
     return () => {
       isCancelled = true;
     };
-  }, [today]);
+  }, [today, syncVersion]);
 
   const getDailyIntensity = (dateKey) => {
     let scheduled = 0;

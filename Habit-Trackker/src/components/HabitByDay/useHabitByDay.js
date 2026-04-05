@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import { getNDays, toUTCDateKey } from "./habitByDay.utils";
 import { startOfAppDay } from "../../utils/date";
+import { useSync } from "../../context/SyncContext";
 
 export function useHabitByDay() {
+  const { syncVersion, triggerSync } = useSync();
   const weekDates = getNDays(30);
 
   const today = startOfAppDay(new Date());
@@ -17,7 +19,9 @@ export function useHabitByDay() {
   );
   const [habits, setHabits] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [refreshTick, setRefreshTick] = useState(0);
+  // localTick is for manual self-refreshes (e.g. after delete), NOT syncVersion
+  // syncVersion would cause an infinite loop since we call triggerSync here
+  const [localTick, setLocalTick] = useState(0);
 
   const selectedDate = weekDates[selectedIndex];
   const selectedKey = toUTCDateKey(selectedDate);
@@ -57,21 +61,7 @@ export function useHabitByDay() {
     return () => {
       isCancelled = true;
     };
-  }, [isToday, refreshTick, selectedKey]);
-
-  useEffect(() => {
-    const handleHabitsUpdated = () => {
-      setRefreshTick((tick) => tick + 1);
-    };
-
-    window.addEventListener("habits-updated", handleHabitsUpdated);
-    return () => {
-      window.removeEventListener(
-        "habits-updated",
-        handleHabitsUpdated
-      );
-    };
-  }, []);
+  }, [isToday, localTick, selectedKey]);
 
   const completeHabit = async (habitId) => {
     if (!isToday) return;
@@ -89,7 +79,7 @@ export function useHabitByDay() {
         habitId,
         date: selectedKey,
       });
-      window.dispatchEvent(new Event("habits-updated"));
+      triggerSync();
     } catch {
       setHabits((prev) =>
         prev.map((habit) =>
@@ -108,9 +98,10 @@ export function useHabitByDay() {
 
     try {
       await api.delete(`/habits/${habitId}`);
-      window.dispatchEvent(new Event("habits-updated"));
+      triggerSync();
     } catch {
-      setRefreshTick((tick) => tick + 1);
+      // rollback: reload the list
+      setLocalTick((t) => t + 1);
     }
   };
 

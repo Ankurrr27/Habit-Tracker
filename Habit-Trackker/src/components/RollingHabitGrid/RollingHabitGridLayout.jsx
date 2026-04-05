@@ -6,6 +6,7 @@ export default function RollingHabitGridLayout({
   habits,
   logs,
   todayKey,
+  onToggle,
 }) {
   return (
     <div className="overflow-x-auto">
@@ -18,7 +19,7 @@ export default function RollingHabitGridLayout({
         "
         style={{
           gridTemplateColumns: `200px repeat(${days.length}, 34px)`,
-          gridAutoRows: "38px",
+          gridAutoRows: "48px",
         }}
       >
         {/* EMPTY CORNER */}
@@ -41,6 +42,7 @@ export default function RollingHabitGridLayout({
             days={days}
             logs={logs}
             todayKey={todayKey}
+            onToggle={onToggle}
           />
         ))}
       </div>

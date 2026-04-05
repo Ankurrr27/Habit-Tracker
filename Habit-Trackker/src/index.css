@@ -9,10 +9,12 @@
 
 /* 🌤 DEFAULT (LIGHT) */
 :root {
-  /* App colors */
-  --bg: 255 255 255;
-  --text: 24 24 27;
-  --primary: 99 102 241;
+  /* App colors - Soft Slate Baseline */
+  --bg-top: 247 248 250; /* bg-slate-50 */
+  --bg-middle: 255 255 255; /* white */
+  --bg-bottom: 240 244 249; /* light old blue hint */
+  --text: 15 23 42; /* slate-900 */
+  --primary: 79 70 229; /* indigo-600 */
 
   /* Scrollbar */
   --scroll-track: #f4f4f5;
@@ -22,8 +24,10 @@
 
 /* 🌑 DARK */
 .dark {
-  --bg: 9 9 11;
-  --text: 244 244 245;
+  --bg-top: 2 6 23; /* slate-950 */
+  --bg-middle: 9 9 11; /* zinc-950 */
+  --bg-bottom: 7 13 36; /* deep old blue hint */
+  --text: 241 245 249; /* slate-100 */
   --primary: 129 140 248;
 
   --scroll-track: #09090b;
@@ -47,10 +51,31 @@
 ========================= */
 
 html,
-body {
-  background-color: rgb(var(--bg));
+body,
+#root {
+  background: linear-gradient(135deg, rgb(var(--bg-top)) 0%, rgb(var(--bg-middle)) 40%, rgb(var(--bg-bottom)) 100%);
+  background-attachment: fixed;
   color: rgb(var(--text));
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 
 /* =========================
    THEME-AWARE SCROLLBAR

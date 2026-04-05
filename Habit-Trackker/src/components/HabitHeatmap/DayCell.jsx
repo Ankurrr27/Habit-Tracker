@@ -6,7 +6,7 @@ export const DayCell = ({ dateKey, intensity, isToday, colorClass }) => (
     animate={{ opacity: 1, scale: 1 }}
     whileHover={{ scale: 1.4, zIndex: 10 }}
     className={`
-      aspect-square w-[13px] h-[13px] rounded-[2px]
+      aspect-square w-[16px] h-[16px] rounded-[3px]
       transition-colors
       ${colorClass}
       ${isToday ? "ring-1 ring-indigo-500/60" : ""}

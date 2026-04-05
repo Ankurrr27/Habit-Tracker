@@ -6,6 +6,7 @@ import App from "./App";
 import "./index.css";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
+import { SyncProvider } from "./context/SyncContext";
 import { GoogleProviderWrapper } from "./providers/GoogleProviderWrapper";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -14,7 +15,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <GoogleProviderWrapper>
         <ThemeProvider>
           <AuthProvider>
-            <App />
+            <SyncProvider>
+              <App />
+            </SyncProvider>
           </AuthProvider>
         </ThemeProvider>
       </GoogleProviderWrapper>

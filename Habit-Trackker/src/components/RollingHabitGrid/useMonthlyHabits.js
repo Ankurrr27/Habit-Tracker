@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
+import { useSync } from "../../context/SyncContext";
 
 export function useWeeklyHabits(weekKey) {
+  const { syncVersion, triggerSync } = useSync();
   const [habits, setHabits] = useState([]);
   const [logs, setLogs] = useState({});
   const [loading, setLoading] = useState(true);
-  const [refreshTick, setRefreshTick] = useState(0);
 
   useEffect(() => {
     let isCancelled = false;
@@ -15,7 +16,6 @@ export function useWeeklyHabits(weekKey) {
         const res = await api.get("/activity/range", {
           params: { startDate: weekKey },
         });
-
         if (!isCancelled) {
           setHabits(res.data.habits || []);
           setLogs(res.data.logs || {});
@@ -32,26 +32,32 @@ export function useWeeklyHabits(weekKey) {
       }
     };
 
-    void loadWeeklyData();
+    loadWeeklyData();
 
-    return () => {
-      isCancelled = true;
-    };
-  }, [refreshTick, weekKey]);
+    return () => { isCancelled = true; };
+  }, [weekKey, syncVersion]);
 
-  useEffect(() => {
-    const handleHabitsUpdated = () => {
-      setRefreshTick((tick) => tick + 1);
-    };
+  const toggleHabit = async (habitId, dateKey) => {
+    const cellKey = `${habitId}_${dateKey}`;
+    const isDone = !!logs[cellKey]?.done;
 
-    window.addEventListener("habits-updated", handleHabitsUpdated);
-    return () => {
-      window.removeEventListener(
-        "habits-updated",
-        handleHabitsUpdated
-      );
-    };
-  }, []);
+    // Optimistic update
+    setLogs((prev) => ({
+      ...prev,
+      [cellKey]: { ...prev[cellKey], done: !isDone },
+    }));
 
-  return { habits, logs, loading };
+    try {
+      await api.post("/activity/toggle", { habitId, date: dateKey });
+      triggerSync();
+    } catch {
+      // Rollback on error
+      setLogs((prev) => ({
+        ...prev,
+        [cellKey]: { ...prev[cellKey], done: isDone },
+      }));
+    }
+  };
+
+  return { habits, logs, loading, toggleHabit };
 }

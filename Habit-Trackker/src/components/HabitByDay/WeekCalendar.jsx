@@ -25,11 +25,11 @@ const accentClassMap = {
 };
 
 const surfaceClassMap = {
-  solid: "bg-zinc-100 dark:bg-black hover:bg-zinc-200 dark:hover:bg-zinc-900",
+  solid: "bg-zinc-100 dark:bg-zinc-900/50 hover:bg-zinc-200 dark:hover:bg-zinc-900",
   glass:
-    "bg-white/80 dark:bg-zinc-950/70 backdrop-blur border border-zinc-200/80 dark:border-zinc-800 hover:bg-white dark:hover:bg-zinc-950",
+    "bg-white/80 dark:bg-zinc-950/70 backdrop-blur hover:bg-white dark:hover:bg-zinc-950",
   minimal:
-    "bg-transparent border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900",
+    "bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-900",
 };
 
 const densityClassMap = {
@@ -159,9 +159,9 @@ export default function WeekCalendar({
           type="date"
           onChange={handleDateSearch}
           className="
-            rounded-lg border border-zinc-300 bg-white px-2 py-1 text-xs
-            text-zinc-700 focus:outline-none focus:border-indigo-500
-            dark:border-zinc-800 dark:bg-black dark:text-zinc-300
+            rounded-lg bg-zinc-100 px-2 py-1 text-xs
+            text-zinc-700 focus:outline-none focus:ring-1 focus:ring-indigo-500/30
+            dark:bg-zinc-900 dark:text-zinc-300
           "
         />
       </div>
