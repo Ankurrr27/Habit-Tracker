@@ -1,11 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
-import { LayoutDashboard, LogOut, User, Menu, X, Zap } from "lucide-react";
+import { LayoutDashboard, LogOut, User, Menu, X, Zap, Cloud, CloudOff, RefreshCw } from "lucide-react";
 import { useAuth } from "../context/useAuth";
+import { useSync } from "../context/SyncContext";
 import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const { user, loading, logout } = useAuth();
+  const { isOnline, isSyncing } = useSync();
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const menuRef = useRef(null);
@@ -40,6 +42,10 @@ export default function Navbar() {
               Dashboard
             </button>
           )}
+
+          <div className="mr-2 md:inline-flex">
+            <SyncStatus isOnline={isOnline} isSyncing={isSyncing} />
+          </div>
 
           <ThemeToggle />
 
@@ -103,6 +109,33 @@ export default function Navbar() {
         </div>
       </div>
     </nav>
+  );
+}
+
+function SyncStatus({ isOnline, isSyncing }) {
+  if (isSyncing) {
+    return (
+      <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-indigo-500 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-500/10">
+        <RefreshCw size={12} className="animate-spin" />
+        <span className="text-[10px] font-bold uppercase tracking-wider hidden sm:inline">Syncing</span>
+      </div>
+    );
+  }
+
+  if (!isOnline) {
+    return (
+      <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-amber-500 bg-amber-50/50 dark:bg-amber-500/10">
+        <CloudOff size={12} />
+        <span className="text-[10px] font-bold uppercase tracking-wider">Offline</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors">
+      <Cloud size={12} />
+      <span className="text-[10px] font-bold uppercase tracking-wider hidden sm:inline">Synced</span>
+    </div>
   );
 }
 

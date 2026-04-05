@@ -165,10 +165,10 @@ export default function ProfilePage() {
     : [{ id: "stats", label: "Stats" }, { id: "links", label: "Links" }];
 
   return (
-    <div className="flex flex-col lg:flex-row w-full h-full lg:overflow-hidden bg-transparent">
+    <div className="flex flex-col lg:flex-row w-full min-h-full lg:h-full lg:overflow-hidden bg-transparent">
 
       {/* LEFT PANEL — Avatar + Identity */}
-      <aside className="lg:shrink-0 h-full w-full lg:w-[300px] border-r border-zinc-100 dark:border-zinc-900/50">
+      <aside className="lg:shrink-0 h-auto lg:h-full w-full lg:w-[300px] border-r border-zinc-100 dark:border-zinc-900/50">
         <div className="h-full flex flex-col px-6 py-8 gap-8">
 
           {/* Avatar — large stacked */}
@@ -230,10 +230,10 @@ export default function ProfilePage() {
           </div>
 
           {/* Stats strip */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="flex justify-between items-center px-2 py-4">
             <StatTile icon={<Flame size={14} />} label="Streak" value={user.currentStreak ?? 0} color="text-orange-500" />
             <StatTile icon={<CheckCircle size={14} />} label="Ticks" value={user.completedCount ?? 0} color="text-emerald-500" />
-            <StatTile icon={<Calendar size={14} />} label="Active Days" value={user.activeDays ?? 0} color="text-indigo-500" />
+            <StatTile icon={<Calendar size={14} />} label="Active" value={user.activeDays ?? 0} color="text-indigo-500" />
             <StatTile icon={<Shield size={14} />} label="Trust" value={user.credibilityScore ?? 0} color="text-violet-500" />
           </div>
 
@@ -257,7 +257,7 @@ export default function ProfilePage() {
       </aside>
 
       {/* RIGHT PANEL — Tabbed content */}
-      <main className="flex-1 w-full h-full flex flex-col overflow-hidden">
+      <main className="flex-1 w-full h-auto lg:h-full flex flex-col lg:overflow-hidden">
         {/* Tab header — identical style to Dashboard */}
         <div className="flex bg-zinc-50/50 dark:bg-zinc-900/30 shrink-0">
           {tabs.map((tab) => (
@@ -275,7 +275,7 @@ export default function ProfilePage() {
           ))}
         </div>
 
-        <div className="flex-1 overflow-y-auto px-8 py-8">
+        <div className="flex-1 h-auto lg:h-full lg:overflow-y-auto px-8 py-8">
           <AnimatePresence mode="wait">
             {/* STATS TAB */}
             {activeTab === "stats" && (
@@ -355,7 +355,7 @@ export default function ProfilePage() {
 
                   <button
                     onClick={() => setProfilePublic(!profilePublic)}
-                    className="flex w-full items-center justify-between rounded-2xl bg-zinc-50/50 dark:bg-zinc-900/30 px-5 py-3.5 text-sm font-bold text-zinc-700 dark:text-zinc-300 border border-zinc-100 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+                    className="flex w-full items-center justify-between py-3.5 text-sm font-bold text-zinc-700 dark:text-zinc-300 hover:text-indigo-500 transition-colors"
                   >
                     <span className="flex items-center gap-2.5">
                       {profilePublic ? <Eye size={16} /> : <EyeOff size={16} />}
@@ -438,10 +438,10 @@ export default function ProfilePage() {
 
 function StatTile({ icon, label, value, color }) {
   return (
-    <div className="rounded-2xl bg-zinc-50/50 dark:bg-zinc-900/30 border border-zinc-100 dark:border-zinc-800 px-4 py-3.5 space-y-1">
-      <div className={`flex items-center gap-1.5 ${color}`}>{icon}</div>
+    <div className="flex flex-col items-center gap-1">
+      <div className={`flex items-center justify-center h-8 w-8 rounded-full bg-zinc-50 dark:bg-zinc-900/50 ${color}`}>{icon}</div>
       <p className="text-xl font-extrabold text-zinc-900 dark:text-zinc-100 tabular-nums tracking-tight">{value}</p>
-      <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">{label}</p>
+      <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">{label}</p>
     </div>
   );
 }
@@ -489,7 +489,6 @@ function SaveButton({ saving, onClick, msg }) {
 }
 
 const inputClass = `
-  w-full rounded-xl border border-zinc-100 bg-zinc-50/30 px-4 py-2.5 text-sm font-semibold
-  text-zinc-900 placeholder:text-zinc-300 focus:outline-none focus:ring-2 focus:ring-indigo-600/10 focus:bg-white
-  dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:bg-zinc-950 transition-all
+  w-full border-b border-zinc-200 dark:border-zinc-800 bg-transparent py-2.5 text-sm font-semibold
+  text-zinc-900 placeholder:text-zinc-300 focus:outline-none focus:border-indigo-600 transition-all
 `;

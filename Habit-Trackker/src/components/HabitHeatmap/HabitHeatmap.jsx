@@ -43,7 +43,10 @@ export default function HabitHeatmap() {
           <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
             Habit Density
           </h3>
-          <p className="text-[10px] uppercase tracking-wide text-zinc-500">
+          <p className="text-[10px] uppercase tracking-wide text-zinc-500 lg:hidden">
+            Last 2 months
+          </p>
+          <p className="text-[10px] uppercase tracking-wide text-zinc-500 hidden lg:block">
             Last 6 months
           </p>
         </div>
@@ -51,11 +54,20 @@ export default function HabitHeatmap() {
         <HeatmapLegend />
       </div>
 
-      <HeatmapGrid
-        days={days}
-        today={today}
-        getDailyIntensity={getDailyIntensity}
-      />
+      <div className="lg:hidden">
+        <HeatmapGrid
+          days={days.slice(-60)}
+          today={today}
+          getDailyIntensity={getDailyIntensity}
+        />
+      </div>
+      <div className="hidden lg:block">
+        <HeatmapGrid
+          days={days}
+          today={today}
+          getDailyIntensity={getDailyIntensity}
+        />
+      </div>
     </Motion.div>
   );
 }

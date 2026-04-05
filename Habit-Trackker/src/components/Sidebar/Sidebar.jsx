@@ -10,6 +10,7 @@ import {
   Info,
 } from "lucide-react";
 import { useAuth } from "../../context/useAuth";
+import { useSync } from "../../context/SyncContext";
 import AddHabitModal from "../AddHabit";
 import SidebarItem from "./SidebarItem";
 
@@ -47,6 +48,7 @@ export default function Sidebar() {
         px-2 py-6
         transition-colors
       ">
+
 
 
         {/* NAV */}
@@ -114,16 +116,37 @@ export default function Sidebar() {
         border-t border-zinc-100 dark:border-zinc-900/50
         px-4 py-3
       ">
-        <div className="flex items-center justify-around gap-2">
+        <div className="flex items-center justify-around gap-1">
+          <MobileNavButton icon={<Search size={20} />} active={isActive("/users")} onClick={() => navigate("/users")} />
           <MobileNavButton icon={<Home size={20} />} active={isActive("/dashboard")} onClick={() => navigate("/dashboard")} />
+          
           <button
             onClick={() => setOpen(true)}
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white shadow-xl shadow-indigo-600/30 transition hover:bg-indigo-700 active:scale-95 -translate-y-4"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white shadow-xl shadow-indigo-600/30 transition hover:bg-indigo-700 active:scale-95 -translate-y-4"
           >
-            <Plus size={24} strokeWidth={3} />
+            <Plus size={20} strokeWidth={3} />
           </button>
+
           <MobileNavButton icon={<CalendarDays size={20} />} active={isActive("/calendar")} onClick={() => navigate("/calendar")} />
-          <MobileNavButton icon={<Search size={20} />} active={isActive("/users")} onClick={() => navigate("/users")} />
+          
+          <button
+            onClick={() => user?.username && navigate(`/u/${user.username}`)}
+            className={`
+              flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl transition
+              ${isActive(`/u/${user?.username}`)
+                ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400"
+                : "text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+              }
+            `}
+          >
+            {user?.avatar ? (
+              <img src={user.avatar} alt="P" className="h-6 w-6 rounded-full object-cover" />
+            ) : (
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white uppercase">
+                {initials}
+              </div>
+            )}
+          </button>
         </div>
       </nav>
 
@@ -131,6 +154,7 @@ export default function Sidebar() {
     </>
   );
 }
+
 
 function MobileNavButton({ icon, onClick, active }) {
   return (

@@ -59,7 +59,7 @@ export default function AboutPage() {
   const [activeSection, setActiveSection] = useState("about");
 
   return (
-    <div className="flex flex-col w-full h-full overflow-hidden bg-transparent">
+    <div className="flex flex-col w-full min-h-full lg:h-full lg:overflow-hidden bg-transparent">
 
       {/* Tab header — same style as Dashboard */}
       <div className="flex bg-zinc-50/50 dark:bg-zinc-900/30 border-b border-zinc-100 dark:border-zinc-900/50 shrink-0">
@@ -79,7 +79,7 @@ export default function AboutPage() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-8 py-10">
+      <div className="flex-1 h-auto lg:h-full lg:overflow-y-auto px-8 py-10">
         <AnimatePresence mode="wait">
 
           {activeSection === "about" && (
@@ -115,7 +115,7 @@ export default function AboutPage() {
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.08 }}
-                      className="space-y-4 rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/20 p-5 hover:border-indigo-500/20 transition-all"
+                      className="space-y-4 py-2 border-l-2 border-transparent hover:border-indigo-500/30 pl-4 -ml-4 transition-all hover:bg-zinc-50/50 dark:hover:bg-zinc-900/20 rounded-r-2xl"
                     >
                       <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${item.color}`}>{item.icon}</div>
                       <div>
@@ -170,7 +170,7 @@ export default function AboutPage() {
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-lg shadow-indigo-600/20">
                       {step.icon}
                     </div>
-                    <div className="flex-1 rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/20 px-5 py-4 hover:-translate-y-0.5 transition-transform">
+                    <div className="flex-1 py-1 hover:translate-x-1 transition-transform">
                       <div className="text-[9px] font-extrabold uppercase tracking-[0.3em] text-indigo-500 mb-1">Step 0{step.id}</div>
                       <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">{step.title}</h3>
                       <p className="mt-1.5 text-[12px] leading-relaxed text-zinc-500 dark:text-zinc-400">{step.description}</p>
@@ -179,13 +179,13 @@ export default function AboutPage() {
                 ))}
               </div>
 
-              <div className="flex items-center gap-3 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 px-5 py-4">
-                <CheckCircle2 size={18} className="text-emerald-500 shrink-0" />
+              <div className="flex items-center gap-3 py-4 text-emerald-600 dark:text-emerald-400">
+                <CheckCircle2 size={18} className="shrink-0" />
                 <div>
-                  <p className="text-sm font-bold text-emerald-700 dark:text-emerald-400">You're all set!</p>
-                  <p className="text-[11px] text-emerald-600/70 dark:text-emerald-500/70">Start tracking from the Dashboard.</p>
+                  <p className="text-sm font-bold">You're all set!</p>
+                  <p className="text-[11px] opacity-70">Start tracking from the Dashboard.</p>
                 </div>
-                <ArrowRight size={16} className="text-emerald-500 ml-auto" />
+                <ArrowRight size={16} className="ml-auto" />
               </div>
             </Motion.div>
           )}

@@ -3,31 +3,35 @@ import { DAYS } from "../../constants/days";
 
 const accentClassMap = {
   indigo: {
-    selected: "bg-indigo-600 text-white",
-    badge: "bg-white text-indigo-600",
+    selected: "text-indigo-600 dark:text-indigo-400",
+    badge: "bg-indigo-100/50 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400",
     ring: "ring-indigo-500/60",
+    indicator: "bg-indigo-500",
   },
   emerald: {
-    selected: "bg-emerald-600 text-white",
-    badge: "bg-white text-emerald-600",
+    selected: "text-emerald-600 dark:text-emerald-400",
+    badge: "bg-emerald-100/50 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400",
     ring: "ring-emerald-500/60",
+    indicator: "bg-emerald-500",
   },
   amber: {
-    selected: "bg-amber-500 text-zinc-950",
-    badge: "bg-white text-amber-600",
+    selected: "text-amber-600 dark:text-amber-400",
+    badge: "bg-amber-100/50 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400",
     ring: "ring-amber-400/70",
+    indicator: "bg-amber-500",
   },
   rose: {
-    selected: "bg-rose-600 text-white",
-    badge: "bg-white text-rose-600",
+    selected: "text-rose-600 dark:text-rose-400",
+    badge: "bg-rose-100/50 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400",
     ring: "ring-rose-400/70",
+    indicator: "bg-rose-500",
   },
 };
 
 const surfaceClassMap = {
-  solid: "bg-zinc-100 dark:bg-zinc-900/50 hover:bg-zinc-200 dark:hover:bg-zinc-900",
+  solid: "bg-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors",
   glass:
-    "bg-white/80 dark:bg-zinc-950/70 backdrop-blur hover:bg-white dark:hover:bg-zinc-950",
+    "bg-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors",
   minimal:
     "bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-900",
 };
@@ -128,19 +132,19 @@ export default function WeekCalendar({
               <div className="text-[11px] uppercase tracking-wide opacity-70">
                 {DAYS[date.getDay()]}
               </div>
-              <div className="mt-1 text-lg font-semibold">
+              <div className={`mt-1 text-lg ${isSelected ? "font-extrabold" : "font-semibold"}`}>
                 {date.getDate()}
               </div>
+
+              {isSelected && (
+                 <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full ${accent.indicator}`} />
+              )}
 
               {showCounts && count > 0 && (
                 <span
                   className={`
-                    absolute right-2 top-2 rounded-full px-1.5 py-0.5 text-[10px] font-medium
-                    ${
-                      isSelected
-                        ? accent.badge
-                        : "bg-zinc-300 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-200"
-                    }
+                    absolute right-1 top-1 rounded-full px-1.5 py-0.5 text-[10px] font-bold
+                    ${isSelected ? accent.badge : "bg-zinc-100 text-zinc-500 dark:bg-zinc-900 dark:text-zinc-400"}
                   `}
                 >
                   {count}

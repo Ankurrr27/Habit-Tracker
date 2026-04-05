@@ -8,8 +8,8 @@ import { useNavigate } from "react-router-dom";
 
 export default function Users() {
   const {
-    users, requests, search, setSearch,
-    loading, error, sendFriendRequest, acceptRequest, rejectRequest,
+    users, search, setSearch,
+    loading, error, toggleFollow,
   } = useUsers();
   const navigate = useNavigate();
 
@@ -38,53 +38,11 @@ export default function Users() {
           />
         </div>
 
-        {/* Friend requests */}
-        {requests.length > 0 && !loading && (
-          <div className="flex-1 overflow-y-auto px-6 pb-6">
-            <div className="flex items-center gap-2 mb-3">
-              <UserCheck size={12} className="text-emerald-500" />
-              <span className="text-[9px] font-bold uppercase tracking-widest text-emerald-500">Pending Requests</span>
-            </div>
-            <div className="space-y-2">
-              {requests.map(req => (
-                <Motion.div
-                  key={req._id}
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="rounded-2xl bg-zinc-50/50 dark:bg-zinc-900/30 border border-zinc-100 dark:border-zinc-800 px-4 py-3"
-                >
-                  <div className="flex items-center gap-3 mb-3">
-                    {req.sender?.avatar ? (
-                      <img src={req.sender.avatar} alt="" className="h-9 w-9 rounded-xl object-cover" />
-                    ) : (
-                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-sm font-bold text-white">
-                        {(req.sender?.name || req.sender?.username || "?")[0].toUpperCase()}
-                      </div>
-                    )}
-                    <div className="min-w-0">
-                      <p className="text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate">{req.sender?.name}</p>
-                      <p className="text-[10px] text-zinc-400">@{req.sender?.username}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => acceptRequest(req._id, req.sender?._id)}
-                      className="flex-1 rounded-full bg-emerald-600 py-1.5 text-xs font-bold text-white hover:bg-emerald-700 transition">
-                      Accept
-                    </button>
-                    <button onClick={() => rejectRequest(req._id, req.sender?._id)}
-                      className="flex-1 rounded-full border border-zinc-200 dark:border-zinc-700 py-1.5 text-xs font-bold text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
-                      Decline
-                    </button>
-                  </div>
-                </Motion.div>
-              ))}
-            </div>
-          </div>
-        )}
+
       </aside>
 
       {/* RIGHT: Results grid */}
-      <main className="flex-1 overflow-y-auto px-8 py-8">
+      <main className="flex-1 overflow-y-auto px-4 lg:px-8 pt-8 pb-32 lg:pb-8">
         {loading && <UsersSkeleton />}
 
         {error && (
@@ -99,7 +57,7 @@ export default function Users() {
         )}
 
         {!loading && !error && users.length > 0 && (
-          <UsersGrid users={users} onAddFriend={sendFriendRequest} />
+          <UsersGrid users={users} onToggleFollow={toggleFollow} />
         )}
       </main>
     </div>

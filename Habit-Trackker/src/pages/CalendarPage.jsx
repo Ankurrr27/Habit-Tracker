@@ -70,37 +70,39 @@ export default function CalendarPage() {
   };
 
   return (
-    <div className="flex flex-col w-full h-full overflow-hidden bg-transparent">
+    <div className="flex flex-col w-full h-auto lg:h-full lg:overflow-hidden bg-transparent">
 
-      {/* TOP: Week navigation bar */}
-      <div className="flex items-center justify-between px-8 py-4 border-b border-zinc-100 dark:border-zinc-900/50 shrink-0">
-        <div>
-          <div className="flex items-center gap-2 mb-0.5">
-            <CalendarDays size={12} className="text-indigo-500" />
-            <span className="text-[9px] font-bold uppercase tracking-[0.35em] text-indigo-500">Weekly Schedule</span>
-          </div>
-          <h1 className="text-xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100">{weekLabel}</h1>
-        </div>
+       {/* TOP: Week navigation bar */}
+       <header className="flex items-center justify-between px-8 py-6 shrink-0 bg-transparent">
+         <div>
+           <div className="flex items-center gap-2 mb-1">
+             <CalendarDays size={14} className="text-indigo-500" />
+             <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-indigo-500">Weekly Schedule</span>
+           </div>
+           <h1 className="text-xl font-extrabold tracking-tight text-zinc-900 dark:text-white">{weekLabel}</h1>
+         </div>
 
-        <div className="flex items-center gap-2">
-          <button onClick={() => shiftWeek(-1)} className="flex h-8 w-8 items-center justify-center rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition">
-            <ChevronLeft size={15} />
-          </button>
-          <button onClick={goToToday} className="rounded-full bg-indigo-600 px-4 py-1.5 text-xs font-bold text-white hover:bg-indigo-700 transition shadow-sm shadow-indigo-600/20">
-            Today
-          </button>
-          <button onClick={() => shiftWeek(1)} className="flex h-8 w-8 items-center justify-center rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition">
-            <ChevronRight size={15} />
-          </button>
-        </div>
-      </div>
+         <div className="flex items-center gap-2.5">
+           <div className="flex items-center bg-zinc-50 dark:bg-zinc-900/50 rounded-2xl p-1 gap-1 border border-zinc-100/50 dark:border-zinc-800/30">
+             <button onClick={() => shiftWeek(-1)} className="p-2.5 rounded-xl text-zinc-500 hover:bg-white dark:hover:bg-zinc-800 transition hover:text-zinc-900 dark:hover:text-white">
+               <ChevronLeft size={16} />
+             </button>
+             <button onClick={goToToday} className="px-5 py-2.5 rounded-xl text-xs font-bold bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm hover:shadow-md transition">
+               Today
+             </button>
+             <button onClick={() => shiftWeek(1)} className="p-2.5 rounded-xl text-zinc-500 hover:bg-white dark:hover:bg-zinc-800 transition hover:text-zinc-900 dark:hover:text-white">
+               <ChevronRight size={16} />
+             </button>
+           </div>
+         </div>
+       </header>
 
       {/* BODY: Split layout */}
-      <div className="flex flex-col lg:flex-row flex-1 min-h-0 overflow-hidden">
+      <div className="flex flex-col lg:flex-row flex-1 min-h-0 lg:overflow-hidden">
 
         {/* LEFT: Week strip */}
-        <aside className="lg:shrink-0 h-full w-full lg:w-[300px] border-r border-zinc-100 dark:border-zinc-900/50 overflow-y-auto px-5 py-6">
-          <div className="flex flex-col gap-2">
+        <aside className="lg:shrink-0 h-auto lg:h-full w-full lg:w-[350px] bg-zinc-50/30 dark:bg-zinc-900/20 lg:overflow-y-auto px-6 py-8">
+          <div className="flex flex-col gap-1.5">
             {weekDates.map(date => {
               const key = toDateKey(date);
               const isSelected = key === selectedKey;
@@ -114,30 +116,37 @@ export default function CalendarPage() {
                   onClick={() => setSelectedDate(date)}
                   whileHover={{ x: 2 }}
                   whileTap={{ scale: 0.98 }}
-                  className={`flex items-center gap-4 rounded-2xl px-4 py-3.5 text-left transition w-full
-                    ${isSelected
-                      ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
-                      : isToday
-                      ? "bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20"
-                      : "hover:bg-zinc-50 dark:hover:bg-zinc-900/50"
-                    }`}
+                  className={`flex items-center gap-4 rounded-2xl px-5 py-4 text-left transition w-full relative group hover:bg-zinc-100/60 dark:hover:bg-zinc-800/40 `}
                 >
-                  <div className={`text-center w-10 shrink-0`}>
-                    <p className={`text-[9px] font-bold uppercase tracking-widest ${isSelected ? "text-indigo-200" : "text-zinc-400"}`}>
+                  {isSelected && (
+                    <Motion.div 
+                      layoutId="activeDay"
+                      className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-indigo-500 rounded-full" 
+                    />
+                  )}
+                  
+                  <div className="text-center w-8 shrink-0">
+                    <p className={`text-[10px] font-bold uppercase tracking-widest ${isSelected ? "text-indigo-600 dark:text-indigo-400" : "text-zinc-400"}`}>
                       {date.toLocaleDateString(undefined, { weekday: "short" })}
                     </p>
-                    <p className={`text-2xl font-extrabold tracking-tight leading-none mt-0.5 ${isSelected ? "text-white" : "text-zinc-900 dark:text-zinc-100"}`}>
+                    <p className={`text-2xl font-extrabold tracking-tight leading-none mt-1 ${isSelected ? "text-zinc-900 dark:text-white" : "text-zinc-700 dark:text-zinc-400"}`}>
                       {date.getDate()}
                     </p>
                   </div>
 
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-center mb-1.5">
-                      <span className={`text-[10px] font-bold ${isSelected ? "text-indigo-200" : "text-zinc-400"}`}>{count.completed}/{count.total} done</span>
-                      {isToday && !isSelected && <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" />}
+                      <span className={`text-[10px] font-semibold ${isSelected ? "text-zinc-900 dark:text-zinc-100" : "text-zinc-400"}`}>
+                        {count.completed}/{count.total} Completion
+                      </span>
+                      {isToday && !isSelected && <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 animate-pulse" />}
                     </div>
-                    <div className={`h-1 w-full rounded-full overflow-hidden ${isSelected ? "bg-indigo-400/30" : "bg-zinc-100 dark:bg-zinc-800"}`}>
-                      <div className={`h-full rounded-full transition-all ${isSelected ? "bg-white" : "bg-indigo-500"}`} style={{ width: `${pct}%` }} />
+                    <div className="h-1.5 w-full rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+                      <Motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${pct}%` }}
+                        className={`h-full rounded-full transition-all ${isSelected ? "bg-indigo-600 dark:bg-indigo-500" : "bg-zinc-300 dark:bg-zinc-600"}`} 
+                      />
                     </div>
                   </div>
                 </Motion.button>
@@ -147,14 +156,22 @@ export default function CalendarPage() {
         </aside>
 
         {/* RIGHT: Day detail */}
-        <main className="flex-1 overflow-y-auto px-8 py-6">
-          <div className="mb-6">
-            <h2 className="text-lg font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100">
+        <main className="flex-1 h-auto lg:h-full lg:overflow-y-auto px-8 py-10 lg:pl-12">
+          <div className="mb-10 flex flex-col gap-1">
+            <h2 className="text-xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
               {selectedDate.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}
             </h2>
-            <p className="text-[11px] text-zinc-400 mt-0.5">
-              {weeklyCounts[selectedKey]?.completed ?? 0} of {weeklyCounts[selectedKey]?.total ?? 0} habits completed
-            </p>
+            <div className="flex items-center gap-3">
+              <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                {weeklyCounts[selectedKey]?.completed ?? 0} of {weeklyCounts[selectedKey]?.total ?? 0} habits completed
+              </p>
+              <div className="h-1 w-1 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+              <div className="flex items-center gap-1.5">
+                <div className="h-1.5 w-24 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+                  <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${weeklyCounts[selectedKey]?.total > 0 ? (weeklyCounts[selectedKey].completed / weeklyCounts[selectedKey].total) * 100 : 0}%` }} />
+                </div>
+              </div>
+            </div>
           </div>
 
           {loading ? (
@@ -172,24 +189,36 @@ export default function CalendarPage() {
                 {selectedDayHabits.map((habit, i) => (
                   <Motion.div
                     key={habit.habitId}
-                    initial={{ opacity: 0, x: -6 }}
-                    animate={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.04 }}
-                    className={`flex items-center gap-4 rounded-2xl px-5 py-4 transition
+                    className={`flex items-center gap-5 px-6 py-5 transition-all
                       ${habit.done
-                        ? "bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20"
-                        : "bg-zinc-50/50 dark:bg-zinc-900/30 border border-zinc-100 dark:border-zinc-800"
+                        ? "opacity-60 grayscale-[0.5]"
+                        : "bg-white dark:bg-zinc-900/50"
                       }`}
                   >
-                    {habit.done
-                      ? <CheckCircle2 size={18} className="text-emerald-500 shrink-0" />
-                      : <Circle size={18} className="text-zinc-300 dark:text-zinc-600 shrink-0" />
-                    }
-                    <div>
-                      <p className={`text-sm font-bold ${habit.done ? "line-through text-emerald-700 dark:text-emerald-400 opacity-70" : "text-zinc-800 dark:text-zinc-200"}`}>
+                    <div className="flex-shrink-0">
+                      {habit.done ? (
+                        <div className="h-6 w-6 rounded-lg bg-indigo-600 flex items-center justify-center text-white">
+                          <CheckCircle2 size={16} strokeWidth={3} />
+                        </div>
+                      ) : (
+                        <div className="h-6 w-6 rounded-lg border-2 border-zinc-200 dark:border-zinc-800 flex items-center justify-center" />
+                      )}
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-sm font-bold tracking-tight ${habit.done ? "line-through text-zinc-500" : "text-zinc-900 dark:text-white"}`}>
                         {habit.title}
                       </p>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">{habit.frequency}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 px-1.5 py-0.5 rounded-md">
+                          {habit.frequency}
+                        </span>
+                        <div className="h-1 w-1 rounded-full bg-zinc-200 dark:border-zinc-800" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Habit</span>
+                      </div>
                     </div>
                   </Motion.div>
                 ))}
