@@ -14,6 +14,7 @@ import teamRoutes from "./routes/team.routes.js";
 import teamInviteRoutes from "./routes/teamInvite.routes.js";
 import viewsRoutes from "./routes/views.routes.js";
 import projectRoutes from "./routes/project.routes.js";
+import taskRoutes from "./routes/task.routes.js";
 
 
 const app = express();
@@ -64,6 +65,7 @@ app.use("/teams", teamRoutes);
 app.use("/team-invites", teamInviteRoutes);
 app.use("/views", viewsRoutes);
 app.use("/projects", projectRoutes);
+app.use("/tasks", taskRoutes);
 
 
 app.get("/", (req, res) => {

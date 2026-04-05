@@ -1,0 +1,10 @@
+Error: Wrong number of segments in token: test
+    at OAuth2Client.verifySignedJwtWithCertsAsync (C:\Users\ankur\Documents\9.MainProjects\4.HabitTrackerApp\Backend\node_modules\google-auth-library\build\src\auth\oauth2client.js:692:19)
+    at OAuth2Client.verifyIdTokenAsync (C:\Users\ankur\Documents\9.MainProjects\4.HabitTrackerApp\Backend\node_modules\google-auth-library\build\src\auth\oauth2client.js:541:34)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async googleLogin (file:///C:/Users/ankur/Documents/9.MainProjects/4.HabitTrackerApp/Backend/src/controllers/googleAuth.controller.js:14:20)
+Error: Wrong number of segments in token: test
+    at OAuth2Client.verifySignedJwtWithCertsAsync (C:\Users\ankur\Documents\9.MainProjects\4.HabitTrackerApp\Backend\node_modules\google-auth-library\build\src\auth\oauth2client.js:692:19)
+    at OAuth2Client.verifyIdTokenAsync (C:\Users\ankur\Documents\9.MainProjects\4.HabitTrackerApp\Backend\node_modules\google-auth-library\build\src\auth\oauth2client.js:541:34)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async googleLogin (file:///C:/Users/ankur/Documents/9.MainProjects/4.HabitTrackerApp/Backend/src/controllers/googleAuth.controller.js:14:20)
