@@ -82,49 +82,30 @@ export const getPublicUserByUsername = async (req, res) => {
 export const getUsers = async (req, res) => {
   try {
     const currentUserId = req.user.id;
+    // We need the current user's following list to know who they follow
+    const currentUser = await User.findById(currentUserId, "following").lean();
+    const followingIds = new Set(
+      (currentUser?.following || []).map((id) => id.toString())
+    );
+
     const users = await User.find(
       {},
       "name username avatar profilePublic credibilityScore"
     ).lean();
 
-    const friendRequests = await FriendRequest.find({
-      $or: [{ sender: currentUserId }, { receiver: currentUserId }],
-    }).lean();
-
-    const friendshipMap = new Map();
-
-    friendRequests.forEach((request) => {
-      const otherUserId =
-        request.sender.toString() === currentUserId
-          ? request.receiver.toString()
-          : request.sender.toString();
-
-      if (request.status === "accepted") {
-        friendshipMap.set(otherUserId, "friends");
-      } else if (request.status === "pending") {
-        friendshipMap.set(
-          otherUserId,
-          request.sender.toString() === currentUserId
-            ? "request_sent"
-            : "request_received"
-        );
-      }
-    });
-
     const formatted = users.map((user) => {
-      const friendshipStatus =
-        user._id.toString() === currentUserId
-          ? "self"
-          : friendshipMap.get(user._id.toString()) || "none";
+      const isSelf = user._id.toString() === currentUserId;
+      const isFollowing = followingIds.has(user._id.toString());
 
-      if (!user.profilePublic) {
+      if (!user.profilePublic && !isSelf) {
         return {
           _id: user._id,
           name: user.name,
           username: user.username,
           avatar: user.avatar,
           profilePublic: false,
-          friendshipStatus,
+          isFollowing,
+          isSelf,
         };
       }
 
@@ -133,9 +114,10 @@ export const getUsers = async (req, res) => {
         name: user.name,
         username: user.username,
         avatar: user.avatar,
-        profilePublic: true,
+        profilePublic: user.profilePublic,
         credibilityScore: user.credibilityScore,
-        friendshipStatus,
+        isFollowing,
+        isSelf,
       };
     });
 
@@ -250,105 +232,45 @@ export const searchUsers = async (req, res) => {
   }
 };
 
-export const getFriendRequests = async (req, res) => {
+export const toggleFollow = async (req, res) => {
   try {
-    const requests = await FriendRequest.find({
-      receiver: req.user.id,
-      status: "pending",
-    })
-      .populate("sender", "name username avatar credibilityScore")
-      .sort({ createdAt: -1 });
+    const currentUserId = req.user.id;
+    const targetUsername = req.params.username;
 
-    res.json(requests);
-  } catch (err) {
-    console.error("GET FRIEND REQUESTS ERROR:", err);
-    res.status(500).json([]);
-  }
-};
-
-export const sendFriendRequest = async (req, res) => {
-  try {
-    const senderId = req.user.id;
-    const { userId } = req.body;
-
-    if (!userId) {
-      return res.status(400).json({ message: "User is required" });
+    const targetUser = await User.findOne({ username: targetUsername });
+    if (!targetUser) {
+      return res.status(404).json({ message: "User not found" });
     }
 
-    if (senderId === userId) {
-      return res.status(400).json({ message: "You cannot add yourself" });
+    if (currentUserId === targetUser._id.toString()) {
+      return res.status(400).json({ message: "You cannot follow yourself" });
     }
 
-    const existing = await FriendRequest.findOne({
-      $or: [
-        { sender: senderId, receiver: userId },
-        { sender: userId, receiver: senderId },
-      ],
-    });
+    const currentUser = await User.findById(currentUserId);
 
-    if (existing?.status === "accepted") {
-      return res.status(400).json({ message: "Already friends" });
-    }
+    const isFollowing = currentUser.following.includes(targetUser._id);
 
-    if (existing?.status === "pending") {
-      return res.status(400).json({
-        message: "Friend request already pending",
+    if (isFollowing) {
+      // Unfollow logic
+      await User.findByIdAndUpdate(currentUserId, {
+        $pull: { following: targetUser._id },
       });
+      await User.findByIdAndUpdate(targetUser._id, {
+        $pull: { followers: currentUserId },
+      });
+      res.json({ message: "Unfollowed successfully", isFollowing: false });
+    } else {
+      // Follow logic
+      await User.findByIdAndUpdate(currentUserId, {
+        $addToSet: { following: targetUser._id },
+      });
+      await User.findByIdAndUpdate(targetUser._id, {
+        $addToSet: { followers: currentUserId },
+      });
+      res.json({ message: "Followed successfully", isFollowing: true });
     }
-
-    if (existing?.status === "rejected") {
-      existing.sender = senderId;
-      existing.receiver = userId;
-      existing.status = "pending";
-      await existing.save();
-      return res.json({ message: "Friend request sent" });
-    }
-
-    await FriendRequest.create({
-      sender: senderId,
-      receiver: userId,
-      status: "pending",
-    });
-
-    res.status(201).json({ message: "Friend request sent" });
   } catch (err) {
-    console.error("SEND FRIEND REQUEST ERROR:", err);
-    res.status(500).json({ message: "Failed to send friend request" });
-  }
-};
-
-export const acceptFriendRequest = async (req, res) => {
-  try {
-    const request = await FriendRequest.findById(req.params.requestId);
-
-    if (!request || request.receiver.toString() !== req.user.id) {
-      return res.status(404).json({ message: "Request not found" });
-    }
-
-    request.status = "accepted";
-    await request.save();
-
-    res.json({ message: "Friend request accepted" });
-  } catch (err) {
-    console.error("ACCEPT FRIEND REQUEST ERROR:", err);
-    res.status(500).json({ message: "Failed to accept request" });
-  }
-};
-
-export const rejectFriendRequest = async (req, res) => {
-  try {
-    const request = await FriendRequest.findById(req.params.requestId);
-
-    if (!request || request.receiver.toString() !== req.user.id) {
-      return res.status(404).json({ message: "Request not found" });
-    }
-
-    request.status = "rejected";
-    await request.save();
-
-    res.json({ message: "Friend request rejected" });
-  } catch (err) {
-    console.error("REJECT FRIEND REQUEST ERROR:", err);
-    res.status(500).json({ message: "Failed to reject request" });
+    console.error("TOGGLE FOLLOW ERROR:", err);
+    res.status(500).json({ message: "Failed to toggle follow status" });
   }
 };

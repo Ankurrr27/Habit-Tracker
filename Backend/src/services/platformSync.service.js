@@ -183,13 +183,17 @@ async function hasCodeChefActivity(handle, targetDate) {
 
 async function hasGfgActivity(handle, targetDate) {
   const response = await fetch(
-    `https://auth.geeksforgeeks.org/user/${encodeURIComponent(handle)}/`,
+    `https://www.geeksforgeeks.org/user/${encodeURIComponent(handle)}/`,
     {
       headers: {
         "User-Agent": "habit-tracker-sync",
       },
     }
   );
+
+  if (response.status === 404) {
+    return false; // Profile doesn't exist, not an error
+  }
 
   if (!response.ok) {
     throw new Error(`GFG sync failed with status ${response.status}`);
