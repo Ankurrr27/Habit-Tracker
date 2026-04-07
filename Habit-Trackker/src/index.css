@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* =========================
    THEME VARIABLES
@@ -10,11 +9,14 @@
 /* 🌤 DEFAULT (LIGHT) */
 :root {
   /* App colors - Soft Slate Baseline */
-  --bg-top: 247 248 250; /* bg-slate-50 */
-  --bg-middle: 255 255 255; /* white */
-  --bg-bottom: 240 244 249; /* light old blue hint */
-  --text: 15 23 42; /* slate-900 */
-  --primary: 79 70 229; /* indigo-600 */
+  --bg-top: 247 248 250; 
+  --bg-middle: 255 255 255; 
+  --bg-bottom: 240 244 249; 
+  --text: 15 23 42; 
+  --primary: 79 70 229;
+  --primary-soft: 79 70 229 / 0.1;
+  --bg-accent: 79 70 229 / 0.02;
+  --border-accent: 79 70 229 / 0.1;
 
   /* Scrollbar */
   --scroll-track: #f4f4f5;
@@ -24,26 +26,107 @@
 
 /* 🌑 DARK */
 .dark {
-  --bg-top: 2 6 23; /* slate-950 */
-  --bg-middle: 9 9 11; /* zinc-950 */
-  --bg-bottom: 7 13 36; /* deep old blue hint */
-  --text: 241 245 249; /* slate-100 */
+  --bg-top: 2 6 23; 
+  --bg-middle: 6 6 9; 
+  --bg-bottom: 4 9 20; 
+  --text: 241 245 249; 
   --primary: 129 140 248;
+  --primary-soft: 129 140 248 / 0.15;
+  --bg-accent: 129 140 248 / 0.03;
+  --border-accent: 129 140 248 / 0.15;
 
   --scroll-track: #09090b;
-  --scroll-thumb: rgba(23, 23, 43, 0.55);
-  --scroll-thumb-hover: rgba(0, 0, 0, 0.85);
+  --scroll-thumb: rgba(129, 140, 248, 0.2);
+  --scroll-thumb-hover: rgba(129, 140, 248, 0.4);
 }
 
-/* 💖 PINK */
-.pink {
-  --bg: 255 240 246;
-  --text: 88 28 64;
-  --primary: 236 72 153;
+/* 🎨 DYNAMIC THEMES (CSS Variable Overrides) */
+.theme-indigo {
+  --primary: 79 70 229;
+  --primary-soft: 79 70 229 / 0.1;
+  --bg-accent: 79 70 229 / 0.02;
+  --border-accent: 79 70 229 / 0.12;
+}
+.dark .theme-indigo {
+  --primary: 129 140 248;
+  --bg-accent: 129 140 248 / 0.04;
+}
 
-  --scroll-track: #fff0f6;
-  --scroll-thumb: rgba(236, 72, 153, 0.55);
-  --scroll-thumb-hover: rgba(219, 39, 119, 0.8);
+.theme-pink {
+  --primary: 236 72 153;
+  --primary-soft: 236 72 153 / 0.1;
+  --bg-accent: 236 72 153 / 0.02;
+  --border-accent: 236 72 153 / 0.12;
+}
+.dark .theme-pink {
+  --primary: 244 114 182;
+  --bg-accent: 244 114 182 / 0.04;
+}
+
+.theme-rose {
+  --primary: 244 63 94;
+  --primary-soft: 244 63 94 / 0.1;
+  --bg-accent: 244 63 94 / 0.02;
+  --border-accent: 244 63 94 / 0.12;
+}
+.dark .theme-rose {
+  --primary: 251 113 133;
+  --bg-accent: 251 113 133 / 0.04;
+}
+
+.theme-sky {
+  --primary: 14 165 233;
+  --primary-soft: 14 165 233 / 0.1;
+  --bg-accent: 14 165 233 / 0.02;
+  --border-accent: 14 165 233 / 0.12;
+}
+.dark .theme-sky {
+  --primary: 56 189 248;
+  --bg-accent: 56 189 248 / 0.04;
+}
+
+.theme-emerald {
+  --primary: 16 185 129;
+  --primary-soft: 16 185 129 / 0.1;
+  --bg-accent: 16 185 129 / 0.02;
+  --border-accent: 16 185 129 / 0.12;
+}
+.dark .theme-emerald {
+  --primary: 52 211 153;
+  --bg-accent: 52 211 153 / 0.04;
+}
+
+.theme-cyan {
+  --primary: 6 182 212;
+  --primary-soft: 6 182 212 / 0.1;
+  --bg-accent: 6 182 212 / 0.02;
+  --border-accent: 6 182 212 / 0.12;
+}
+.dark .theme-cyan {
+  --primary: 34 211 238;
+  --bg-accent: 34 211 238 / 0.04;
+}
+
+.theme-orange {
+  --primary: 249 115 22;
+  --primary-soft: 249 115 22 / 0.1;
+  --bg-accent: 249 115 22 / 0.02;
+  --border-accent: 249 115 22 / 0.12;
+}
+.dark .theme-orange {
+  --primary: 251 146 60;
+  --bg-accent: 251 146 60 / 0.04;
+}
+
+.theme-violet {
+  --primary: 139 92 246;
+  --primary-soft: 139 92 246 / 0.1;
+  --bg-accent: 139 92 246 / 0.02;
+  --border-accent: 139 92 246 / 0.12;
+}
+.dark .theme-violet {
+  --primary: 167 139 250;
+  --bg-accent: 167 139 250 / 0.04;
 }
 
 /* =========================
@@ -53,17 +136,19 @@
 html,
 body,
 #root {
-  background: linear-gradient(135deg, rgb(var(--bg-top)) 0%, rgb(var(--bg-middle)) 40%, rgb(var(--bg-bottom)) 100%);
+  background: radial-gradient(at 0% 0%, rgba(var(--primary), 0.08) 0%, transparent 40%),
+              radial-gradient(at 100% 100%, rgba(var(--primary), 0.05) 0%, transparent 40%),
+              linear-gradient(135deg, rgb(var(--bg-top)) 0%, rgb(var(--bg-middle)) 40%, rgb(var(--bg-bottom)) 100%);
   background-attachment: fixed;
   color: rgb(var(--text));
   min-height: 100vh;
   margin: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Outfit', 'Inter', -apple-system, sans-serif;
   font-weight: 400;
   line-height: 1.5;
-  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 @keyframes gradientBG {
@@ -78,6 +163,48 @@ body,
   }
 }
 
+/* =========================
+   PREMIUM GLASS & GRADIENTS
+========================= */
+
+@layer utilities {
+  .glass {
+    @apply backdrop-blur-md bg-white/70 dark:bg-zinc-950/70 border border-white/20 dark:border-zinc-800/20 shadow-xl shadow-black/5;
+  }
+  
+  .glass-darker {
+    @apply backdrop-blur-xl bg-white/40 dark:bg-zinc-950/40 border border-white/10 dark:border-zinc-800/10 shadow-2xl;
+  }
+
+  .gradient-indigo {
+    @apply bg-gradient-to-br from-indigo-500 via-indigo-600 to-indigo-700 text-white;
+  }
+
+  .gradient-pink {
+    @apply bg-gradient-to-br from-pink-500 via-rose-500 to-rose-600 text-white;
+  }
+
+  .gradient-emerald {
+    @apply bg-gradient-to-br from-emerald-400 via-emerald-500 to-emerald-600 text-white;
+  }
+
+  .gradient-cyan {
+    @apply bg-gradient-to-br from-cyan-400 via-cyan-500 to-blue-600 text-white;
+  }
+
+  .gradient-violet {
+    @apply bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-600 text-white;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
 
 /* =========================
    THEME-AWARE SCROLLBAR

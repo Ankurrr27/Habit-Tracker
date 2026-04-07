@@ -1,4 +1,4 @@
-import express from "express";
+import { Router } from "express";
 import {
   addHabit,
   getHabits,
@@ -6,7 +6,7 @@ import {
 } from "../controllers/habit.controller.js";
 import auth from "../middleware/auth.middleware.js";
 
-const router = express.Router();
+const router = Router();
 
 router.post("/", auth, addHabit);
 router.get("/", auth, getHabits);

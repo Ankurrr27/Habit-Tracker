@@ -1,4 +1,4 @@
-import express from "express";
+import { Router } from "express";
 import {
   updateProfile,
   getUserByUsername,
@@ -10,7 +10,7 @@ import {
 import auth from "../middleware/auth.middleware.js";
 import upload from "../middleware/upload.middleware.js";
 
-const router = express.Router();
+const router = Router();
 
 router.get("/public/:username", getPublicUserByUsername);
 router.get("/search", auth, searchUsers);

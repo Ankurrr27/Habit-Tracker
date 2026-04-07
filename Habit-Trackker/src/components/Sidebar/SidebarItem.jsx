@@ -8,7 +8,7 @@ export default function SidebarItem({ icon, label, onClick, active, compact = fa
         ${
           active
             ? `
-              bg-indigo-600 text-white shadow-xl shadow-indigo-600/20
+              bg-[rgb(var(--primary))] text-white shadow-xl shadow-[rgba(var(--primary),0.2)]
             `
             : `
               text-slate-400 hover:bg-white/5 hover:text-slate-100
@@ -20,7 +20,7 @@ export default function SidebarItem({ icon, label, onClick, active, compact = fa
         className={`
           relative z-10 flex shrink-0 items-center justify-center transition-transform duration-300 group-hover:scale-110
           ${compact ? "w-6" : "w-6"}
-          ${active ? "text-white" : "text-slate-500 group-hover:text-indigo-400"}
+          ${active ? "text-white" : "text-slate-500 group-hover:text-[rgb(var(--primary))]"}
         `}
       >
         {icon}

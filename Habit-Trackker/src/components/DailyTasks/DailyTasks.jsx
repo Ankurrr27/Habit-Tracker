@@ -1,8 +1,36 @@
 import { useState, useEffect } from "react";
 import { Check, Clock, Plus, Trash2 } from "lucide-react";
 import api from "../../api/axios";
+import { useSync } from "../../context/SyncContext";
+import { useAuth } from "../../context/useAuth";
 
 export default function DailyTasks() {
+  const { triggerSync } = useSync();
+  const { user } = useAuth();
+  const accentColor = user?.accentColor || "indigo";
+
+  const accentTextMap = {
+    indigo: "text-indigo-500",
+    pink: "text-pink-500",
+    rose: "text-rose-500",
+    sky: "text-sky-500",
+    emerald: "text-emerald-500",
+    cyan: "text-cyan-500",
+    orange: "text-orange-500",
+    violet: "text-violet-500",
+  };
+
+  const accentBgMap = {
+    indigo: "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/20",
+    pink: "bg-pink-600 hover:bg-pink-700 shadow-pink-600/20",
+    rose: "bg-rose-500 hover:bg-rose-600 shadow-rose-500/20",
+    sky: "bg-sky-500 hover:bg-sky-600 shadow-sky-500/20",
+    emerald: "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20",
+    cyan: "bg-cyan-600 hover:bg-cyan-700 shadow-cyan-600/20",
+    orange: "bg-orange-600 hover:bg-orange-700 shadow-orange-600/20",
+    violet: "bg-violet-600 hover:bg-violet-700 shadow-violet-600/20",
+  };
+
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
   const [loading, setLoading] = useState(true);
@@ -30,6 +58,7 @@ export default function DailyTasks() {
       const res = await api.post("/tasks", { title: newTask.trim() });
       setTasks([res.data, ...tasks]);
       setNewTask("");
+      triggerSync();
     } catch (err) {
       console.error(err);
     }
@@ -39,6 +68,7 @@ export default function DailyTasks() {
     try {
       const res = await api.patch(`/tasks/${id}/toggle`);
       setTasks(tasks.map((t) => (t._id === id ? res.data : t)));
+      triggerSync();
     } catch (err) {
       console.error(err);
     }
@@ -48,6 +78,7 @@ export default function DailyTasks() {
     try {
       await api.delete(`/tasks/${id}`);
       setTasks(tasks.filter((t) => t._id !== id));
+      triggerSync();
     } catch (err) {
       console.error(err);
     }
@@ -74,22 +105,27 @@ export default function DailyTasks() {
         />
         <button
           type="submit"
-          className="shrink-0 flex items-center justify-center w-8 h-8 rounded-xl bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 active:scale-95 transition-all duration-200"
+          className={`shrink-0 flex items-center justify-center w-8 h-8 rounded-xl text-white shadow-lg active:scale-95 transition-all duration-200 ${accentBgMap[accentColor]}`}
         >
           <Plus size={16} strokeWidth={3} />
         </button>
       </form>
 
       {loading ? (
-        <div className="animate-pulse h-20 bg-zinc-200 dark:bg-zinc-800 rounded-3xl" />
+        <div className={`animate-pulse h-24 rounded-3xl border flex items-center justify-center ${accentBgMap[accentColor].replace('bg-', 'bg-').split(' ')[0]}/5 ${accentBgMap[accentColor].replace('bg-', 'border-').split(' ')[0]}/20`}>
+          <span className={`text-[10px] font-black uppercase tracking-[0.3em] ${accentTextMap[accentColor]}/40`}>Syncing Goals...</span>
+        </div>
       ) : tasks.length === 0 ? (
-        <p className="text-sm text-zinc-500">No active goals. Add one above!</p>
+        <p className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 px-1">No active goals. Add one above!</p>
       ) : (
         <div className="flex flex-col gap-2">
           {[...tasks].sort((a, b) => (a.status === "done" ? 1 : b.status === "done" ? -1 : 0)).map((task) => (
             <div
               key={task._id}
-              className={`group flex items-center gap-3 px-3 py-3 rounded-2xl border border-transparent hover:border-zinc-100 dark:hover:border-zinc-800/50 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/20 transition-all duration-200 ${
+              className={`group flex items-center gap-3 px-3 py-3 rounded-2xl border border-transparent 
+                hover:border-indigo-100 dark:hover:border-indigo-500/20 
+                hover:bg-indigo-50/50 dark:hover:bg-indigo-500/5 
+                transition-all duration-300 ${
                 task.status === "done" ? "opacity-60" : ""
               }`}
             >

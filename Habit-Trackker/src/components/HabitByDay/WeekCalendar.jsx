@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { motion as Motion } from "framer-motion";
 import { DAYS } from "../../constants/days";
 
 const accentClassMap = {
@@ -101,7 +102,7 @@ export default function WeekCalendar({
     <div className="space-y-3">
       <div
         ref={containerRef}
-        className="flex gap-2 overflow-x-auto pb-2 scroll-smooth"
+        className="flex gap-2 overflow-x-auto no-scrollbar pb-2 scroll-smooth"
       >
         {weekDates.map((date, index) => {
           const isSelected = index === selectedIndex;
@@ -129,15 +130,18 @@ export default function WeekCalendar({
                 ${isToday && !isSelected ? `ring-1 ${accent.ring}` : ""}
               `}
             >
-              <div className="text-[11px] uppercase tracking-wide opacity-70">
-                {DAYS[date.getDay()]}
+              <div className={`text-[10px] font-bold uppercase tracking-widest ${isSelected ? "opacity-100" : "text-zinc-500 dark:text-zinc-400"}`}>
+                {date.toLocaleDateString("en-US", { weekday: "short" })}
               </div>
-              <div className={`mt-1 text-lg ${isSelected ? "font-extrabold" : "font-semibold"}`}>
+              <div className={`mt-1.5 text-xl ${isSelected ? "font-extrabold text-zinc-900 dark:text-white" : "font-semibold text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-200"}`}>
                 {date.getDate()}
               </div>
 
               {isSelected && (
-                 <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full ${accent.indicator}`} />
+                 <Motion.div 
+                   layoutId="activeDayDash"
+                   className={`absolute bottom-1 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full ${accent.indicator}`} 
+                 />
               )}
 
               {showCounts && count > 0 && (

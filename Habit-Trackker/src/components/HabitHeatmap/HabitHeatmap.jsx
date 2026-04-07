@@ -1,10 +1,19 @@
+import { useMemo } from "react";
 import { motion as Motion } from "framer-motion";
-import { useHabitHeatmap } from "./useHabitHeatmap";
+import { useDashboard } from "../../context/DashboardContext";
+import { startOfAppDay, addAppDays } from "../../utils/date";
 import HeatmapGrid from "./HeatmapGrid";
 import HeatmapLegend from "./HeatmapLegend";
 
 export default function HabitHeatmap() {
-  const { days, today, loading, getDailyIntensity } = useHabitHeatmap();
+  const { loading, getDailyIntensity } = useDashboard();
+  const DESKTOP_DAYS = 240; // Last ~8 months on laptop/desktop
+
+  const today = useMemo(() => startOfAppDay(new Date()), []);
+  const days = useMemo(() => {
+    const start = addAppDays(today, -(DESKTOP_DAYS - 1));
+    return Array.from({ length: DESKTOP_DAYS }, (_, index) => addAppDays(start, index));
+  }, [today]);
 
   if (loading) {
     return (
@@ -17,7 +26,7 @@ export default function HabitHeatmap() {
           <div className="h-3 w-40 bg-zinc-50 dark:bg-zinc-900/40 rounded-md" />
         </div>
         <div className="grid grid-cols-[repeat(auto-fill,minmax(16px,16px))] gap-[3px]">
-          {Array.from({ length: 180 }).map((_, i) => (
+          {Array.from({ length: DESKTOP_DAYS }).map((_, i) => (
             <div key={i} className="h-[16px] w-[16px] bg-zinc-100 dark:bg-zinc-900 rounded-[3px] animate-pulse" />
           ))}
         </div>
@@ -47,7 +56,7 @@ export default function HabitHeatmap() {
             Last 2 months
           </p>
           <p className="text-[10px] uppercase tracking-wide text-zinc-500 hidden lg:block">
-            Last 6 months
+            Last 8 months
           </p>
         </div>
 

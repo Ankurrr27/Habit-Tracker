@@ -224,7 +224,7 @@ export async function syncAutoVerifiedHabitsForDate(userId, date = new Date()) {
   }
 
   const [user, habits] = await Promise.all([
-    User.findById(userId).lean(),
+    User.findById(userId),
     Habit.find({
       user: userId,
       verificationRule: "platform",
@@ -235,6 +235,17 @@ export async function syncAutoVerifiedHabitsForDate(userId, date = new Date()) {
   if (!user || habits.length === 0) {
     return;
   }
+
+  // 5-minute cooldown
+  const now = new Date();
+  const lastSync = user.lastPlatformSync ? new Date(user.lastPlatformSync) : null;
+  if (lastSync && (now.getTime() - lastSync.getTime()) < 5 * 60 * 1000) {
+    return;
+  }
+
+  // Mark sync as started/completed (optimistic for cooldown)
+  user.lastPlatformSync = now;
+  await user.save();
 
   const scheduledHabits = habits.filter((habit) =>
     isHabitScheduledOnDate(habit, targetDate)

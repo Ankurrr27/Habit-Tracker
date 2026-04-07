@@ -33,87 +33,82 @@ function UserCard({ user, compact = false, onClick, onToggleFollow }) {
       variants={cardVariants}
       onClick={onClick}
       className={`
-        relative w-full text-left transition-all duration-300 flex flex-col hover:-translate-y-1
-        ${onClick ? "cursor-pointer" : "cursor-default"}
-        ${
-          compact
-            ? "flex-row items-center gap-3 rounded-2xl px-3 py-3 hover:bg-zinc-100 dark:hover:bg-zinc-900/50"
-            : "overflow-hidden rounded-3xl bg-white dark:bg-[#080f26] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-zinc-100 dark:border-zinc-800/80"
+        relative w-full max-w-xl text-left transition-all duration-300
+        border border-[rgba(var(--primary),0.12)]
+        bg-[rgba(var(--primary),0.02)] backdrop-blur-sm
+        shadow-[0_4px_20px_-4px_rgba(var(--primary),0.05)]
+        hover:shadow-[0_20px_40px_-12px_rgba(var(--primary),0.1)]
+        ${compact
+          ? "flex flex-row items-center gap-3 rounded-2xl px-4 py-3 cursor-pointer"
+          : "flex flex-row items-center gap-5 px-5 py-4 rounded-3xl"
         }
       `}
     >
       {!compact && (
         <>
-          <div className="flex items-center gap-5 p-5 w-full">
-            {/* Avatar */}
-            <div className="shrink-0 relative">
-              <div className="rounded-full overflow-hidden border border-zinc-100 dark:border-zinc-800">
-                {hasAvatar ? (
-                  <img
-                    src={user.avatar}
-                    alt={user.name}
-                    className="h-16 w-16 object-cover"
-                  />
-                ) : (
-                  <div className={`flex h-16 w-16 items-center justify-center text-xl font-bold text-white ${color}`}>
-                    {initial}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Name & Credentials Info */}
-            <div className="flex-1 min-w-0 flex flex-col justify-center">
-              <div className="flex items-center gap-1.5 mb-1">
-                <h3 className="text-base font-bold tracking-tight text-zinc-900 dark:text-white truncate">
-                  {user.name}
-                </h3>
-                {user.credibilityScore > 50 && (
-                   <div className="text-indigo-500">
-                     <Sparkles size={12} />
-                   </div>
-                )}
-              </div>
-              <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 truncate">
-                @{user.username}
-              </p>
-              
-              <div className="flex items-center gap-4 mt-2">
-                 <div className="flex items-center gap-1">
-                    <Flame size={12} className="text-orange-500" />
-                    <span className="text-[10px] font-bold text-zinc-600 dark:text-zinc-300">{user.currentStreak || 0}</span>
-                 </div>
-                 <div className="h-3 w-px bg-zinc-200 dark:bg-zinc-800" />
-                 <div className="flex items-center gap-1">
-                    <Shield size={12} className="text-indigo-500" />
-                    <span className="text-[10px] font-bold text-zinc-600 dark:text-zinc-300">{user.credibilityScore || 0}</span>
-                 </div>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="shrink-0 pl-2">
-              {!user.isSelf && typeof onToggleFollow === "function" && (
-                <button
-                  type="button"
-                  onClick={handleFollowClick}
-                  className={`
-                    px-5 py-2 rounded-xl text-xs font-bold transition-all active:scale-95
-                    ${user.isFollowing 
-                        ? "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800/80 dark:text-zinc-300 dark:hover:bg-zinc-700" 
-                        : "bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 hover:shadow-indigo-600/20"
-                    }
-                  `}
-                >
-                  {user.isFollowing ? "Unfollow" : "Follow"}
-                </button>
-              )}
-              {user.isSelf && (
-                <div className="px-5 py-2 rounded-xl text-xs font-bold bg-zinc-50 text-zinc-400 dark:bg-zinc-900/30 border border-transparent">
-                  You
+          {/* Avatar */}
+          <div className="shrink-0">
+            <div className="rounded-full overflow-hidden">
+              {hasAvatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="h-12 w-12 object-cover"
+                />
+              ) : (
+                <div className={`flex h-12 w-12 items-center justify-center text-lg font-extrabold text-white ${color} rounded-full`}>
+                  {initial}
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Name & Stats — flex-1 fills all available space */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5 mb-0.5">
+              <h3 className="text-sm font-bold tracking-tight text-zinc-900 dark:text-white truncate">
+                {user.name}
+              </h3>
+              {user.credibilityScore > 50 && (
+                <Sparkles size={11} className="text-indigo-500 shrink-0" />
+              )}
+            </div>
+            <p className="text-[11px] font-medium text-zinc-400 truncate mb-1.5">
+              @{user.username}
+            </p>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1">
+                <Flame size={11} className="text-orange-500" />
+                <span className="text-[11px] font-bold text-zinc-600 dark:text-zinc-300">{user.currentStreak || 0}d</span>
+              </div>
+              <div className="h-2.5 w-px bg-zinc-300 dark:bg-zinc-700" />
+              <div className="flex items-center gap-1">
+                <Shield size={11} className="text-indigo-500" />
+                <span className="text-[11px] font-bold text-zinc-600 dark:text-zinc-300">{user.credibilityScore || 0}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Follow / Unfollow button — pinned right */}
+          <div className="shrink-0">
+            {!user.isSelf && typeof onToggleFollow === "function" && (
+              <button
+                type="button"
+                onClick={handleFollowClick}
+                className={`
+                  px-4 py-1.5 rounded-xl text-xs font-bold transition-all active:scale-95
+                  ${user.isFollowing
+                    ? "border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-red-400 hover:text-red-500 dark:hover:text-red-400"
+                    : "bg-[rgb(var(--primary))] text-white hover:opacity-90"
+                  }
+                `}
+              >
+                {user.isFollowing ? "Unfollow" : "Follow"}
+              </button>
+            )}
+            {user.isSelf && (
+              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">You</span>
+            )}
           </div>
         </>
       )}

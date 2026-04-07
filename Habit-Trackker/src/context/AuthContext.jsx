@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
 import { AuthContext } from "./auth-context";
+import idbStorage from "../utils/idbStorage";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -12,10 +13,17 @@ export function AuthProvider({ children }) {
     let mounted = true;
     const token = localStorage.getItem("token");
 
+    // Hydrate user from IndexedDB cache immediately
+    idbStorage.getItem("cached-user").then((cached) => {
+      if (mounted && cached && token) {
+        setUser(cached);
+        setLoading(false);
+      }
+    });
+
     if (!token) {
-      return () => {
-        mounted = false;
-      };
+      setLoading(false);
+      return () => { mounted = false; };
     }
 
     api
@@ -23,12 +31,18 @@ export function AuthProvider({ children }) {
       .then((res) => {
         if (mounted) {
           setUser(res.data);
+          idbStorage.setItem("cached-user", res.data);
         }
       })
-      .catch(() => {
-        localStorage.removeItem("token");
-        if (mounted) {
-          setUser(null);
+      .catch((err) => {
+        // Only logout if the server says the token is invalid (401)
+        // This prevents logging out when the internet is just down.
+        if (err.response?.status === 401) {
+          localStorage.removeItem("token");
+          idbStorage.removeItem("cached-user");
+          if (mounted) {
+            setUser(null);
+          }
         }
       })
       .finally(() => {
@@ -44,6 +58,7 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     localStorage.removeItem("token");
+    idbStorage.removeItem("cached-user");
     setUser(null);
   };
 

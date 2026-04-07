@@ -43,7 +43,7 @@ export default function Sidebar() {
       {/* DESKTOP SIDEBAR - FLUSH ELITE RAIL */}
       <aside className="
         hidden md:fixed md:top-0 md:left-0 md:flex md:flex-col
-        h-screen w-[60px] shrink-0 z-50
+        md:h-screen w-[60px] shrink-0 z-20
         bg-slate-900 dark:bg-black
         px-2 py-6
         transition-colors
@@ -83,7 +83,7 @@ export default function Sidebar() {
               flex h-10 w-10 items-center justify-center overflow-hidden rounded-2xl transition mx-auto
               ${
                 isActive(`/u/${user?.username}`)
-                  ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400 ring-2 ring-indigo-500/20"
+                  ? "bg-[rgba(var(--primary),0.1)] text-[rgb(var(--primary))] ring-2 ring-[rgba(var(--primary),0.2)]"
                   : "bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-900 dark:hover:bg-zinc-800"
               }
             `}
@@ -111,7 +111,7 @@ export default function Sidebar() {
 
       {/* MOBILE BOTTOM NAV */}
       <nav className="
-        fixed inset-x-0 bottom-0 z-40 md:hidden
+        fixed inset-x-0 bottom-2 z-40 md:hidden
         bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl
         border-t border-zinc-100 dark:border-zinc-900/50
         px-4 py-3
@@ -122,7 +122,7 @@ export default function Sidebar() {
           
           <button
             onClick={() => setOpen(true)}
-            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white shadow-xl shadow-indigo-600/30 transition hover:bg-indigo-700 active:scale-95 -translate-y-4"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[rgb(var(--primary))] text-white shadow-xl shadow-[rgba(var(--primary),0.3)] transition hover:opacity-90 active:scale-95 -translate-y-4"
           >
             <Plus size={20} strokeWidth={3} />
           </button>
@@ -134,7 +134,7 @@ export default function Sidebar() {
             className={`
               flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl transition
               ${isActive(`/u/${user?.username}`)
-                ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400"
+                ? "bg-[rgba(var(--primary),0.1)] text-[rgb(var(--primary))]"
                 : "text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
               }
             `}
@@ -142,7 +142,7 @@ export default function Sidebar() {
             {user?.avatar ? (
               <img src={user.avatar} alt="P" className="h-6 w-6 rounded-full object-cover" />
             ) : (
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white uppercase">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[rgb(var(--primary))] text-[10px] font-bold text-white uppercase">
                 {initials}
               </div>
             )}
@@ -163,7 +163,7 @@ function MobileNavButton({ icon, onClick, active }) {
       className={`
         flex h-12 w-12 items-center justify-center rounded-2xl transition
         ${active
-          ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400"
+          ? "bg-[rgba(var(--primary),0.1)] text-[rgb(var(--primary))]"
           : "text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
         }
       `}

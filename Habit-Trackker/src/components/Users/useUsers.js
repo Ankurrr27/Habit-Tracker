@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import api from "../../api/axios";
+import { useAuth } from "../../context/useAuth";
 
 export function useUsers() {
+  const { user: currentUser, setUser } = useAuth();
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -46,6 +48,16 @@ export function useUsers() {
             : user
         )
       );
+
+      // Update the current user's following count in AuthContext
+      if (currentUser) {
+        setUser((prev) => ({
+          ...prev,
+          followingCount: isFollowing 
+            ? (prev.followingCount || 0) + 1 
+            : Math.max(0, (prev.followingCount || 0) - 1),
+        }));
+      }
     } catch (err) {
       console.error("Toggle follow failed", err);
     }

@@ -1,13 +1,12 @@
 import { useState, useEffect, useMemo } from "react";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import api from "../../api/axios";
 import { startOfAppDay, addAppDays } from "../../utils/date";
-import { toDateKey, getDayKey } from "../HabitHeatmap/heatmap.utils";
+import { toDateKey } from "../HabitHeatmap/heatmap.utils";
 import { motion as Motion } from "framer-motion";
-import { useSync } from "../../context/SyncContext";
+import { useDashboard } from "../../context/DashboardContext";
 
 export default function ProgressChart() {
-  const { syncVersion } = useSync();
+  const { habits, logs, loading, getDailyIntensity } = useDashboard();
   const [data, setData] = useState([]);
   const [initialLoading, setInitialLoading] = useState(true);
 
@@ -18,52 +17,23 @@ export default function ProgressChart() {
   }, [today]);
 
   useEffect(() => {
-    const startDate = toDateKey(new Date(today.getTime() - 29 * 24 * 60 * 60 * 1000));
-    let isCancelled = false;
+    if (loading) return;
 
-    api.get("/activity/range", { params: { startDate } }).then((res) => {
-      if (!isCancelled) {
-        const habits = res.data.habits || [];
-        const logs = res.data.logs || {};
-
-        const chartData = daysArr.map((dateObj) => {
-          const dateKey = toDateKey(dateObj);
-          
-          let scheduled = 0;
-          let completed = 0;
-
-          habits.forEach((habit) => {
-            const isScheduled =
-              habit.frequency === "daily" ||
-              (habit.frequency === "weekly" && habit.days?.includes(getDayKey(new Date(dateKey))));
-
-            if (!isScheduled) return;
-
-            scheduled += 1;
-            if (logs[`${habit._id}_${dateKey}`]?.done) {
-              completed += 1;
-            }
-          });
-
-          const intensity = scheduled === 0 ? 0 : Math.round((completed / scheduled) * 100);
-          
-          return {
-            date: dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-            progress: intensity,
-          };
-        });
-
-        setData(chartData);
-        setInitialLoading(false);
-      }
+    const chartData = daysArr.map((dateObj) => {
+      const dateKey = toDateKey(dateObj);
+      const intensity = getDailyIntensity(dateKey);
+      
+      return {
+        date: dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+        progress: Math.round(intensity),
+      };
     });
 
-    return () => {
-      isCancelled = true;
-    };
-  }, [today, daysArr, syncVersion]);
+    setData(chartData);
+    setInitialLoading(false);
+  }, [loading, daysArr, getDailyIntensity]);
 
-  if (initialLoading) {
+  if (initialLoading || loading) {
     return (
       <div className="w-full h-full p-8 animate-pulse">
         <div className="flex items-center justify-between mb-8 pb-4">

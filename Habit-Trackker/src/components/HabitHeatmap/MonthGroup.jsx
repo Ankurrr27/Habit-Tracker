@@ -6,6 +6,7 @@ export const MonthGroup = ({
   getDailyIntensity,
   toDateKey,
   getIntensityColor,
+  accentColor,
 }) => {
   return (
     <div className="flex flex-col gap-2">
@@ -35,7 +36,8 @@ export const MonthGroup = ({
               dateKey={dateKey}
               intensity={intensity}
               isToday={dateKey === todayKey}
-              colorClass={getIntensityColor(intensity)}
+              colorClass={getIntensityColor(intensity, accentColor)}
+              accentColor={accentColor} 
             />
           );
         })}

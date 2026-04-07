@@ -27,19 +27,19 @@ const Dashboard = () => {
     syncPlatforms();
     const intervalId = setInterval(syncPlatforms, 5 * 60 * 1000);
     return () => clearInterval(intervalId);
-  }, []);
+  }, [triggerSync]);
 
   return (
-    <div className="flex flex-col lg:flex-row w-full h-auto lg:h-full lg:overflow-hidden bg-transparent">
+    <div className="flex flex-col lg:flex-row w-full h-auto lg:h-full min-h-0 lg:overflow-hidden bg-transparent">
       {/* LEFT: Habits + Tasks */}
       <aside className="lg:shrink-0 h-auto lg:h-full w-full lg:w-[350px] border-r border-zinc-100 dark:border-zinc-900/50 flex flex-col lg:overflow-hidden">
         {/* TAB HEADER */}
-        <div className="flex bg-zinc-50/50 dark:bg-zinc-900/30 border-b border-zinc-100 dark:border-zinc-900/50 shrink-0">
+        <div className="flex border-b border-zinc-100 dark:border-zinc-900/50 shrink-0">
           <button
             onClick={() => setActiveTab("habits")}
             className={`flex-1 px-4 py-4 text-[10px] font-semibold uppercase tracking-[0.2em] transition-all
               ${activeTab === "habits"
-                ? "text-indigo-600 dark:text-indigo-400 bg-white dark:bg-zinc-950 font-bold border-b-2 border-indigo-600 dark:border-indigo-400"
+                ? "text-indigo-600 dark:text-indigo-400 font-bold border-b-2 border-indigo-600 dark:border-indigo-400"
                 : "text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
               }`}
           >
@@ -47,13 +47,13 @@ const Dashboard = () => {
           </button>
           <button
             onClick={() => setActiveTab("goals")}
-            className={`flex-1 px-4 py-4 text-[10px] font-semibold uppercase tracking-[0.2em] transition-all hidden lg:block
+            className={`flex-1 px-4 py-4 text-[10px] font-semibold uppercase tracking-[0.2em] transition-all
               ${activeTab === "goals"
-                ? "text-indigo-600 dark:text-indigo-400 bg-white dark:bg-zinc-950 font-bold border-b-2 border-indigo-600 dark:border-indigo-400"
+                ? "text-indigo-600 dark:text-indigo-400 font-bold border-b-2 border-indigo-600 dark:border-indigo-400"
                 : "text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
               }`}
           >
-            Efficiency
+            Tasks
           </button>
         </div>
 
@@ -68,7 +68,7 @@ const Dashboard = () => {
                 exit={{ opacity: 0, x: 10 }}
                 transition={{ duration: 0.2 }}
               >
-                <HabitByDay key={`habits-${syncVersion}`} />
+                <HabitByDay />
               </Motion.div>
             ) : (
               <Motion.div
@@ -79,7 +79,7 @@ const Dashboard = () => {
                 transition={{ duration: 0.2 }}
                 className="space-y-8"
               >
-                <DailyTasks key={`tasks-${syncVersion}`} />
+                <DailyTasks />
               </Motion.div>
             )}
           </AnimatePresence>
@@ -87,16 +87,15 @@ const Dashboard = () => {
       </aside>
 
       {/* RIGHT: Visual Analytics */}
-      <main className="flex-1 w-full h-auto lg:h-full lg:overflow-y-auto p-4 lg:py-12 lg:px-6">
-        <div className="max-w-5xl lg:space-y-12 space-y-6">
-          {/* key=syncVersion forces full remount on every sync — guaranteed fresh data */}
+      <main className="flex-1 w-full h-auto lg:h-full lg:overflow-y-auto p-4 lg:py-12 lg:px-10">
+        <div className="max-w-5xl lg:space-y-12 space-y-8">
           <div className="hidden lg:block">
-            <RollingHabitGrid key={`grid-${syncVersion}`} />
+            <RollingHabitGrid />
           </div>
           <div className="border-t border-zinc-100 dark:border-zinc-800/50" />
-          <ProgressChart key={`chart-${syncVersion}`} />
+          <ProgressChart />
           <div className="border-t border-zinc-100 dark:border-zinc-800/50" />
-          <HabitHeatmap key={`heatmap-${syncVersion}`} />
+          <HabitHeatmap />
         </div>
       </main>
     </div>

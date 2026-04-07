@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HabTrack Extension Settings</title>
+    <link rel="stylesheet" href="./popup.css" />
+  </head>
+  <body>
+    <main class="popup-shell" style="max-width: 680px; margin: 0 auto; width: auto;">
+      <section class="hero">
+        <div class="hero-brand">
+          <img src="./habtrack-logo.svg" alt="HabTrack logo" class="hero-logo" />
+          <div>
+          <p class="eyebrow">Extension settings</p>
+          <h1>Choose which HabTrack API the extension should use.</h1>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>API connection</h2>
+          <p>Use the production API by default or point the extension at a local backend while developing.</p>
+        </div>
+
+        <form id="settingsForm" class="form-stack">
+          <label>
+            <span>API base URL</span>
+            <input id="apiBase" type="url" placeholder="https://habit-tracker-ixsb.onrender.com" />
+          </label>
+
+          <label>
+            <span>Access token (for your daily tasks)</span>
+            <input id="authToken" type="password" placeholder="Paste token from HabTrack Extension page" />
+          </label>
+
+          <button class="primary-button" type="submit">Save settings</button>
+        </form>
+      </section>
+
+      <div id="settingsStatus" class="status-message hidden" role="status" aria-live="polite"></div>
+    </main>
+
+    <script src="./options.js"></script>
+  </body>
+</html>

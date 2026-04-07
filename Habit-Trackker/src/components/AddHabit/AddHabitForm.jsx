@@ -1,5 +1,6 @@
 import { DAYS } from "../../constants/days";
 import { PLATFORM_OPTIONS } from "./addHabit.utils";
+import { useAuth } from "../../context/useAuth";
 
 export default function AddHabitForm({ state, actions }) {
   const {
@@ -29,12 +30,51 @@ export default function AddHabitForm({ state, actions }) {
     submit,
   } = actions;
 
+  const { user } = useAuth();
+  const accentColor = user?.accentColor || "indigo";
+
+  const accentBgMap = {
+    indigo: "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/20",
+    pink: "bg-pink-600 hover:bg-pink-700 shadow-pink-500/20",
+    rose: "bg-rose-500 hover:bg-rose-600 shadow-rose-500/20",
+    sky: "bg-sky-500 hover:bg-sky-600 shadow-sky-500/20",
+    emerald: "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/20",
+    cyan: "bg-cyan-600 hover:bg-cyan-700 shadow-cyan-500/20",
+    orange: "bg-orange-600 hover:bg-orange-700 shadow-orange-500/20",
+    violet: "bg-violet-600 hover:bg-violet-700 shadow-violet-500/20",
+  };
+
+  const accentRingMap = {
+    indigo: "focus:ring-indigo-500/20 focus:border-indigo-500/50",
+    pink: "focus:ring-pink-500/20 focus:border-pink-500/50",
+    rose: "focus:ring-rose-500/20 focus:border-rose-500/50",
+    sky: "focus:ring-sky-500/20 focus:border-sky-500/50",
+    emerald: "focus:ring-emerald-500/20 focus:border-emerald-500/50",
+    cyan: "focus:ring-cyan-500/20 focus:border-cyan-500/50",
+    orange: "focus:ring-orange-500/20 focus:border-orange-500/50",
+    violet: "focus:ring-violet-500/20 focus:border-violet-500/50",
+  };
+
+  const dayActiveMap = {
+    indigo: "bg-indigo-600 border-indigo-600",
+    pink: "bg-pink-600 border-pink-600",
+    rose: "bg-rose-500 border-rose-500",
+    sky: "bg-sky-500 border-sky-500",
+    emerald: "bg-emerald-600 border-emerald-600",
+    cyan: "bg-cyan-600 border-cyan-600",
+    orange: "bg-orange-600 border-orange-600",
+    violet: "bg-violet-600 border-violet-600",
+  };
+
   const inputBase = `
-    w-full p-2 rounded-md
-    bg-white dark:bg-zinc-900
+    w-full px-5 py-3 rounded-2xl
+    bg-zinc-100/50 dark:bg-zinc-900/50
     text-zinc-900 dark:text-zinc-100
-    border border-zinc-300 dark:border-zinc-700
-    focus:outline-none focus:ring-2 focus:ring-indigo-500/40
+    border border-transparent
+    transition-all duration-200
+    placeholder:text-zinc-500
+    focus:outline-none focus:ring-4
+    ${accentRingMap[accentColor]}
     disabled:opacity-60
   `;
 
@@ -111,11 +151,11 @@ export default function AddHabitForm({ state, actions }) {
                 type="button"
                 onClick={() => toggleDay(day)}
                 className={`
-                  px-3 py-1 rounded-md text-sm border transition
+                  px-3 py-2 rounded-xl text-[10px] font-black tracking-widest border transition-all duration-300
                   ${
                     active
-                      ? "bg-indigo-600 border-indigo-600 text-white"
-                      : "bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-indigo-50 dark:hover:bg-zinc-800"
+                      ? `${dayActiveMap[accentColor]} text-white border-transparent shadow-md`
+                      : "bg-zinc-100 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800"
                   }
                 `}
               >
@@ -168,18 +208,19 @@ export default function AddHabitForm({ state, actions }) {
         </p>
       )}
 
-      <div className="flex justify-end">
+      <div className="flex justify-end pt-4">
         <button
           onClick={submit}
           disabled={loading}
-          className="
-            px-4 py-2 rounded-md
-            bg-indigo-600 text-white
-            hover:bg-indigo-700
+          className={`
+            px-8 py-3 rounded-2xl
+            text-white font-black uppercase tracking-widest text-[11px]
+            transition-all duration-300 shadow-lg
             disabled:opacity-60
-          "
+            ${accentBgMap[accentColor]}
+          `}
         >
-          {loading ? "Saving..." : "Save"}
+          {loading ? "Saving..." : "Save Habit"}
         </button>
       </div>
     </>

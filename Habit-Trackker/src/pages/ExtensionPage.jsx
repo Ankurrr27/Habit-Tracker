@@ -110,14 +110,14 @@ export default function ExtensionPage() {
         {/* RIGHT: Tabbed detail */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Tab header */}
-          <div className="flex bg-zinc-50/50 dark:bg-zinc-900/30 border-b border-zinc-100 dark:border-zinc-900/50 shrink-0">
+          <div className="flex border-b border-zinc-100 dark:border-zinc-900/50 shrink-0">
             {TABS.map(t => (
               <button
                 key={t.id}
                 onClick={() => setActiveTab(t.id)}
                 className={`flex-1 px-4 py-4 text-[10px] font-semibold uppercase tracking-[0.2em] transition-all
                   ${activeTab === t.id
-                    ? "text-indigo-600 dark:text-indigo-400 bg-white dark:bg-zinc-950 font-bold border-b-2 border-indigo-600 dark:border-indigo-400"
+                    ? "text-indigo-600 dark:text-indigo-400 font-bold border-b-2 border-indigo-600 dark:border-indigo-400"
                     : "text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
                   }`}
               >

@@ -93,6 +93,11 @@ const userSchema = new mongoose.Schema(
     },
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    lastPlatformSync: { type: Date, default: null },
+    bio: { type: String, maxLength: 160, default: "" },
+    tagline: { type: String, maxLength: 50, default: "" },
+    location: { type: String, maxLength: 32, default: "" },
+    accentColor: { type: String, default: "indigo" }, // Choices: indigo, pink, emerald, cyan, orange, violet
   },
   {
     timestamps: true,

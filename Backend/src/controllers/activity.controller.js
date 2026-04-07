@@ -152,7 +152,8 @@ export const getActivityRange = async (req, res) => {
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
 
-    await syncAutoVerifiedHabitsForDate(userId, today);
+    // Syncing is now handled via cooldown or dedicated sync endpoint to keep fetches instant
+    // await syncAutoVerifiedHabitsForDate(userId, today);
 
     const habits = await Habit.find({ user: userId }).lean();
     const logs = await ActivityLog.find({
@@ -215,6 +216,21 @@ export const completeHabitToday = async (req, res) => {
       message: "Habit completed",
       log,
     });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const syncActivity = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+
+    // This sync follows the 5-minute cooldown implemented in the service
+    await syncAutoVerifiedHabitsForDate(userId, today);
+    
+    res.json({ message: "Sync complete" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

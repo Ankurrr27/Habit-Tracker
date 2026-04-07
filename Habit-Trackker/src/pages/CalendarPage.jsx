@@ -126,26 +126,26 @@ export default function CalendarPage() {
                   )}
                   
                   <div className="text-center w-8 shrink-0">
-                    <p className={`text-[10px] font-bold uppercase tracking-widest ${isSelected ? "text-indigo-600 dark:text-indigo-400" : "text-zinc-400"}`}>
+                    <p className={`text-[10px] font-bold uppercase tracking-widest ${isSelected ? "text-indigo-600 dark:text-indigo-400" : "text-zinc-500 dark:text-zinc-400"}`}>
                       {date.toLocaleDateString(undefined, { weekday: "short" })}
                     </p>
-                    <p className={`text-2xl font-extrabold tracking-tight leading-none mt-1 ${isSelected ? "text-zinc-900 dark:text-white" : "text-zinc-700 dark:text-zinc-400"}`}>
+                    <p className={`text-2xl font-extrabold tracking-tight leading-none mt-1 ${isSelected ? "text-zinc-900 dark:text-white" : "text-zinc-800 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white"}`}>
                       {date.getDate()}
                     </p>
                   </div>
 
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-center mb-1.5">
-                      <span className={`text-[10px] font-semibold ${isSelected ? "text-zinc-900 dark:text-zinc-100" : "text-zinc-400"}`}>
+                      <span className={`text-[10px] font-bold ${isSelected ? "text-zinc-900 dark:text-zinc-100" : "text-zinc-500 dark:text-zinc-400"}`}>
                         {count.completed}/{count.total} Completion
                       </span>
                       {isToday && !isSelected && <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 animate-pulse" />}
                     </div>
-                    <div className="h-1.5 w-full rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+                    <div className="h-1.5 w-full rounded-full bg-zinc-200 dark:bg-zinc-800/80 overflow-hidden">
                       <Motion.div 
                         initial={{ width: 0 }}
                         animate={{ width: `${pct}%` }}
-                        className={`h-full rounded-full transition-all ${isSelected ? "bg-indigo-600 dark:bg-indigo-500" : "bg-zinc-300 dark:bg-zinc-600"}`} 
+                        className={`h-full rounded-full transition-all ${isSelected ? "bg-indigo-600 dark:bg-indigo-500" : "bg-zinc-400 dark:bg-zinc-600"}`} 
                       />
                     </div>
                   </div>
@@ -217,7 +217,7 @@ export default function CalendarPage() {
                           {habit.frequency}
                         </span>
                         <div className="h-1 w-1 rounded-full bg-zinc-200 dark:border-zinc-800" />
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Habit</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Habit</span>
                       </div>
                     </div>
                   </Motion.div>

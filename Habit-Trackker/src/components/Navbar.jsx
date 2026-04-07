@@ -27,7 +27,11 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-30 bg-zinc-50/90 dark:bg-[#080f26]/90 backdrop-blur-xl border-b border-zinc-200/60 dark:border-indigo-900/30">
+    <nav
+      className={`sticky top-0 z-30 bg-zinc-50/90 dark:bg-[#080f26]/90 backdrop-blur-xl border-b border-zinc-200/60 dark:border-indigo-900/30 ${
+        user ? "md:ml-[60px] md:w-[calc(100%-60px)]" : ""
+      }`}
+    >
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-3.5">
         {/* Brand Gap if needed (was removed) */}
         <div></div>
@@ -44,7 +48,7 @@ export default function Navbar() {
           )}
 
           <div className="mr-2 md:inline-flex">
-            <SyncStatus isOnline={isOnline} isSyncing={isSyncing} />
+            <SyncStatus isOnline={isOnline} isSyncing={isSyncing} user={user} />
           </div>
 
           <ThemeToggle />
@@ -112,10 +116,34 @@ export default function Navbar() {
   );
 }
 
-function SyncStatus({ isOnline, isSyncing }) {
+function SyncStatus({ isOnline, isSyncing, user }) {
+  const accentColor = user?.accentColor || "indigo";
+
+  const accentTextMap = {
+    indigo: "text-indigo-500 dark:text-indigo-400",
+    pink: "text-pink-500 dark:text-pink-400",
+    rose: "text-rose-500 dark:text-rose-400",
+    sky: "text-sky-500 dark:text-sky-400",
+    cyan: "text-cyan-500 dark:text-cyan-400",
+    emerald: "text-emerald-500 dark:text-emerald-400",
+    orange: "text-orange-500 dark:text-orange-400",
+    violet: "text-violet-500 dark:text-violet-400",
+  };
+
+  const accentBgMap = {
+    indigo: "bg-indigo-50/50 dark:bg-indigo-500/10",
+    pink: "bg-pink-50/50 dark:bg-pink-500/10",
+    rose: "bg-rose-50/50 dark:bg-rose-500/10",
+    sky: "bg-sky-50/50 dark:bg-sky-500/10",
+    cyan: "bg-cyan-50/50 dark:bg-cyan-500/10",
+    emerald: "bg-emerald-50/50 dark:bg-emerald-500/10",
+    orange: "bg-orange-50/50 dark:bg-orange-500/10",
+    violet: "bg-violet-50/50 dark:bg-violet-500/10",
+  };
+
   if (isSyncing) {
     return (
-      <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-indigo-500 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-500/10">
+      <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg ${accentTextMap[accentColor]} ${accentBgMap[accentColor]}`}>
         <RefreshCw size={12} className="animate-spin" />
         <span className="text-[10px] font-bold uppercase tracking-wider hidden sm:inline">Syncing</span>
       </div>
@@ -132,7 +160,7 @@ function SyncStatus({ isOnline, isSyncing }) {
   }
 
   return (
-    <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors">
+    <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg ${accentTextMap[accentColor]} transition-colors opacity-60 hover:opacity-100`}>
       <Cloud size={12} />
       <span className="text-[10px] font-bold uppercase tracking-wider hidden sm:inline">Synced</span>
     </div>

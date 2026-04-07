@@ -1,7 +1,7 @@
 import { motion as Motion } from "framer-motion";
 import { toDateKey } from "../../utils/date";
 import { addAppDays, startOfAppDay } from "../../utils/date";
-import { useWeeklyHabits } from "./useMonthlyHabits";
+import { useDashboard } from "../../context/DashboardContext";
 import RollingHabitGridLayout from "./RollingHabitGridLayout";
 
 const getRollingDays = (center = new Date()) => {
@@ -30,7 +30,7 @@ export default function RollingHabitGrid() {
   const today = startOfAppDay(new Date());
 
   const { days, rangeKey, todayKey } = getRollingDays(today);
-  const { habits, logs, loading, toggleHabit } = useWeeklyHabits(rangeKey);
+  const { habits, logs, loading, toggleHabit } = useDashboard();
 
   if (loading) {
     return (

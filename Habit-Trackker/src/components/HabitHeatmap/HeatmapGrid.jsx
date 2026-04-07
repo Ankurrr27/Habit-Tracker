@@ -1,8 +1,11 @@
 import { useMemo } from "react";
 import { toDateKey, getIntensityColor } from "./heatmap.utils";
 import { MonthGroup } from "./MonthGroup";
+import { useAuth } from "../../context/useAuth";
 
 export default function HeatmapGrid({ days, today, getDailyIntensity }) {
+  const { user } = useAuth();
+  const accentColor = user?.accentColor || "indigo";
   const todayKey = toDateKey(today);
 
   // Group days into months with start-of-week offsets
@@ -54,6 +57,7 @@ export default function HeatmapGrid({ days, today, getDailyIntensity }) {
             getDailyIntensity={getDailyIntensity}
             toDateKey={toDateKey}
             getIntensityColor={getIntensityColor}
+            accentColor={accentColor}
           />
         ))}
       </div>

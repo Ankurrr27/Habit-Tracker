@@ -1,5 +1,7 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
+import { OfflineSyncManager } from "./components/OfflineSyncManager";
+import { useAuth } from "./context/useAuth";
 
 /* PAGES */
 import Login from "./pages/LoginPage";
@@ -33,6 +35,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <OfflineSyncManager />
       <Routes>
         {/* 🔓 PUBLIC ROUTES */}
         <Route element={<PublicRoute />}>
@@ -72,7 +75,16 @@ export default function App() {
             </Route>
           </Route>
         </Route>
+
+        {/* Compatibility + fallback */}
+        <Route path="/home" element={<RouteFallback />} />
+        <Route path="*" element={<RouteFallback />} />
       </Routes>
     </BrowserRouter>
   );
+}
+
+function RouteFallback() {
+  const { user } = useAuth();
+  return <Navigate to={user ? "/dashboard" : "/"} replace />;
 }

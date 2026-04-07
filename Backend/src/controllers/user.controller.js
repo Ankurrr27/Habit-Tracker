@@ -1,6 +1,53 @@
 import User from "../models/user.model.js";
 import cloudinary from "../config/cloudinary.js";
 import FriendRequest from "../models/friendRequest.model.js";
+import ActivityLog from "../models/activityLog.model.js";
+import Habit from "../models/habit.model.js";
+import { getUTCStartOfDay, getAppDateKey } from "../utils/date.js";
+
+export const calculateUserStats = async (userId) => {
+  const [totalTicks, activeDaysList, habits] = await Promise.all([
+    ActivityLog.countDocuments({ user: userId, status: "done" }),
+    ActivityLog.distinct("date", { user: userId, status: "done" }),
+    Habit.find({ user: userId }),
+  ]);
+
+  const activeDays = activeDaysList.length;
+
+  // Calculate global current streak (max of all habits)
+  // We'll use a simplified version: how many consecutive days did they check-in at least ONE habit?
+  // Or better, let's keep it simple for now: totalTicks / (total habits * days since join or similar)
+  // Let's actually calculate the "Days since join" streak for simplicity and "hardcore" feel.
+  
+  const logs = await ActivityLog.find({ user: userId, status: "done" }).sort({ date: -1 });
+  const logDates = new Set(logs.map(l => getAppDateKey(l.date)));
+  
+  let currentStreak = 0;
+  let cursor = getUTCStartOfDay(new Date());
+  
+  // If no check-in today, check if they checked in yesterday to keep streak alive
+  if (!logDates.has(getAppDateKey(cursor))) {
+    cursor.setUTCDate(cursor.getUTCDate() - 1);
+  }
+
+  while (logDates.has(getAppDateKey(cursor))) {
+    currentStreak++;
+    cursor.setUTCDate(cursor.getUTCDate() - 1);
+  }
+
+  // Completion Rate: Ticks / (Active Days * avg habits per day?)
+  // Let's use a simpler heuristic: Ticks vs Days since Joined.
+  const user = await User.findById(userId, "createdAt");
+  const daysSinceJoined = Math.max(1, Math.ceil((new Date() - new Date(user.createdAt)) / (1000 * 60 * 60 * 24)));
+  const completionRate = Math.min(100, Math.round((activeDays / daysSinceJoined) * 100));
+
+  return {
+    totalTicks,
+    activeDays,
+    currentStreak,
+    completionRate: `${completionRate}%`,
+  };
+};
 
 const emptyExternalProfiles = () => ({
   github: "",
@@ -39,6 +86,8 @@ export const getUserByUsername = async (req, res) => {
       return res.status(404).json({ message: "Profile not found" });
     }
 
+    const stats = await calculateUserStats(user._id);
+
     res.json({
       id: user.id,
       name: user.name,
@@ -48,6 +97,11 @@ export const getUserByUsername = async (req, res) => {
       profilePublic: user.profilePublic,
       credibilityScore: user.credibilityScore,
       createdAt: user.createdAt,
+      bio: user.bio,
+      tagline: user.tagline,
+      location: user.location,
+      accentColor: user.accentColor,
+      stats,
       externalProfiles: isOwner
         ? user.externalProfiles || emptyExternalProfiles()
         : undefined,
@@ -65,6 +119,8 @@ export const getPublicUserByUsername = async (req, res) => {
       return res.status(404).json({ message: "Public profile not found" });
     }
 
+    const stats = await calculateUserStats(user._id);
+
     res.json({
       id: user._id,
       name: user.name,
@@ -73,6 +129,11 @@ export const getPublicUserByUsername = async (req, res) => {
       profilePublic: true,
       credibilityScore: user.credibilityScore,
       createdAt: user.createdAt,
+      bio: user.bio,
+      tagline: user.tagline,
+      location: user.location,
+      accentColor: user.accentColor,
+      stats,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -184,6 +245,11 @@ export const updateProfile = async (req, res) => {
       user.avatar = upload.secure_url;
     }
 
+    if (req.body.bio !== undefined) user.bio = String(req.body.bio).slice(0, 160);
+    if (req.body.tagline !== undefined) user.tagline = String(req.body.tagline).slice(0, 50);
+    if (req.body.location !== undefined) user.location = String(req.body.location).slice(0, 32);
+    if (req.body.accentColor !== undefined) user.accentColor = String(req.body.accentColor);
+
     await user.save();
 
     res.json({
@@ -195,6 +261,10 @@ export const updateProfile = async (req, res) => {
         email: user.email,
         avatar: user.avatar,
         profilePublic: user.profilePublic,
+        bio: user.bio,
+        tagline: user.tagline,
+        location: user.location,
+        accentColor: user.accentColor,
         externalProfiles: user.externalProfiles || emptyExternalProfiles(),
       },
     });

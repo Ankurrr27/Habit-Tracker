@@ -53,19 +53,25 @@ app.use(express.json());
 /* =====================
    ROUTES
 ===================== */
-app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
-app.use("/habits", habitRoutes);
-app.use("/activity", activityRoutes);
-app.use("/stats", statsRoutes);
-app.use("/streak", streakRoutes);
-app.use("/heatmap", heatmapRoutes);
-app.use("/proof", proofRoutes);
-app.use("/teams", teamRoutes);
-app.use("/team-invites", teamInviteRoutes);
-app.use("/views", viewsRoutes);
-app.use("/projects", projectRoutes);
-app.use("/tasks", taskRoutes);
+const mountApiRoutes = (prefix = "") => {
+  app.use(`${prefix}/auth`, authRoutes);
+  app.use(`${prefix}/users`, userRoutes);
+  app.use(`${prefix}/habits`, habitRoutes);
+  app.use(`${prefix}/activity`, activityRoutes);
+  app.use(`${prefix}/stats`, statsRoutes);
+  app.use(`${prefix}/streak`, streakRoutes);
+  app.use(`${prefix}/heatmap`, heatmapRoutes);
+  app.use(`${prefix}/proof`, proofRoutes);
+  app.use(`${prefix}/teams`, teamRoutes);
+  app.use(`${prefix}/team-invites`, teamInviteRoutes);
+  app.use(`${prefix}/views`, viewsRoutes);
+  app.use(`${prefix}/projects`, projectRoutes);
+  app.use(`${prefix}/tasks`, taskRoutes);
+};
+
+// Support both "/route" and "/api/route" to prevent env/baseURL mismatches.
+mountApiRoutes();
+mountApiRoutes("/api");
 
 
 app.get("/", (req, res) => {

@@ -1,7 +1,9 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
+import Habit from "../models/habit.model.js";
 import cloudinary from "../config/cloudinary.js";
 import { generateToken } from "../utils/jwt.js";
+import { calculateUserStats } from "./user.controller.js";
 
 export const register = async (req, res) => {
   try {
@@ -101,7 +103,16 @@ export const login = async (req, res) => {
 };
 
 export const me = async (req, res) => {
-  const user = await User.findById(req.user.id);
+  const [user, habitsCount] = await Promise.all([
+    User.findById(req.user.id),
+    Habit.countDocuments({ user: req.user.id })
+  ]);
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  const stats = await calculateUserStats(user._id);
 
   res.json({
     id: user.id,
@@ -109,8 +120,16 @@ export const me = async (req, res) => {
     username: user.username,
     email: user.email,
     avatar: user.avatar,
+    bio: user.bio || "",
+    tagline: user.tagline || "",
+    location: user.location || "",
+    accentColor: user.accentColor || "indigo",
     profilePublic: user.profilePublic,
     credibilityScore: user.credibilityScore,
+    followersCount: user.followers?.length || 0,
+    followingCount: user.following?.length || 0,
+    habitsCount,
+    stats,
     externalProfiles: user.externalProfiles,
   });
 };

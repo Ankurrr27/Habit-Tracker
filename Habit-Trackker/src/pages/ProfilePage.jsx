@@ -12,8 +12,12 @@ import {
   Sparkles,
   UserRound,
   ArrowRight,
+  MapPin,
+  Quote,
+  Pencil,
   X,
   Check,
+  Palette,
 } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
@@ -52,6 +56,10 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [msg, setMsg] = useState("");
+  const [bio, setBio] = useState("");
+  const [tagline, setTagline] = useState("");
+  const [location, setLocation] = useState("");
+  const [accentColor, setAccentColor] = useState("indigo");
   const [activeTab, setActiveTab] = useState("stats");
   const [cropSrc, setCropSrc] = useState(null); // raw image URL for crop modal
   const cropCanvasRef = useRef(null);
@@ -68,6 +76,10 @@ export default function ProfilePage() {
         const nextUser = res.data;
         setUser(nextUser);
         setName(nextUser.name || "");
+        setBio(nextUser.bio || "");
+        setTagline(nextUser.tagline || "");
+        setLocation(nextUser.location || "");
+        setAccentColor(nextUser.accentColor || "indigo");
         setProfilePublic(Boolean(nextUser.profilePublic));
         setExternalProfiles(nextUser.externalProfiles || emptyExternalProfiles);
       })
@@ -113,11 +125,8 @@ export default function ProfilePage() {
   }, [user?.createdAt]);
 
   const completionRate = useMemo(() => {
-    const completed = Number(user?.completedCount || 0);
-    const activeDays = Number(user?.activeDays || 0);
-    if (!activeDays) return "0%";
-    return `${Math.min(100, Math.round((completed / activeDays) * 100))}%`;
-  }, [user?.activeDays, user?.completedCount]);
+    return user?.stats?.completionRate || "0%";
+  }, [user?.stats?.completionRate]);
 
   const submit = async () => {
     if (!isOwnProfile || saving) return;
@@ -126,10 +135,14 @@ export default function ProfilePage() {
     try {
       let res;
       if (!file) {
-        res = await api.put("/users/profile", { name, profilePublic, externalProfiles });
+        res = await api.put("/users/profile", { name, profilePublic, externalProfiles, bio, tagline, location, accentColor });
       } else {
         const formData = new FormData();
         formData.append("name", name);
+        formData.append("bio", bio);
+        formData.append("tagline", tagline);
+        formData.append("location", location);
+        formData.append("accentColor", accentColor);
         formData.append("profilePublic", String(profilePublic));
         formData.append("externalProfiles", JSON.stringify(externalProfiles));
         formData.append("avatar", file);
@@ -149,8 +162,9 @@ export default function ProfilePage() {
   };
 
   if (loading) return (
-    <div className="h-full flex items-center justify-center">
-      <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-zinc-400 animate-pulse">Loading...</p>
+    <div className="h-full flex flex-col items-center justify-center gap-4">
+      <div className={`h-12 w-12 rounded-2xl border-4 border-${user?.accentColor || 'indigo'}-500/20 border-t-${user?.accentColor || 'indigo'}-500 animate-spin`} />
+      <p className={`text-[11px] font-black uppercase tracking-[0.4em] text-${user?.accentColor || 'indigo'}-500 animate-pulse`}>Initializing Profile...</p>
     </div>
   );
   if (error) return (
@@ -165,7 +179,7 @@ export default function ProfilePage() {
     : [{ id: "stats", label: "Stats" }, { id: "links", label: "Links" }];
 
   return (
-    <div className="flex flex-col lg:flex-row w-full min-h-full lg:h-full lg:overflow-hidden bg-transparent">
+    <div className={`flex flex-col lg:flex-row w-full min-h-full lg:h-full lg:overflow-hidden bg-transparent profile-theme-${user.accentColor || 'indigo'}`}>
 
       {/* LEFT PANEL — Avatar + Identity */}
       <aside className="lg:shrink-0 h-auto lg:h-full w-full lg:w-[300px] border-r border-zinc-100 dark:border-zinc-900/50">
@@ -174,7 +188,7 @@ export default function ProfilePage() {
           {/* Avatar — large stacked */}
           <div className="flex flex-col items-center gap-6 pt-4">
             <div className="relative group">
-              <div className="h-[180px] w-[180px] overflow-hidden rounded-[2.5rem] bg-indigo-600 shadow-2xl shadow-indigo-600/25 transition-all duration-500 group-hover:rounded-[2rem]">
+              <div className={`h-[180px] w-[180px] overflow-hidden rounded-[2.5rem] bg-${user.accentColor || 'indigo'}-600 shadow-2xl shadow-${user.accentColor || 'indigo'}-600/25 transition-all duration-500 group-hover:rounded-[2rem]`}>
                 {preview || user.avatar ? (
                   <img src={preview || user.avatar} alt={user.name} className="h-full w-full object-cover" />
                 ) : (
@@ -185,7 +199,7 @@ export default function ProfilePage() {
               </div>
 
               {isOwnProfile && (
-                <label className="absolute -bottom-2 -right-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-2xl bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-xl hover:bg-indigo-600 transition-all">
+                <label className={`absolute -bottom-2 -right-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-2xl bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-xl hover:bg-${user.accentColor || 'indigo'}-600 transition-all`}>
                   <UserRound size={15} />
                   <input type="file" hidden accept="image/*" onChange={(e) => { if(e.target.files[0]) setFile(e.target.files[0]); }} />
                 </label>
@@ -203,49 +217,70 @@ export default function ProfilePage() {
               </button>
             )}
 
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-1.5 mb-1">
-                <Sparkles size={10} className="text-indigo-500" />
-                <span className="text-[9px] font-bold uppercase tracking-[0.35em] text-indigo-500">
-                  {isOwnProfile ? "You" : "Profile"}
-                </span>
+            <div className="text-center space-y-3">
+              <div>
+                <div className="flex items-center justify-center gap-1.5 mb-1">
+                  <Sparkles size={10} className={`text-${user.accentColor || 'indigo'}-500`} />
+                  <span className={`text-[9px] font-bold uppercase tracking-[0.35em] text-${user.accentColor || 'indigo'}-500`}>
+                    {isOwnProfile ? "You" : "Profile"}
+                  </span>
+                </div>
+                <h1 className="text-2xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100">
+                  {user.name || user.username}
+                </h1>
+                <p className="text-sm text-zinc-400 font-bold tracking-tight">@{user.username}</p>
               </div>
-              <h1 className="text-xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100">
-                {user.name || user.username}
-              </h1>
-              <p className="text-sm text-zinc-400 font-medium">@{user.username}</p>
+
+              {user.tagline && (
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100/50 dark:bg-zinc-900/50 border border-zinc-200/50 dark:border-zinc-800/50">
+                  <Quote size={10} className="text-zinc-400" />
+                  <p className="text-[10px] font-bold text-zinc-500 italic">"{user.tagline}"</p>
+                </div>
+              )}
+
+              {user.bio && (
+                <p className="text-[12px] font-medium leading-relaxed text-zinc-600 dark:text-zinc-400 max-w-[240px]">
+                  {user.bio}
+                </p>
+              )}
             </div>
           </div>
 
           {/* Meta */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-[11px] text-zinc-400">
-              <Calendar size={12} strokeWidth={2.5} />
-              <span>Since {joinedDate}</span>
+          <div className="space-y-2.5 px-2">
+            {user.location && (
+              <div className="flex items-center gap-2.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400">
+                <MapPin size={13} strokeWidth={2.5} className="opacity-70" />
+                <span>{user.location}</span>
+              </div>
+            )}
+            <div className="flex items-center gap-2.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400">
+              <Calendar size={13} strokeWidth={2.5} className="opacity-70" />
+              <span>Joined {joinedDate}</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               <div className={`h-1.5 w-1.5 rounded-full ${profilePublic ? "bg-emerald-500" : "bg-zinc-400"}`} />
-              <span className="text-[11px] text-zinc-400">{profilePublic ? "Public profile" : "Private profile"}</span>
+              <span className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400">{profilePublic ? "Public Profile" : "Private Profile"}</span>
             </div>
           </div>
 
           {/* Stats strip */}
           <div className="flex justify-between items-center px-2 py-4">
-            <StatTile icon={<Flame size={14} />} label="Streak" value={user.currentStreak ?? 0} color="text-orange-500" />
-            <StatTile icon={<CheckCircle size={14} />} label="Ticks" value={user.completedCount ?? 0} color="text-emerald-500" />
-            <StatTile icon={<Calendar size={14} />} label="Active" value={user.activeDays ?? 0} color="text-indigo-500" />
+            <StatTile icon={<Flame size={14} />} label="Streak" value={user.stats?.currentStreak ?? 0} color="text-orange-500" />
+            <StatTile icon={<CheckCircle size={14} />} label="Ticks" value={user.stats?.totalTicks ?? 0} color="text-emerald-500" />
+            <StatTile icon={<Calendar size={14} />} label="Active" value={user.stats?.activeDays ?? 0} color="text-indigo-500" />
             <StatTile icon={<Shield size={14} />} label="Trust" value={user.credibilityScore ?? 0} color="text-violet-500" />
           </div>
 
           {/* Completion rate bar */}
           <div className="space-y-2">
-            <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+            <div className="flex justify-between text-[11px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
               <span>Completion Rate</span>
-              <span className="text-zinc-900 dark:text-zinc-100">{completionRate}</span>
+              <span className="text-zinc-800 dark:text-zinc-100">{completionRate}</span>
             </div>
             <div className="h-1.5 w-full rounded-full bg-zinc-100 dark:bg-zinc-900 overflow-hidden">
               <Motion.div
-                className="h-full rounded-full bg-indigo-500"
+                className={`h-full rounded-full bg-${user.accentColor || 'indigo'}-500 shadow-[0_0_12px_rgba(var(--primary),0.3)]`}
                 initial={{ width: 0 }}
                 animate={{ width: completionRate }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
@@ -259,15 +294,15 @@ export default function ProfilePage() {
       {/* RIGHT PANEL — Tabbed content */}
       <main className="flex-1 w-full h-auto lg:h-full flex flex-col lg:overflow-hidden">
         {/* Tab header — identical style to Dashboard */}
-        <div className="flex bg-zinc-50/50 dark:bg-zinc-900/30 shrink-0">
+        <div className="flex border-b border-zinc-100 dark:border-zinc-900/50 shrink-0">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex-1 px-4 py-4 text-[10px] font-semibold uppercase tracking-[0.2em] transition-all
                 ${activeTab === tab.id
-                  ? "text-indigo-600 dark:text-indigo-400 bg-white dark:bg-zinc-950 font-bold border-b-2 border-indigo-600 dark:border-indigo-400"
-                  : "text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
+                  ? `text-${user.accentColor || 'indigo'}-600 dark:text-${user.accentColor || 'indigo'}-400 font-bold border-b-2 border-${user.accentColor || 'indigo'}-600 dark:border-${user.accentColor || 'indigo'}-400`
+                  : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
                 }`}
             >
               {tab.label}
@@ -289,10 +324,10 @@ export default function ProfilePage() {
               >
                 <SectionLabel icon={<Flame size={16} />} title="Performance" sub="Historical consistency" />
                 <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-                  <LongMetric label="Streak" value={user.currentStreak ?? 0} unit="days" />
+                  <LongMetric label="Streak" value={user.stats?.currentStreak ?? 0} unit="days" />
                   <LongMetric label="Completion" value={completionRate} unit="rate" />
-                  <LongMetric label="Total Ticks" value={user.completedCount ?? 0} unit="done" />
-                  <LongMetric label="Active" value={user.activeDays ?? 0} unit="days" />
+                  <LongMetric label="Total Ticks" value={user.stats?.totalTicks ?? 0} unit="done" />
+                  <LongMetric label="Active" value={user.stats?.activeDays ?? 0} unit="days" />
                 </div>
               </Motion.div>
             )}
@@ -347,19 +382,56 @@ export default function ProfilePage() {
               >
                 <SectionLabel icon={<Shield size={16} />} title="Settings" sub="Identity and visibility" />
 
-                <div className="space-y-5">
+                 <div className="space-y-5">
                   <div className="space-y-1.5">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Display Name</p>
-                    <input value={name} onChange={(e) => setName(e.target.value)} className={inputClass} />
+                    <input value={name} onChange={(e) => setName(e.target.value)} className={inputClass} placeholder="Your name..." />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Tagline</p>
+                    <input value={tagline} onChange={(e) => setTagline(e.target.value)} className={inputClass} placeholder="Short emotional hook..." />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Biography</p>
+                    <textarea 
+                      value={bio} 
+                      onChange={(e) => setBio(e.target.value)} 
+                      className={inputClass + " h-20 resize-none"} 
+                      placeholder="Tell your story..." 
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Location</p>
+                    <input value={location} onChange={(e) => setLocation(e.target.value)} className={inputClass} placeholder="City, Country..." />
+                  </div>
+
+                  <div className="space-y-2.5">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Accent Color</p>
+                    <div className="flex flex-wrap gap-3 pt-1">
+                      {["indigo", "sky", "rose", "emerald", "cyan", "orange", "violet"].map((c) => (
+                        <button
+                          key={c}
+                          onClick={() => setAccentColor(c)}
+                          className={`h-8 w-8 rounded-xl transition-all duration-300 ${
+                            accentColor === c ? "ring-2 ring-offset-2 ring-zinc-400 scale-110" : "scale-90 opacity-60 hover:opacity-100"
+                          } ${
+                            c === "rose" ? "bg-rose-400" : c === "sky" ? "bg-sky-400" : `bg-${c}-500`
+                          }`}
+                        />
+                      ))}
+                    </div>
                   </div>
 
                   <button
                     onClick={() => setProfilePublic(!profilePublic)}
-                    className="flex w-full items-center justify-between py-3.5 text-sm font-bold text-zinc-700 dark:text-zinc-300 hover:text-indigo-500 transition-colors"
+                    className="flex w-full items-center justify-between py-4 text-sm font-bold text-zinc-700 dark:text-zinc-300 hover:text-indigo-500 transition-colors border-t border-zinc-100 dark:border-zinc-900/50 mt-4"
                   >
                     <span className="flex items-center gap-2.5">
                       {profilePublic ? <Eye size={16} /> : <EyeOff size={16} />}
-                      Visibility
+                      Profile Visibility
                     </span>
                     <span className={`text-[10px] uppercase font-black tracking-widest ${profilePublic ? "text-emerald-500" : "text-zinc-400"}`}>
                       {profilePublic ? "Public" : "Private"}
@@ -439,9 +511,9 @@ export default function ProfilePage() {
 function StatTile({ icon, label, value, color }) {
   return (
     <div className="flex flex-col items-center gap-1">
-      <div className={`flex items-center justify-center h-8 w-8 rounded-full bg-zinc-50 dark:bg-zinc-900/50 ${color}`}>{icon}</div>
+      <div className={`flex items-center justify-center h-8 w-8 rounded-full bg-zinc-100/50 dark:bg-zinc-900/50 ${color}`}>{icon}</div>
       <p className="text-xl font-extrabold text-zinc-900 dark:text-zinc-100 tabular-nums tracking-tight">{value}</p>
-      <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">{label}</p>
+      <p className="text-[10px] font-extrabold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">{label}</p>
     </div>
   );
 }
@@ -449,10 +521,10 @@ function StatTile({ icon, label, value, color }) {
 function LongMetric({ label, value, unit }) {
   return (
     <div className="space-y-1.5">
-      <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">{label}</p>
+      <p className="text-[11px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">{label}</p>
       <div className="flex items-baseline gap-1.5">
         <span className="text-3xl font-extrabold text-zinc-900 dark:text-zinc-100 tabular-nums tracking-tight">{value}</span>
-        <span className="text-[11px] font-bold uppercase text-zinc-400">{unit}</span>
+        <span className="text-[12px] font-bold uppercase text-zinc-500 dark:text-zinc-400">{unit}</span>
       </div>
     </div>
   );
@@ -466,7 +538,7 @@ function SectionLabel({ icon, title, sub }) {
       </span>
       <div>
         <h2 className="text-base font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100">{title}</h2>
-        <p className="text-[11px] text-zinc-400">{sub}</p>
+        <p className="text-[12px] font-medium text-zinc-500 dark:text-zinc-400 tracking-tight">{sub}</p>
       </div>
     </div>
   );
@@ -478,12 +550,12 @@ function SaveButton({ saving, onClick, msg }) {
       <button
         onClick={onClick}
         disabled={saving}
-        className="flex items-center justify-center gap-2.5 rounded-full bg-indigo-600 px-6 py-3 text-sm font-extrabold text-white shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 transition-all active:scale-95 disabled:opacity-50"
+        className={`flex items-center justify-center gap-2.5 rounded-full bg-indigo-600 px-6 py-3 text-sm font-extrabold text-white shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 transition-all active:scale-95 disabled:opacity-50`}
       >
         {saving ? "Saving..." : "Save Changes"}
         <ArrowRight size={15} />
       </button>
-      {msg && <p className="text-[11px] font-bold uppercase tracking-widest text-indigo-500 text-center">{msg}</p>}
+      {msg && <p className={`text-[11px] font-bold uppercase tracking-widest text-indigo-500 text-center`}>{msg}</p>}
     </div>
   );
 }
