@@ -19,20 +19,44 @@ import taskRoutes from "./routes/task.routes.js";
 
 const app = express();
 
+const allowedExactOrigins = new Set(
+  [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    process.env.FRONTEND_URL,
+    process.env.CORS_ORIGIN,
+  ].filter(Boolean)
+);
+
+const isAllowedDeploymentOrigin = (origin = "") => {
+  try {
+    const { hostname, protocol } = new URL(origin);
+
+    if (!/^https?:$/.test(protocol)) {
+      return false;
+    }
+
+    return (
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname.endsWith(".vercel.app") ||
+      hostname.endsWith(".onrender.com")
+    );
+  } catch {
+    return false;
+  }
+};
+
 /* =====================
    CORS
 ===================== */
 app.use(
   cors({
     origin(origin, callback) {
-      const allowedOrigins = [
-        "http://localhost:5173",
-        "https://habit-tracker-ybku.vercel.app",
-      ];
-
       if (
         !origin ||
-        allowedOrigins.includes(origin) ||
+        allowedExactOrigins.has(origin) ||
+        isAllowedDeploymentOrigin(origin) ||
         origin.startsWith("chrome-extension://") ||
         origin.startsWith("moz-extension://")
       ) {

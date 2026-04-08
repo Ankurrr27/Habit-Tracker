@@ -12,7 +12,6 @@ import Dashboard from "./pages/DashboardPage";
 import UsersPage from "./pages/UsersPage";
 import CalendarPage from "./pages/CalendarPage";
 import ExtensionPage from "./pages/ExtensionPage";
-import AboutPage from "./pages/AboutPage";
 import HowToUsePage from "./pages/HowToUsePage";
 
 /* ROUTES */
@@ -23,13 +22,14 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import AppLayout from "./layouts/AppLayout";
 import DashboardLayout from "./layouts/DashboardLayout";
 import AuthLayout from "./layouts/AuthLayout";
+import { API_BASE_URL } from "./config/api";
 
 export default function App() {
   /* =====================
      BACKEND WARM-UP
   ===================== */
   useEffect(() => {
-    fetch("https://habit-tracker-ixsb.onrender.com/")
+    fetch(`${API_BASE_URL}/`)
       .catch(() => {});
   }, []);
 
@@ -70,7 +70,6 @@ export default function App() {
               <Route path="/extension" element={<ExtensionPage />} />
 
               {/* INFO PAGES */}
-              <Route path="/about" element={<AboutPage />} />
               <Route path="/how-to-use" element={<HowToUsePage />} />
             </Route>
           </Route>

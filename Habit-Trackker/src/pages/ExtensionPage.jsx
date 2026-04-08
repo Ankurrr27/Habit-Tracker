@@ -13,7 +13,7 @@ const TABS = [
 ];
 
 const features = [
-  { icon: <Puzzle size={18} />, title: "Panel Workflow", description: "Keeps the extension open alongside your browser.", color: "bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400" },
+  { icon: <Puzzle size={18} />, title: "Panel Workflow", description: "Keeps the extension open alongside your browser.", color: "accent-bg-soft accent-text" },
   { icon: <ShieldCheck size={18} />, title: "Date Sync", description: "Synced with your local timezone — perfect alignment.", color: "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400" },
   { icon: <Zap size={18} />, title: "Instant Toggle", description: "Mark habits done directly from the side panel.", color: "bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400" },
 ];
@@ -28,7 +28,7 @@ const steps = [
 ];
 
 const specs = [
-  ["Protocol ID", "habtrack-extension.zip"],
+  ["Protocol ID", "verlocity-extension.zip"],
   ["Version", "1.2.0-Alpha"],
   ["Architecture", "V3 Side Panel API"],
   ["Transmission", "HTTPS / JSON Sync"],
@@ -60,15 +60,15 @@ export default function ExtensionPage() {
       <div className="flex flex-col lg:flex-row flex-1 min-h-0 overflow-hidden">
 
         {/* LEFT: Identity panel */}
-        <aside className="lg:shrink-0 w-full lg:w-[300px] border-r border-zinc-100 dark:border-zinc-900/50 flex flex-col px-6 py-8 gap-8 overflow-y-auto">
-          <div className="space-y-3">
+        <aside className="lg:shrink-0 w-full lg:w-[320px] border-r border-white/30 dark:border-white/5 flex flex-col px-5 py-6 gap-8 overflow-y-auto sm:px-6 sm:py-8">
+          <div className="page-header-copy space-y-0">
             <div className="flex items-center gap-2">
-              <Chrome size={12} className="text-indigo-500" />
-              <span className="text-[9px] font-bold uppercase tracking-[0.35em] text-indigo-500">Browser Extension</span>
+              <Chrome size={12} className="accent-text" />
+              <span className="page-kicker">Browser Extension</span>
             </div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100">Side Panel</h1>
-            <p className="text-[12px] leading-relaxed text-zinc-500 dark:text-zinc-400">
-              Elite habit tracking without losing your browser flow. Syncs perfectly across every tab.
+            <h1 className="page-title">Side Panel</h1>
+            <p className="page-subtitle">
+              Verlocity stays with your browser flow so your progress is always one panel away.
             </p>
           </div>
 
@@ -78,7 +78,7 @@ export default function ExtensionPage() {
               href={releaseHref}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center justify-center gap-2 rounded-full bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 transition-all active:scale-95"
+              className="btn-primary px-5 py-2.5 text-xs"
             >
               <ExternalLink size={13} strokeWidth={3} />
               GitHub Release
@@ -86,7 +86,7 @@ export default function ExtensionPage() {
             <a
               href={packageHref}
               download
-              className="flex items-center justify-center gap-2 rounded-full bg-zinc-900 dark:bg-zinc-100 px-5 py-2.5 text-xs font-bold text-white dark:text-zinc-900 hover:opacity-90 transition-all active:scale-95"
+              className="btn-secondary px-5 py-2.5 text-xs dark:bg-zinc-100 dark:text-zinc-900"
             >
               <Download size={13} strokeWidth={3} />
               Download Bundle
@@ -99,8 +99,8 @@ export default function ExtensionPage() {
               <div key={f.title} className="flex items-start gap-3">
                 <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${f.color}`}>{f.icon}</div>
                 <div>
-                  <p className="text-sm font-bold text-zinc-900 dark:text-zinc-100">{f.title}</p>
-                  <p className="text-[11px] text-zinc-400 leading-relaxed">{f.description}</p>
+                  <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{f.title}</p>
+                  <p className="text-[12px] font-medium text-zinc-400 leading-6">{f.description}</p>
                 </div>
               </div>
             ))}
@@ -110,23 +110,21 @@ export default function ExtensionPage() {
         {/* RIGHT: Tabbed detail */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Tab header */}
-          <div className="flex border-b border-zinc-100 dark:border-zinc-900/50 shrink-0">
+          <div className="shrink-0 px-4 pt-4 sm:px-6 sm:pt-5">
+            <div className="segmented-control flex w-full">
             {TABS.map(t => (
               <button
                 key={t.id}
                 onClick={() => setActiveTab(t.id)}
-                className={`flex-1 px-4 py-4 text-[10px] font-semibold uppercase tracking-[0.2em] transition-all
-                  ${activeTab === t.id
-                    ? "text-indigo-600 dark:text-indigo-400 font-bold border-b-2 border-indigo-600 dark:border-indigo-400"
-                    : "text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
-                  }`}
+                className={`segmented-tab flex-1 ${activeTab === t.id ? "segmented-tab-active" : ""}`}
               >
                 {t.label}
               </button>
             ))}
+            </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-8 py-8">
+          <div className="flex-1 overflow-y-auto page-shell">
             <AnimatePresence mode="wait">
 
               {activeTab === "install" && (
@@ -154,7 +152,7 @@ export default function ExtensionPage() {
               {activeTab === "key" && (
                 <Motion.div key="key" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} transition={{ duration: 0.2 }} className="space-y-8 max-w-lg">
                   <div className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                    <span className="accent-bg-soft accent-text flex h-10 w-10 items-center justify-center rounded-xl">
                       <Key size={20} />
                     </span>
                     <div>
@@ -169,7 +167,7 @@ export default function ExtensionPage() {
                     {token && (
                       <button
                         onClick={copyToClipboard}
-                        className="absolute bottom-4 right-4 flex items-center gap-1.5 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 px-3 py-1.5 text-[10px] font-bold text-zinc-500 hover:text-indigo-600 transition shadow-sm"
+                        className="absolute bottom-4 right-4 flex items-center gap-1.5 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 px-3 py-1.5 text-[10px] font-semibold text-zinc-500 transition shadow-sm hover:[color:rgb(var(--primary))]"
                       >
                         {copied ? <Check size={12} className="text-emerald-500" /> : <Copy size={12} />}
                         {copied ? "Copied" : "Copy"}

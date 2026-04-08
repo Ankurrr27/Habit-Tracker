@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -22,6 +23,11 @@
   --scroll-track: #f4f4f5;
   --scroll-thumb: rgba(99, 102, 241, 0.45);
   --scroll-thumb-hover: rgba(79, 70, 229, 0.7);
+  --radius-sm: 14px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+  --shadow-soft: 0 12px 40px -18px rgba(15, 23, 42, 0.16);
+  --shadow-card: 0 24px 70px -32px rgba(15, 23, 42, 0.22);
 }
 
 /* 🌑 DARK */
@@ -38,6 +44,8 @@
   --scroll-track: #09090b;
   --scroll-thumb: rgba(129, 140, 248, 0.2);
   --scroll-thumb-hover: rgba(129, 140, 248, 0.4);
+  --shadow-soft: 0 14px 44px -22px rgba(0, 0, 0, 0.45);
+  --shadow-card: 0 26px 76px -34px rgba(0, 0, 0, 0.55);
 }
 
 /* 🎨 DYNAMIC THEMES (CSS Variable Overrides) */
@@ -151,6 +159,21 @@ body,
   overflow-x: hidden;
 }
 
+body {
+  letter-spacing: -0.01em;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(var(--primary), 0.18);
+}
+
 @keyframes gradientBG {
   0% {
     background-position: 0% 50%;
@@ -203,6 +226,145 @@ body,
 
   .no-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+
+  .app-page {
+    @apply w-full min-h-full;
+  }
+
+  .app-page-scroll {
+    @apply h-auto lg:h-full lg:overflow-y-auto;
+  }
+
+  .page-shell {
+    @apply w-full px-4 py-5 sm:px-6 sm:py-6 lg:px-10 lg:py-8;
+  }
+
+  .page-stack {
+    @apply mx-auto flex w-full max-w-6xl flex-col gap-6 lg:gap-8;
+  }
+
+  .page-header {
+    @apply flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between;
+  }
+
+  .page-header-copy {
+    @apply flex min-w-0 flex-col gap-2;
+  }
+
+  .page-kicker {
+    @apply text-[0.68rem] font-semibold uppercase tracking-[0.26em] text-[rgb(var(--primary))];
+  }
+
+  .page-title {
+    @apply text-2xl font-semibold tracking-[-0.03em] text-zinc-900 dark:text-zinc-50 sm:text-3xl;
+  }
+
+  .page-subtitle {
+    @apply max-w-2xl text-sm font-medium leading-6 text-zinc-500 dark:text-zinc-400;
+  }
+
+  .surface-card {
+    background: rgba(255, 255, 255, 0.76);
+    box-shadow: var(--shadow-soft);
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    border-radius: var(--radius-md);
+    @apply backdrop-blur-xl dark:border-white/5 dark:bg-zinc-950/52;
+  }
+
+  .surface-card-strong {
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: var(--shadow-card);
+    border: 1px solid rgba(255, 255, 255, 0.78);
+    border-radius: var(--radius-lg);
+    @apply backdrop-blur-xl dark:border-white/5 dark:bg-zinc-950/68;
+  }
+
+  .surface-muted {
+    @apply rounded-[var(--radius-sm)] bg-zinc-50/80 dark:bg-zinc-900/55;
+  }
+
+  .section-grid {
+    @apply grid gap-4 sm:gap-5 xl:gap-6;
+  }
+
+  .section-title {
+    @apply text-base font-semibold tracking-[-0.02em] text-zinc-900 dark:text-zinc-100;
+  }
+
+  .section-copy {
+    @apply text-sm font-medium leading-6 text-zinc-500 dark:text-zinc-400;
+  }
+
+  .segmented-control {
+    @apply inline-flex rounded-[18px] bg-zinc-100/85 p-1 dark:bg-zinc-900/70;
+  }
+
+  .segmented-tab {
+    @apply rounded-[14px] px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500 transition-all dark:text-zinc-400;
+  }
+
+  .segmented-tab-active {
+    @apply bg-white text-zinc-900 shadow-sm dark:bg-zinc-800 dark:text-zinc-50;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-[rgb(var(--primary))] px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[rgba(var(--primary),0.24)] transition hover:opacity-95 active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-zinc-200/80 bg-white/70 px-5 py-2.5 text-sm font-semibold text-zinc-700 transition hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950/60 dark:text-zinc-200 dark:hover:bg-zinc-900;
+  }
+
+  .field-label {
+    @apply text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-400 dark:text-zinc-500;
+  }
+
+  .field-input {
+    @apply w-full rounded-2xl border border-zinc-200/70 bg-white/75 px-4 py-3 text-sm font-medium text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-[rgba(var(--primary),0.35)] focus:ring-4 focus:ring-[rgba(var(--primary),0.08)] dark:border-zinc-800 dark:bg-zinc-950/55 dark:text-zinc-100;
+  }
+
+  .accent-text {
+    color: rgb(var(--primary));
+  }
+
+  .accent-text-soft {
+    color: rgba(var(--primary), 0.82);
+  }
+
+  .accent-bg {
+    background: rgb(var(--primary));
+    color: white;
+  }
+
+  .accent-bg-soft {
+    background: rgba(var(--primary), 0.1);
+  }
+
+  .accent-border {
+    border-color: rgba(var(--primary), 0.22);
+  }
+
+  .accent-pill {
+    @apply rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.16em];
+    color: rgb(var(--primary));
+    background: rgba(var(--primary), 0.1);
+  }
+
+  .divider-soft {
+    @apply h-px w-full bg-zinc-200/70 dark:bg-zinc-800/70;
+  }
+
+  .stat-card {
+    background: rgba(255, 255, 255, 0.76);
+    box-shadow: var(--shadow-soft);
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    border-radius: var(--radius-md);
+    @apply p-5 backdrop-blur-xl dark:border-white/5 dark:bg-zinc-950/52;
+  }
+
+  .empty-state {
+    @apply flex flex-col items-center justify-center gap-3 rounded-[var(--radius-md)] px-6 py-16 text-center;
   }
 }
 

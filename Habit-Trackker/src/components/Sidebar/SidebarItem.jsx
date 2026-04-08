@@ -3,15 +3,15 @@ export default function SidebarItem({ icon, label, onClick, active, compact = fa
     <button
       onClick={onClick}
       className={`
-        group relative flex w-full items-center gap-3 rounded-[1.25rem] px-3 py-3 text-[13px] font-bold uppercase tracking-widest transition-all duration-300
-        ${compact ? "justify-center px-0 py-3 mx-auto w-12" : "px-4"}
+        group relative flex w-full items-center gap-3 rounded-[18px] px-3 py-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] transition-all duration-300
+        ${compact ? "justify-center px-0 py-2.5 mx-auto w-11" : "px-4"}
         ${
           active
             ? `
-              bg-[rgb(var(--primary))] text-white shadow-xl shadow-[rgba(var(--primary),0.2)]
+              bg-[rgb(var(--primary))] text-white shadow-lg shadow-[rgba(var(--primary),0.22)]
             `
             : `
-              text-slate-400 hover:bg-white/5 hover:text-slate-100
+              text-slate-400 hover:bg-white/6 hover:text-slate-100
             `
         }
       `}
@@ -19,7 +19,7 @@ export default function SidebarItem({ icon, label, onClick, active, compact = fa
       <span
         className={`
           relative z-10 flex shrink-0 items-center justify-center transition-transform duration-300 group-hover:scale-110
-          ${compact ? "w-6" : "w-6"}
+          ${compact ? "w-5" : "w-5"}
           ${active ? "text-white" : "text-slate-500 group-hover:text-[rgb(var(--primary))]"}
         `}
       >

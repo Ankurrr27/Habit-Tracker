@@ -7,7 +7,6 @@ import {
   LogOut,
   Plus,
   Search,
-  Info,
 } from "lucide-react";
 import { useAuth } from "../../context/useAuth";
 import { useSync } from "../../context/SyncContext";
@@ -35,7 +34,6 @@ export default function Sidebar() {
     { icon: <CalendarDays size={18} />, label: "Calendar", path: "/calendar" },
     { icon: <Search size={18} />, label: "Search", path: "/users" },
     { icon: <Download size={18} />, label: "Extension", path: "/extension" },
-    { icon: <Info size={18} />, label: "About", path: "/about" },
   ];
 
   return (
@@ -43,16 +41,16 @@ export default function Sidebar() {
       {/* DESKTOP SIDEBAR - FLUSH ELITE RAIL */}
       <aside className="
         hidden md:fixed md:top-0 md:left-0 md:flex md:flex-col
-        md:h-screen w-[60px] shrink-0 z-20
-        bg-slate-900 dark:bg-black
-        px-2 py-6
+        md:h-screen w-[72px] shrink-0 z-20
+        bg-slate-950/96 dark:bg-black
+        px-3 py-5
         transition-colors
       ">
 
 
 
         {/* NAV */}
-        <nav className="flex flex-1 flex-col gap-3">
+        <nav className="flex flex-1 flex-col gap-2.5">
           {navItems.map((item) => (
             <SidebarItem
               key={item.path}
@@ -66,11 +64,11 @@ export default function Sidebar() {
         </nav>
 
         {/* BOTTOM ACTIONS */}
-        <div className="flex flex-col gap-4 pt-6">
+        <div className="flex flex-col gap-3 pt-5">
           {/* Add Habit */}
           <button
             onClick={() => setOpen(true)}
-            className="flex h-10 w-10 items-center justify-center rounded-2xl bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-xl shadow-black/10 transition hover:opacity-90 active:scale-95 mx-auto"
+            className="flex h-11 w-11 items-center justify-center rounded-[18px] bg-white text-zinc-900 shadow-lg shadow-black/15 transition hover:opacity-90 active:scale-95 mx-auto dark:bg-zinc-100 dark:text-zinc-900"
             aria-label="Add habit"
           >
             <Plus size={18} strokeWidth={3} />
@@ -80,11 +78,11 @@ export default function Sidebar() {
           <button
             onClick={() => user?.username && navigate(`/u/${user.username}`)}
             className={`
-              flex h-10 w-10 items-center justify-center overflow-hidden rounded-2xl transition mx-auto
+              flex h-11 w-11 items-center justify-center overflow-hidden rounded-[18px] transition mx-auto
               ${
                 isActive(`/u/${user?.username}`)
-                  ? "bg-[rgba(var(--primary),0.1)] text-[rgb(var(--primary))] ring-2 ring-[rgba(var(--primary),0.2)]"
-                  : "bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-900 dark:hover:bg-zinc-800"
+                  ? "bg-[rgba(var(--primary),0.14)] text-[rgb(var(--primary))] ring-2 ring-[rgba(var(--primary),0.18)]"
+                  : "bg-slate-900 text-slate-200 hover:bg-slate-800 dark:bg-zinc-900 dark:hover:bg-zinc-800"
               }
             `}
             aria-label="Open profile"
@@ -92,7 +90,7 @@ export default function Sidebar() {
             {user?.avatar ? (
               <img src={user.avatar} alt="Profile" className="h-full w-full object-cover" />
             ) : (
-              <div className="flex h-full w-full items-center justify-center text-sm font-bold">
+                <div className="flex h-full w-full items-center justify-center text-sm font-semibold">
                 {initials}
               </div>
             )}
@@ -101,7 +99,7 @@ export default function Sidebar() {
           {/* Logout */}
           <button
             onClick={handleLogout}
-            className="flex h-10 w-10 items-center justify-center rounded-2xl text-zinc-400 transition hover:bg-red-50 hover:text-red-500 dark:text-zinc-500 dark:hover:bg-red-500/10 dark:hover:text-red-400 mx-auto"
+            className="flex h-11 w-11 items-center justify-center rounded-[18px] text-zinc-400 transition hover:bg-red-50 hover:text-red-500 dark:text-zinc-500 dark:hover:bg-red-500/10 dark:hover:text-red-400 mx-auto"
             aria-label="Logout"
           >
             <LogOut size={16} />

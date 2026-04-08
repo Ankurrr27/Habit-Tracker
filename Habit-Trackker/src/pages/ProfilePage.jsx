@@ -550,17 +550,14 @@ function SaveButton({ saving, onClick, msg }) {
       <button
         onClick={onClick}
         disabled={saving}
-        className={`flex items-center justify-center gap-2.5 rounded-full bg-indigo-600 px-6 py-3 text-sm font-extrabold text-white shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 transition-all active:scale-95 disabled:opacity-50`}
+        className="btn-primary px-6 py-3 disabled:opacity-50"
       >
         {saving ? "Saving..." : "Save Changes"}
         <ArrowRight size={15} />
       </button>
-      {msg && <p className={`text-[11px] font-bold uppercase tracking-widest text-indigo-500 text-center`}>{msg}</p>}
+      {msg && <p className="text-center text-[11px] font-semibold uppercase tracking-[0.18em] text-indigo-500">{msg}</p>}
     </div>
   );
 }
 
-const inputClass = `
-  w-full border-b border-zinc-200 dark:border-zinc-800 bg-transparent py-2.5 text-sm font-semibold
-  text-zinc-900 placeholder:text-zinc-300 focus:outline-none focus:border-indigo-600 transition-all
-`;
+const inputClass = "field-input";

@@ -32,33 +32,27 @@ const Dashboard = () => {
   return (
     <div className="flex flex-col lg:flex-row w-full h-auto lg:h-full min-h-0 lg:overflow-hidden bg-transparent">
       {/* LEFT: Habits + Tasks */}
-      <aside className="lg:shrink-0 h-auto lg:h-full w-full lg:w-[350px] border-r border-zinc-100 dark:border-zinc-900/50 flex flex-col lg:overflow-hidden">
+      <aside className="lg:shrink-0 h-auto lg:h-full w-full lg:w-[360px] border-r border-white/30 dark:border-white/5 flex flex-col lg:overflow-hidden">
         {/* TAB HEADER */}
-        <div className="flex border-b border-zinc-100 dark:border-zinc-900/50 shrink-0">
+        <div className="shrink-0 px-4 pt-4 sm:px-5 sm:pt-5">
+          <div className="segmented-control flex w-full">
           <button
             onClick={() => setActiveTab("habits")}
-            className={`flex-1 px-4 py-4 text-[10px] font-semibold uppercase tracking-[0.2em] transition-all
-              ${activeTab === "habits"
-                ? "text-indigo-600 dark:text-indigo-400 font-bold border-b-2 border-indigo-600 dark:border-indigo-400"
-                : "text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
-              }`}
+            className={`segmented-tab flex-1 ${activeTab === "habits" ? "segmented-tab-active" : ""}`}
           >
             Habits
           </button>
           <button
             onClick={() => setActiveTab("goals")}
-            className={`flex-1 px-4 py-4 text-[10px] font-semibold uppercase tracking-[0.2em] transition-all
-              ${activeTab === "goals"
-                ? "text-indigo-600 dark:text-indigo-400 font-bold border-b-2 border-indigo-600 dark:border-indigo-400"
-                : "text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
-              }`}
+            className={`segmented-tab flex-1 ${activeTab === "goals" ? "segmented-tab-active" : ""}`}
           >
             Tasks
           </button>
+          </div>
         </div>
 
         {/* SCROLLABLE LIST */}
-        <div className="flex-1 lg:overflow-y-auto lg:h-full p-6 pb-24 lg:pb-6">
+        <div className="flex-1 lg:overflow-y-auto lg:h-full p-4 pb-24 sm:p-5 lg:pb-6">
           <AnimatePresence mode="wait">
             {activeTab === "habits" ? (
               <Motion.div
@@ -77,7 +71,7 @@ const Dashboard = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 10 }}
                 transition={{ duration: 0.2 }}
-                className="space-y-8"
+                className="space-y-6"
               >
                 <DailyTasks />
               </Motion.div>
@@ -87,14 +81,14 @@ const Dashboard = () => {
       </aside>
 
       {/* RIGHT: Visual Analytics */}
-      <main className="flex-1 w-full h-auto lg:h-full lg:overflow-y-auto p-4 lg:py-12 lg:px-10">
-        <div className="max-w-5xl lg:space-y-12 space-y-8">
+      <main className="flex-1 w-full h-auto lg:h-full lg:overflow-y-auto page-shell">
+        <div className="page-stack max-w-5xl space-y-0">
           <div className="hidden lg:block">
             <RollingHabitGrid />
           </div>
-          <div className="border-t border-zinc-100 dark:border-zinc-800/50" />
+          <div className="divider-soft" />
           <ProgressChart />
-          <div className="border-t border-zinc-100 dark:border-zinc-800/50" />
+          <div className="divider-soft" />
           <HabitHeatmap />
         </div>
       </main>

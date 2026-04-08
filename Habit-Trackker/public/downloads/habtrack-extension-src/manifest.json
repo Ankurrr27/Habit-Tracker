@@ -1,12 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "HabTrack Extension",
+  "name": "Verlocity Extension",
   "version": "2.0.2",
-  "description": "Open HabTrack in a side panel and view public habit progress by username.",
+  "description": "Open Verlocity in a side panel and view public habit progress by username.",
   "permissions": ["storage", "sidePanel"],
   "host_permissions": ["https://*/*", "http://*/*"],
   "action": {
-    "default_title": "HabTrack"
+    "default_title": "Verlocity"
   },
   "background": {
     "service_worker": "background.js"

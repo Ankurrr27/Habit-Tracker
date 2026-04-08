@@ -1,11 +1,11 @@
-# HabTrack Browser Extension
+# Verlocity Browser Extension
 
-This folder contains a standalone browser extension for HabTrack.
+This folder contains a standalone browser extension for Verlocity.
 
 ## What it does
 
 - opens in the browser side panel instead of a popup
-- lets someone enter a HabTrack username
+- lets someone enter a Verlocity username
 - fetches a public profile by username
 - shows that user's public habits for today
 - shows your own one-day tasks for today (when access token is added in settings)
@@ -27,7 +27,7 @@ This folder contains a standalone browser extension for HabTrack.
 2. Enable `Developer mode`
 3. Click `Load unpacked`
 4. Select this `Extension` folder
-5. Click the HabTrack extension icon to open the side panel
+5. Click the Verlocity extension icon to open the side panel
 
 ### Firefox
 
@@ -36,8 +36,8 @@ This version is designed around the Chromium side panel API, so Chromium browser
 ## How it works
 
 1. Click the extension icon
-2. The HabTrack side panel opens on the right side
-3. Enter a HabTrack username
+2. The Verlocity side panel opens on the right side
+3. Enter a Verlocity username
 4. If that profile is public, the extension fetches:
    - public profile details
    - today’s public habit status
@@ -52,7 +52,7 @@ You can change that from the extension settings page if you want to point it at 
 
 - `http://localhost:5000`
 
-To enable your personal one-day tasks in the extension, also paste your HabTrack access token in extension settings.
+To enable your personal one-day tasks in the extension, also paste your Verlocity access token in extension settings.
 
 ## Notes
 

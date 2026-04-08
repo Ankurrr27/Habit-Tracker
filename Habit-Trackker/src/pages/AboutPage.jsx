@@ -129,7 +129,7 @@ export default function AboutPage() {
 
               <div className="border-t border-zinc-100 dark:border-zinc-800/50 pt-6">
                 <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-400">
-                  Habit Tracker · Elite Edition · v2.0
+                Verlocity · Elite Edition · v2.0
                 </span>
               </div>
             </Motion.div>
