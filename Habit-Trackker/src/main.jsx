@@ -9,10 +9,30 @@ import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { SyncProvider } from "./context/SyncContext";
 import { GoogleProviderWrapper } from "./providers/GoogleProviderWrapper";
-import { registerSW } from "virtual:pwa-register";
 
-// Register Service Worker for PWA/Offline support
-registerSW({ immediate: true });
+function cleanupLegacyPwaCaches() {
+  if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
+    return;
+  }
+
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      registrations.forEach((registration) => {
+        void registration.unregister();
+      });
+    });
+
+    if ("caches" in window) {
+      caches.keys().then((cacheKeys) => {
+        cacheKeys.forEach((cacheKey) => {
+          void caches.delete(cacheKey);
+        });
+      });
+    }
+  });
+}
+
+cleanupLegacyPwaCaches();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
