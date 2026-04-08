@@ -1,4 +1,4 @@
-import { Search, Sparkles, Users2 } from "lucide-react";
+import { Search, Sparkles } from "lucide-react";
 
 export default function UsersHeader({ search, onSearch }) {
   return (
@@ -6,19 +6,19 @@ export default function UsersHeader({ search, onSearch }) {
       <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div className="max-w-2xl">
           <div className="inline-flex items-center gap-2 mb-2">
-            <Sparkles size={14} className="text-indigo-500" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-indigo-500">Social Space</span>
+            <Sparkles size={14} className="accent-text" />
+            <span className="page-kicker">Social Space</span>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
+          <h1 className="page-title text-2xl sm:text-3xl">
             Discover and Connect
           </h1>
-          <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="page-subtitle mt-2 max-w-xl">
             Browse public profiles, send friend requests, and grow your accountability circle.
           </p>
         </div>
 
         <div className="flex w-full flex-col gap-2 sm:max-w-sm">
-          <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-1">
+          <label className="field-label ml-1">
             Search Community
           </label>
           <div className="relative">
@@ -31,12 +31,7 @@ export default function UsersHeader({ search, onSearch }) {
               placeholder="Search by name or username"
               value={search}
               onChange={(event) => onSearch(event.target.value)}
-              className="
-                w-full rounded-2xl bg-zinc-100/80 dark:bg-zinc-900/50 py-3.5 pl-10 pr-4 text-sm font-medium
-                text-zinc-900 placeholder:text-zinc-500 focus:outline-none focus:bg-white dark:focus:bg-[#080f26]
-                focus:ring-2 focus:ring-indigo-500/30 transition-all border border-transparent focus:border-indigo-500/20
-                dark:text-white
-              "
+              className="field-input py-3.5 pl-10 pr-4"
             />
           </div>
         </div>

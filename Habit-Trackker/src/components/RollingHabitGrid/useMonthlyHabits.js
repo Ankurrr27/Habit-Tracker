@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
-import { useSync } from "../../context/SyncContext";
+import { useSync } from "../../context/useSync";
 
 export function useWeeklyHabits(weekKey) {
   const { syncVersion, triggerSync } = useSync();

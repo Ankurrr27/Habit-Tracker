@@ -9,7 +9,6 @@ import {
   Search,
 } from "lucide-react";
 import { useAuth } from "../../context/useAuth";
-import { useSync } from "../../context/SyncContext";
 import AddHabitModal from "../AddHabit";
 import SidebarItem from "./SidebarItem";
 

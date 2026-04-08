@@ -6,10 +6,10 @@ import RollingHabitGrid from "../components/RollingHabitGrid/RollingHabitGrid";
 import DailyTasks from "../components/DailyTasks/DailyTasks";
 import ProgressChart from "../components/ProgressChart/ProgressChart";
 import api from "../api/axios";
-import { useSync } from "../context/SyncContext";
+import { useSync } from "../context/useSync";
 
 const Dashboard = () => {
-  const { syncVersion, triggerSync } = useSync();
+  const { triggerSync } = useSync();
   const [activeTab, setActiveTab] = useState("habits");
 
   // Background auto-sync for LeetCode/Github
@@ -38,13 +38,13 @@ const Dashboard = () => {
           <div className="segmented-control flex w-full">
           <button
             onClick={() => setActiveTab("habits")}
-            className={`segmented-tab flex-1 ${activeTab === "habits" ? "segmented-tab-active" : ""}`}
+            className={`segmented-tab flex-1 !py-2 !text-[10px] tracking-[0.14em] ${activeTab === "habits" ? "segmented-tab-active" : ""}`}
           >
             Habits
           </button>
           <button
             onClick={() => setActiveTab("goals")}
-            className={`segmented-tab flex-1 ${activeTab === "goals" ? "segmented-tab-active" : ""}`}
+            className={`segmented-tab flex-1 !py-2 !text-[10px] tracking-[0.14em] ${activeTab === "goals" ? "segmented-tab-active" : ""}`}
           >
             Tasks
           </button>

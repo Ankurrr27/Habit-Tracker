@@ -1,3 +1,5 @@
+/* global browser, chrome */
+
 const extensionApi = typeof browser !== "undefined" ? browser : chrome;
 const DEFAULT_API_BASE = "https://habit-tracker-ixsb.onrender.com";
 const DEFAULT_WEB_APP = "https://habit-tracker-ybku.vercel.app";

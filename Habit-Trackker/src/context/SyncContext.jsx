@@ -1,8 +1,7 @@
-import { createContext, useContext, useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { processQueue } from "../utils/syncQueue";
 import api from "../api/axios";
-
-const SyncContext = createContext();
+import { SyncContext } from "./sync-context";
 
 export function SyncProvider({ children }) {
   const [syncVersion, setSyncVersion] = useState(0);
@@ -62,11 +61,3 @@ export function SyncProvider({ children }) {
     </SyncContext.Provider>
   );
 }
-
-export const useSync = () => {
-  const context = useContext(SyncContext);
-  if (!context) {
-    throw new Error("useSync must be used within a SyncProvider");
-  }
-  return context;
-};

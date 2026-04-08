@@ -7,7 +7,11 @@ export default function AppLayout() {
   const accentColor = user?.accentColor || "indigo";
 
   return (
-    <div className={`theme-${accentColor} min-h-screen w-full flex flex-col bg-bg text-text transition-all duration-500 overflow-y-auto lg:overflow-hidden relative`}>
+    <div
+      className={`theme-${accentColor} relative flex w-full flex-col bg-bg text-text transition-all duration-500 ${
+        user ? "h-screen overflow-hidden" : "min-h-screen overflow-y-auto"
+      }`}
+    >
       {/* Immersive background glow */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-50 dark:opacity-20">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[rgba(var(--primary),0.15)] blur-[120px]" />
@@ -15,7 +19,7 @@ export default function AppLayout() {
       </div>
 
       <Navbar />
-      <main className="flex-1 flex flex-col min-h-0 lg:overflow-hidden w-full relative z-10">
+      <main className="relative z-10 flex w-full flex-1 min-h-0 flex-col overflow-hidden">
         <Outlet />
       </main>
     </div>

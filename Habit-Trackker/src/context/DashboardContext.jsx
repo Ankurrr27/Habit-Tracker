@@ -1,10 +1,9 @@
-import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import api from "../api/axios";
-import { useSync } from "./SyncContext";
+import { useSync } from "./useSync";
 import { startOfAppDay, addAppDays, toDateKey } from "../utils/date";
 import idbStorage from "../utils/idbStorage";
-
-const DashboardContext = createContext();
+import { DashboardContext } from "./dashboard-context";
 
 export function DashboardProvider({ children }) {
   const { syncVersion, triggerSync } = useSync();
@@ -141,12 +140,4 @@ export function DashboardProvider({ children }) {
       {children}
     </DashboardContext.Provider>
   );
-}
-
-export function useDashboard() {
-  const context = useContext(DashboardContext);
-  if (!context) {
-    throw new Error("useDashboard must be used within a DashboardProvider");
-  }
-  return context;
 }

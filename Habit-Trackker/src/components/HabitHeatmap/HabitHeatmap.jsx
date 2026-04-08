@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { motion as Motion } from "framer-motion";
-import { useDashboard } from "../../context/DashboardContext";
+import { useDashboard } from "../../context/useDashboard";
 import { startOfAppDay, addAppDays } from "../../utils/date";
 import HeatmapGrid from "./HeatmapGrid";
 import HeatmapLegend from "./HeatmapLegend";

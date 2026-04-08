@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { Check, Clock, Plus, Trash2 } from "lucide-react";
+import { Check, Plus, Trash2 } from "lucide-react";
 import api from "../../api/axios";
-import { useSync } from "../../context/SyncContext";
+import { useSync } from "../../context/useSync";
 import { useAuth } from "../../context/useAuth";
 
 export default function DailyTasks() {
@@ -95,7 +95,15 @@ export default function DailyTasks() {
         </span>
       </div>
       
-      <form onSubmit={handleAdd} className="group flex items-center gap-3 bg-zinc-50/50 dark:bg-zinc-900/30 border border-zinc-100 dark:border-zinc-800/80 rounded-2xl px-4 py-1.5 focus-within:border-indigo-500/30 focus-within:bg-zinc-50 dark:focus-within:bg-zinc-900/50 transition-all duration-300">
+      <form
+        onSubmit={handleAdd}
+        className="
+          group flex items-center gap-3 rounded-2xl border border-zinc-100 bg-zinc-50/50 px-4 py-1.5
+          transition-all duration-300
+          focus-within:border-[rgba(var(--primary),0.28)] focus-within:bg-zinc-50
+          dark:border-zinc-800/80 dark:bg-zinc-900/30 dark:focus-within:bg-zinc-900/50
+        "
+      >
         <input
           type="text"
           value={newTask}
@@ -123,8 +131,8 @@ export default function DailyTasks() {
             <div
               key={task._id}
               className={`group flex items-center gap-3 px-3 py-3 rounded-2xl border border-transparent 
-                hover:border-indigo-100 dark:hover:border-indigo-500/20 
-                hover:bg-indigo-50/50 dark:hover:bg-indigo-500/5 
+                hover:border-[rgba(var(--primary),0.16)] dark:hover:border-[rgba(var(--primary),0.18)] 
+                hover:bg-[rgba(var(--primary),0.05)] dark:hover:bg-[rgba(var(--primary),0.06)] 
                 transition-all duration-300 ${
                 task.status === "done" ? "opacity-60" : ""
               }`}
@@ -134,7 +142,7 @@ export default function DailyTasks() {
                 className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-lg border-2 transition-all duration-200 ${
                   task.status === "done"
                     ? "border-emerald-500 bg-emerald-500 text-white scale-95"
-                    : "border-zinc-300 dark:border-zinc-700 group-hover:border-indigo-500/50"
+                    : "border-zinc-300 dark:border-zinc-700 group-hover:border-[rgba(var(--primary),0.5)]"
                 }`}
               >
                 <Check size={12} strokeWidth={3} className={task.status === "done" ? "block scale-110" : "hidden"} />

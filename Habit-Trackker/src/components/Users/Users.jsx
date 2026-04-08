@@ -20,7 +20,7 @@ export default function Users() {
         <div className="page-header">
           <div className="page-header-copy">
             <div className="mb-1 flex items-center gap-2">
-              <UsersIcon size={12} className="text-indigo-500" />
+              <UsersIcon size={12} className="accent-text" />
               <span className="page-kicker">Community</span>
             </div>
             <h1 className="page-title">Find People</h1>

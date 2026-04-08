@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import { getNDays, toUTCDateKey } from "./habitByDay.utils";
 import { startOfAppDay } from "../../utils/date";
-import { useSync } from "../../context/SyncContext";
+import { useSync } from "../../context/useSync";
 
 export function useHabitByDay() {
-  const { syncVersion, triggerSync } = useSync();
+  const { triggerSync } = useSync();
   const weekDates = getNDays(30);
 
   const today = startOfAppDay(new Date());

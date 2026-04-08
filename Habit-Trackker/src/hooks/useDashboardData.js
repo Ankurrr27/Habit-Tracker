@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import api from "../api/axios";
-import { useSync } from "../context/SyncContext";
+import { useSync } from "../context/useSync";
 import { startOfAppDay, addAppDays, toDateKey } from "../utils/date";
 
 export function useDashboardData() {
-  const { syncVersion } = useSync();
+  const { syncVersion, triggerSync } = useSync();
   const [data, setData] = useState({ habits: [], logs: {} });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

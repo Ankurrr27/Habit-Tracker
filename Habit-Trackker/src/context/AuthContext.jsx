@@ -22,8 +22,9 @@ export function AuthProvider({ children }) {
     });
 
     if (!token) {
-      setLoading(false);
-      return () => { mounted = false; };
+      return () => {
+        mounted = false;
+      };
     }
 
     api

@@ -1,14 +1,21 @@
-import { useState, useEffect, useMemo } from "react";
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { useMemo } from "react";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import { startOfAppDay, addAppDays } from "../../utils/date";
 import { toDateKey } from "../HabitHeatmap/heatmap.utils";
 import { motion as Motion } from "framer-motion";
-import { useDashboard } from "../../context/DashboardContext";
+import { useDashboard } from "../../context/useDashboard";
+
+const SKELETON_BAR_HEIGHTS = [24, 38, 46, 58, 42, 67, 55, 40, 61, 48, 34, 52];
 
 export default function ProgressChart() {
-  const { habits, logs, loading, getDailyIntensity } = useDashboard();
-  const [data, setData] = useState([]);
-  const [initialLoading, setInitialLoading] = useState(true);
+  const { loading, getDailyIntensity } = useDashboard();
 
   const today = useMemo(() => startOfAppDay(new Date()), []);
   const daysArr = useMemo(() => {
@@ -16,38 +23,40 @@ export default function ProgressChart() {
     return Array.from({ length: 30 }, (_, index) => addAppDays(start, index));
   }, [today]);
 
-  useEffect(() => {
-    if (loading) return;
+  const data = useMemo(() => {
+    if (loading) {
+      return [];
+    }
 
-    const chartData = daysArr.map((dateObj) => {
+    return daysArr.map((dateObj) => {
       const dateKey = toDateKey(dateObj);
       const intensity = getDailyIntensity(dateKey);
-      
+
       return {
-        date: dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+        date: dateObj.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        }),
         progress: Math.round(intensity),
       };
     });
-
-    setData(chartData);
-    setInitialLoading(false);
   }, [loading, daysArr, getDailyIntensity]);
 
-  if (initialLoading || loading) {
+  if (loading) {
     return (
-      <div className="w-full h-full p-8 animate-pulse">
-        <div className="flex items-center justify-between mb-8 pb-4">
+      <div className="h-full w-full animate-pulse p-8">
+        <div className="mb-8 flex items-center justify-between pb-4">
           <div className="space-y-4">
-            <div className="h-6 w-48 bg-zinc-100 dark:bg-zinc-900 rounded-md" />
-            <div className="h-3 w-40 bg-zinc-50 dark:bg-zinc-900/40 rounded-md" />
+            <div className="h-6 w-48 rounded-md bg-zinc-100 dark:bg-zinc-900" />
+            <div className="h-3 w-40 rounded-md bg-zinc-50 dark:bg-zinc-900/40" />
           </div>
         </div>
-        <div className="h-80 w-full bg-zinc-50 dark:bg-zinc-900/40 rounded-2xl flex items-end px-4 gap-2">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div 
-              key={i} 
-              className="flex-1 bg-zinc-100 dark:bg-zinc-800 rounded-t-lg" 
-              style={{ height: `${20 + Math.random() * 60}%` }}
+        <div className="flex h-80 w-full items-end gap-2 rounded-2xl bg-zinc-50 px-4 dark:bg-zinc-900/40">
+          {SKELETON_BAR_HEIGHTS.map((height, index) => (
+            <div
+              key={index}
+              className="flex-1 rounded-t-lg bg-zinc-100 dark:bg-zinc-800"
+              style={{ height: `${height}%` }}
             />
           ))}
         </div>
@@ -57,14 +66,18 @@ export default function ProgressChart() {
 
   return (
     <Motion.div
-      className="w-full h-full p-5 sm:p-8"
+      className="h-full w-full p-5 sm:p-8"
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="-mx-5 mb-5 px-5 sm:-mx-8 sm:mb-6 sm:px-8 pb-4">
-        <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">Your Progress</h3>
-        <p className="text-[10px] uppercase tracking-wide text-zinc-500">Last 30 Days completion rate (%)</p>
+      <div className="-mx-5 mb-5 px-5 pb-4 sm:-mx-8 sm:mb-6 sm:px-8">
+        <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
+          Your Progress
+        </h3>
+        <p className="text-[10px] uppercase tracking-wide text-zinc-500">
+          Last 30 Days completion rate (%)
+        </p>
       </div>
 
       <div className="h-80 w-full">
@@ -77,10 +90,23 @@ export default function ProgressChart() {
                 <stop offset="100%" stopColor="#0ea5e9" stopOpacity={0.7} />
               </linearGradient>
             </defs>
-            <XAxis dataKey="date" tick={{ fontSize: 10, fill: "#71717a" }} tickLine={false} axisLine={false} />
-            <YAxis tick={{ fontSize: 10, fill: "#71717a" }} tickLine={false} axisLine={false} />
+            <XAxis
+              dataKey="date"
+              tick={{ fontSize: 10, fill: "#71717a" }}
+              tickLine={false}
+              axisLine={false}
+            />
+            <YAxis
+              tick={{ fontSize: 10, fill: "#71717a" }}
+              tickLine={false}
+              axisLine={false}
+            />
             <Tooltip
-              contentStyle={{ borderRadius: "10px", border: "1px solid #e4e4e7", backgroundColor: "#fff" }}
+              contentStyle={{
+                borderRadius: "10px",
+                border: "1px solid #e4e4e7",
+                backgroundColor: "#fff",
+              }}
               itemStyle={{ color: "#6366f1", fontWeight: "600" }}
             />
             <Area

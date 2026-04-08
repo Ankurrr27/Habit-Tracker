@@ -17,7 +17,7 @@ export default function DayHeader({ day, todayKey }) {
         transition-colors
         ${
           isToday
-            ? "text-indigo-600 bg-indigo-500/10 dark:text-violet-300 dark:bg-violet-500/10"
+            ? "accent-text accent-bg-soft"
             : "text-zinc-600 dark:text-zinc-400"
         }
         ${

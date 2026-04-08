@@ -1,27 +1,26 @@
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
-import api from "../api/axios";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
+  ArrowRight,
   Calendar,
+  Check,
   CheckCircle,
   Crop,
   Eye,
   EyeOff,
   Flame,
   Link2,
+  MapPin,
+  Palette,
+  Quote,
   Shield,
   Sparkles,
   UserRound,
-  ArrowRight,
-  MapPin,
-  Quote,
-  Pencil,
   X,
-  Check,
-  Palette,
 } from "lucide-react";
-import { useParams } from "react-router-dom";
-import { useAuth } from "../context/useAuth";
 import { motion as Motion, AnimatePresence } from "framer-motion";
+import { useParams } from "react-router-dom";
+import api from "../api/axios";
+import { useAuth } from "../context/useAuth";
 
 const emptyExternalProfiles = {
   github: "",
@@ -41,6 +40,16 @@ const profileFields = [
   { key: "codolio", label: "Codolio" },
 ];
 
+const accentSwatches = {
+  indigo: "bg-indigo-500",
+  sky: "bg-sky-400",
+  rose: "bg-rose-400",
+  emerald: "bg-emerald-500",
+  cyan: "bg-cyan-500",
+  orange: "bg-orange-500",
+  violet: "bg-violet-500",
+};
+
 export default function ProfilePage() {
   const { username } = useParams();
   const { user: me, setUser: setAuthUser } = useAuth();
@@ -55,25 +64,29 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [msg, setMsg] = useState("");
+  const [message, setMessage] = useState("");
   const [bio, setBio] = useState("");
   const [tagline, setTagline] = useState("");
   const [location, setLocation] = useState("");
   const [accentColor, setAccentColor] = useState("indigo");
   const [activeTab, setActiveTab] = useState("stats");
-  const [cropSrc, setCropSrc] = useState(null); // raw image URL for crop modal
-  const cropCanvasRef = useRef(null);
+  const [cropSrc, setCropSrc] = useState(null);
 
   const isOwnProfile = Boolean(me && me.username === targetUsername);
 
   useEffect(() => {
-    if (!targetUsername) return;
+    if (!targetUsername) {
+      return;
+    }
+
     setLoading(true);
     setError("");
+
     api
       .get(`/users/${targetUsername}`)
-      .then((res) => {
-        const nextUser = res.data;
+      .then((response) => {
+        const nextUser = response.data;
+
         setUser(nextUser);
         setName(nextUser.name || "");
         setBio(nextUser.bio || "");
@@ -88,54 +101,105 @@ export default function ProfilePage() {
   }, [targetUsername]);
 
   useEffect(() => {
-    if (!file) return undefined;
-    const url = URL.createObjectURL(file);
-    setPreview(url);
-    setCropSrc(url); // open crop modal automatically when file chosen
-    return () => URL.revokeObjectURL(url);
+    if (!file) {
+      return undefined;
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+    setPreview(objectUrl);
+    setCropSrc(objectUrl);
+
+    return () => URL.revokeObjectURL(objectUrl);
   }, [file]);
 
-  // Apply square centre-crop via canvas
   const applyCrop = useCallback(() => {
-    if (!cropSrc) return;
-    const img = new Image();
-    img.onload = () => {
-      const size = Math.min(img.width, img.height);
-      const sx = (img.width - size) / 2;
-      const sy = (img.height - size) / 2;
+    if (!cropSrc) {
+      return;
+    }
+
+    const image = new Image();
+
+    image.onload = () => {
+      const size = Math.min(image.width, image.height);
+      const sx = (image.width - size) / 2;
+      const sy = (image.height - size) / 2;
       const canvas = document.createElement("canvas");
+
       canvas.width = 400;
       canvas.height = 400;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, sx, sy, size, size, 0, 0, 400, 400);
-      const cropped = canvas.toDataURL("image/jpeg", 0.92);
-      setPreview(cropped);
-      // convert dataURL back to File object
-      canvas.toBlob(blob => setFile(new File([blob], "avatar.jpg", { type: "image/jpeg" })), "image/jpeg", 0.92);
+
+      const context = canvas.getContext("2d");
+      context.drawImage(image, sx, sy, size, size, 0, 0, 400, 400);
+
+      const croppedPreview = canvas.toDataURL("image/jpeg", 0.92);
+      setPreview(croppedPreview);
+
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            return;
+          }
+
+          setFile(new File([blob], "avatar.jpg", { type: "image/jpeg" }));
+        },
+        "image/jpeg",
+        0.92
+      );
+
       setCropSrc(null);
     };
-    img.src = cropSrc;
+
+    image.src = cropSrc;
   }, [cropSrc]);
 
   const joinedDate = useMemo(() => {
-    if (!user?.createdAt) return "Unknown";
+    if (!user?.createdAt) {
+      return "Unknown";
+    }
+
     return new Date(user.createdAt).toLocaleDateString(undefined, {
-      year: "numeric", month: "short",
+      year: "numeric",
+      month: "short",
     });
   }, [user?.createdAt]);
 
-  const completionRate = useMemo(() => {
-    return user?.stats?.completionRate || "0%";
-  }, [user?.stats?.completionRate]);
+  const completionRate = useMemo(
+    () => user?.stats?.completionRate || "0%",
+    [user?.stats?.completionRate]
+  );
+
+  const tabs = isOwnProfile
+    ? [
+        { id: "stats", label: "Stats" },
+        { id: "links", label: "Links" },
+        { id: "settings", label: "Settings" },
+      ]
+    : [
+        { id: "stats", label: "Stats" },
+        { id: "links", label: "Links" },
+      ];
 
   const submit = async () => {
-    if (!isOwnProfile || saving) return;
+    if (!isOwnProfile || saving || !user) {
+      return;
+    }
+
     setSaving(true);
-    setMsg("");
+    setMessage("");
+
     try {
-      let res;
+      let response;
+
       if (!file) {
-        res = await api.put("/users/profile", { name, profilePublic, externalProfiles, bio, tagline, location, accentColor });
+        response = await api.put("/users/profile", {
+          name,
+          profilePublic,
+          externalProfiles,
+          bio,
+          tagline,
+          location,
+          accentColor,
+        });
       } else {
         const formData = new FormData();
         formData.append("name", name);
@@ -146,173 +210,237 @@ export default function ProfilePage() {
         formData.append("profilePublic", String(profilePublic));
         formData.append("externalProfiles", JSON.stringify(externalProfiles));
         formData.append("avatar", file);
-        res = await api.put("/users/profile", formData);
+
+        response = await api.put("/users/profile", formData);
       }
-      const updatedUser = { ...user, ...res.data.user };
+
+      const updatedUser = { ...user, ...response.data.user };
       setUser(updatedUser);
-      setAuthUser((prev) => (prev ? { ...prev, ...res.data.user } : prev));
+      setAuthUser((previous) =>
+        previous ? { ...previous, ...response.data.user } : previous
+      );
       setFile(null);
       setPreview(null);
-      setMsg("Saved.");
+      setMessage("Saved.");
     } catch (err) {
-      setMsg(err.response?.data?.message || "Update failed.");
+      setMessage(err.response?.data?.message || "Update failed.");
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) return (
-    <div className="h-full flex flex-col items-center justify-center gap-4">
-      <div className={`h-12 w-12 rounded-2xl border-4 border-${user?.accentColor || 'indigo'}-500/20 border-t-${user?.accentColor || 'indigo'}-500 animate-spin`} />
-      <p className={`text-[11px] font-black uppercase tracking-[0.4em] text-${user?.accentColor || 'indigo'}-500 animate-pulse`}>Initializing Profile...</p>
-    </div>
-  );
-  if (error) return (
-    <div className="h-full flex items-center justify-center">
-      <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-red-400">{error}</p>
-    </div>
-  );
-  if (!user) return null;
+  if (loading) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center gap-4">
+        <div className="h-12 w-12 animate-spin rounded-2xl border-4 border-zinc-200 border-t-[rgb(var(--primary))]" />
+        <p className="accent-text animate-pulse text-[11px] font-black uppercase tracking-[0.36em]">
+          Initializing Profile...
+        </p>
+      </div>
+    );
+  }
 
-  const tabs = isOwnProfile
-    ? [{ id: "stats", label: "Stats" }, { id: "links", label: "Links" }, { id: "settings", label: "Settings" }]
-    : [{ id: "stats", label: "Stats" }, { id: "links", label: "Links" }];
+  if (error) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-red-400">
+          {error}
+        </p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
 
   return (
-    <div className={`flex flex-col lg:flex-row w-full min-h-full lg:h-full lg:overflow-hidden bg-transparent profile-theme-${user.accentColor || 'indigo'}`}>
+    <div
+      className={`theme-${user.accentColor || "indigo"} flex h-auto w-full flex-col bg-transparent lg:h-full lg:flex-row lg:overflow-hidden`}
+    >
+      <aside className="w-full shrink-0 border-b border-white/30 dark:border-white/5 lg:h-full lg:w-[340px] lg:border-b-0 lg:border-r">
+        <div className="page-shell h-full">
+          <div className="surface-card-strong flex h-full flex-col gap-8 p-6 sm:p-8">
+            <div className="flex flex-col items-center gap-6">
+              <div className="relative group">
+                <div
+                  className="flex h-[180px] w-[180px] items-center justify-center overflow-hidden rounded-[2.5rem] transition-all duration-500 group-hover:rounded-[2rem]"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, rgba(var(--primary),0.96) 0%, rgba(var(--primary),0.74) 100%)",
+                    boxShadow:
+                      "0 32px 70px -34px rgba(var(--primary),0.46)",
+                  }}
+                >
+                  {preview || user.avatar ? (
+                    <img
+                      src={preview || user.avatar}
+                      alt={user.name}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="text-5xl font-semibold text-white">
+                      {(user.name || user.username || "?")[0].toUpperCase()}
+                    </div>
+                  )}
+                </div>
 
-      {/* LEFT PANEL — Avatar + Identity */}
-      <aside className="lg:shrink-0 h-auto lg:h-full w-full lg:w-[300px] border-r border-zinc-100 dark:border-zinc-900/50">
-        <div className="h-full flex flex-col px-6 py-8 gap-8">
-
-          {/* Avatar — large stacked */}
-          <div className="flex flex-col items-center gap-6 pt-4">
-            <div className="relative group">
-              <div className={`h-[180px] w-[180px] overflow-hidden rounded-[2.5rem] bg-${user.accentColor || 'indigo'}-600 shadow-2xl shadow-${user.accentColor || 'indigo'}-600/25 transition-all duration-500 group-hover:rounded-[2rem]`}>
-                {preview || user.avatar ? (
-                  <img src={preview || user.avatar} alt={user.name} className="h-full w-full object-cover" />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center text-5xl font-extrabold text-white">
-                    {(user.name || user.username || "?")[0].toUpperCase()}
-                  </div>
+                {isOwnProfile && (
+                  <label className="absolute -bottom-2 -right-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-2xl bg-zinc-900 text-white shadow-xl transition hover:bg-[rgb(var(--primary))] dark:bg-zinc-100 dark:text-zinc-900">
+                    <UserRound size={15} />
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      onChange={(event) => {
+                        if (event.target.files?.[0]) {
+                          setFile(event.target.files[0]);
+                        }
+                      }}
+                    />
+                  </label>
                 )}
               </div>
 
-              {isOwnProfile && (
-                <label className={`absolute -bottom-2 -right-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-2xl bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-xl hover:bg-${user.accentColor || 'indigo'}-600 transition-all`}>
-                  <UserRound size={15} />
-                  <input type="file" hidden accept="image/*" onChange={(e) => { if(e.target.files[0]) setFile(e.target.files[0]); }} />
-                </label>
+              {isOwnProfile && preview && file && (
+                <button
+                  onClick={() => setCropSrc(preview)}
+                  className="accent-pill accent-border flex items-center gap-1.5 rounded-full border px-4 py-1.5 transition hover:bg-[rgba(var(--primary),0.14)]"
+                >
+                  <Crop size={11} />
+                  Crop Image
+                </button>
               )}
-            </div>
 
-            {/* Crop trigger — shown when a new file is picked */}
-            {isOwnProfile && preview && file && (
-              <button
-                onClick={() => setCropSrc(preview)}
-                className="flex items-center gap-1.5 rounded-full border border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/10 px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 transition"
-              >
-                <Crop size={11} />
-                Crop Image
-              </button>
-            )}
-
-            <div className="text-center space-y-3">
-              <div>
-                <div className="flex items-center justify-center gap-1.5 mb-1">
-                  <Sparkles size={10} className={`text-${user.accentColor || 'indigo'}-500`} />
-                  <span className={`text-[9px] font-bold uppercase tracking-[0.35em] text-${user.accentColor || 'indigo'}-500`}>
+              <div className="space-y-3 text-center">
+                <div className="flex items-center justify-center gap-1.5">
+                  <Sparkles size={10} className="accent-text" />
+                  <span className="accent-text text-[9px] font-bold uppercase tracking-[0.34em]">
                     {isOwnProfile ? "You" : "Profile"}
                   </span>
                 </div>
-                <h1 className="text-2xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100">
-                  {user.name || user.username}
-                </h1>
-                <p className="text-sm text-zinc-400 font-bold tracking-tight">@{user.username}</p>
-              </div>
-
-              {user.tagline && (
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100/50 dark:bg-zinc-900/50 border border-zinc-200/50 dark:border-zinc-800/50">
-                  <Quote size={10} className="text-zinc-400" />
-                  <p className="text-[10px] font-bold text-zinc-500 italic">"{user.tagline}"</p>
+                <div>
+                  <h1 className="text-2xl font-semibold tracking-[-0.03em] text-zinc-900 dark:text-zinc-100">
+                    {user.name || user.username}
+                  </h1>
+                  <p className="mt-1 text-sm font-medium text-zinc-400">
+                    @{user.username}
+                  </p>
                 </div>
-              )}
 
-              {user.bio && (
-                <p className="text-[12px] font-medium leading-relaxed text-zinc-600 dark:text-zinc-400 max-w-[240px]">
-                  {user.bio}
-                </p>
-              )}
-            </div>
-          </div>
+                {user.tagline && (
+                  <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200/60 bg-zinc-100/50 px-3 py-1 dark:border-zinc-800 dark:bg-zinc-900/50">
+                    <Quote size={10} className="text-zinc-400" />
+                    <p className="text-[10px] font-medium italic text-zinc-500">
+                      "{user.tagline}"
+                    </p>
+                  </div>
+                )}
 
-          {/* Meta */}
-          <div className="space-y-2.5 px-2">
-            {user.location && (
-              <div className="flex items-center gap-2.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400">
-                <MapPin size={13} strokeWidth={2.5} className="opacity-70" />
-                <span>{user.location}</span>
+                {user.bio && (
+                  <p className="mx-auto max-w-[240px] text-sm font-medium leading-6 text-zinc-500 dark:text-zinc-400">
+                    {user.bio}
+                  </p>
+                )}
               </div>
-            )}
-            <div className="flex items-center gap-2.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400">
-              <Calendar size={13} strokeWidth={2.5} className="opacity-70" />
-              <span>Joined {joinedDate}</span>
             </div>
-            <div className="flex items-center gap-2.5">
-              <div className={`h-1.5 w-1.5 rounded-full ${profilePublic ? "bg-emerald-500" : "bg-zinc-400"}`} />
-              <span className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400">{profilePublic ? "Public Profile" : "Private Profile"}</span>
-            </div>
-          </div>
 
-          {/* Stats strip */}
-          <div className="flex justify-between items-center px-2 py-4">
-            <StatTile icon={<Flame size={14} />} label="Streak" value={user.stats?.currentStreak ?? 0} color="text-orange-500" />
-            <StatTile icon={<CheckCircle size={14} />} label="Ticks" value={user.stats?.totalTicks ?? 0} color="text-emerald-500" />
-            <StatTile icon={<Calendar size={14} />} label="Active" value={user.stats?.activeDays ?? 0} color="text-indigo-500" />
-            <StatTile icon={<Shield size={14} />} label="Trust" value={user.credibilityScore ?? 0} color="text-violet-500" />
-          </div>
-
-          {/* Completion rate bar */}
-          <div className="space-y-2">
-            <div className="flex justify-between text-[11px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
-              <span>Completion Rate</span>
-              <span className="text-zinc-800 dark:text-zinc-100">{completionRate}</span>
-            </div>
-            <div className="h-1.5 w-full rounded-full bg-zinc-100 dark:bg-zinc-900 overflow-hidden">
-              <Motion.div
-                className={`h-full rounded-full bg-${user.accentColor || 'indigo'}-500 shadow-[0_0_12px_rgba(var(--primary),0.3)]`}
-                initial={{ width: 0 }}
-                animate={{ width: completionRate }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
+            <div className="section-grid gap-4">
+              <MetaRow icon={<Calendar size={13} />} value={`Joined ${joinedDate}`} />
+              {user.location && (
+                <MetaRow icon={<MapPin size={13} />} value={user.location} />
+              )}
+              <MetaRow
+                icon={profilePublic ? <Eye size={13} /> : <EyeOff size={13} />}
+                value={profilePublic ? "Public profile" : "Private profile"}
               />
             </div>
-          </div>
 
+            <div className="grid grid-cols-2 gap-3">
+              <StatTile
+                icon={<Flame size={14} />}
+                label="Streak"
+                value={user.stats?.currentStreak ?? 0}
+                colorClass="text-orange-500"
+              />
+              <StatTile
+                icon={<CheckCircle size={14} />}
+                label="Ticks"
+                value={user.stats?.totalTicks ?? 0}
+                colorClass="text-emerald-500"
+              />
+              <StatTile
+                icon={<Calendar size={14} />}
+                label="Active"
+                value={user.stats?.activeDays ?? 0}
+                colorClass="accent-text"
+              />
+              <StatTile
+                icon={<Shield size={14} />}
+                label="Trust"
+                value={user.credibilityScore ?? 0}
+                colorClass="text-violet-500"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-400">
+                <span>Completion Rate</span>
+                <span className="text-zinc-800 dark:text-zinc-100">
+                  {completionRate}
+                </span>
+              </div>
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-900">
+                <Motion.div
+                  className="accent-bg h-full rounded-full shadow-[0_0_12px_rgba(var(--primary),0.3)]"
+                  initial={{ width: 0 }}
+                  animate={{ width: completionRate }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </aside>
 
-      {/* RIGHT PANEL — Tabbed content */}
-      <main className="flex-1 w-full h-auto lg:h-full flex flex-col lg:overflow-hidden">
-        {/* Tab header — identical style to Dashboard */}
-        <div className="flex border-b border-zinc-100 dark:border-zinc-900/50 shrink-0">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 px-4 py-4 text-[10px] font-semibold uppercase tracking-[0.2em] transition-all
-                ${activeTab === tab.id
-                  ? `text-${user.accentColor || 'indigo'}-600 dark:text-${user.accentColor || 'indigo'}-400 font-bold border-b-2 border-${user.accentColor || 'indigo'}-600 dark:border-${user.accentColor || 'indigo'}-400`
-                  : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
-                }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+      <main className="flex h-auto w-full flex-1 flex-col lg:h-full lg:overflow-hidden">
+        <div className="page-shell shrink-0 pb-4">
+          <div className="page-header">
+            <div className="page-header-copy">
+              <div className="mb-1 flex items-center gap-2">
+                <UserRound size={14} className="accent-text" />
+                <span className="page-kicker">Profile Workspace</span>
+              </div>
+              <h2 className="page-title">Account and Progress</h2>
+              <p className="page-subtitle">
+                One consistent view for habit stats, public links, and profile
+                settings.
+              </p>
+            </div>
+
+            <div className="segmented-control flex">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`segmented-tab ${activeTab === tab.id ? "segmented-tab-active" : ""}`}
+                  style={
+                    activeTab === tab.id
+                      ? {
+                          color: "rgb(var(--primary))",
+                        }
+                      : undefined
+                  }
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="flex-1 h-auto lg:h-full lg:overflow-y-auto px-8 py-8">
+        <div className="page-shell flex-1 lg:overflow-y-auto">
           <AnimatePresence mode="wait">
-            {/* STATS TAB */}
             {activeTab === "stats" && (
               <Motion.div
                 key="stats"
@@ -320,19 +448,34 @@ export default function ProfilePage() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 10 }}
                 transition={{ duration: 0.2 }}
-                className="space-y-10"
+                className="page-stack max-w-none gap-6"
               >
-                <SectionLabel icon={<Flame size={16} />} title="Performance" sub="Historical consistency" />
-                <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-                  <LongMetric label="Streak" value={user.stats?.currentStreak ?? 0} unit="days" />
-                  <LongMetric label="Completion" value={completionRate} unit="rate" />
-                  <LongMetric label="Total Ticks" value={user.stats?.totalTicks ?? 0} unit="done" />
-                  <LongMetric label="Active" value={user.stats?.activeDays ?? 0} unit="days" />
+                <SectionHeading
+                  icon={<Flame size={16} />}
+                  title="Performance"
+                  subtitle="Historical consistency and activity rhythm."
+                />
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                  <MetricCard
+                    label="Current Streak"
+                    value={user.stats?.currentStreak ?? 0}
+                    unit="days"
+                  />
+                  <MetricCard label="Completion" value={completionRate} unit="rate" />
+                  <MetricCard
+                    label="Total Ticks"
+                    value={user.stats?.totalTicks ?? 0}
+                    unit="done"
+                  />
+                  <MetricCard
+                    label="Active Days"
+                    value={user.stats?.activeDays ?? 0}
+                    unit="days"
+                  />
                 </div>
               </Motion.div>
             )}
 
-            {/* LINKS TAB */}
             {activeTab === "links" && (
               <Motion.div
                 key="links"
@@ -340,37 +483,57 @@ export default function ProfilePage() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 10 }}
                 transition={{ duration: 0.2 }}
-                className="space-y-10"
+                className="page-stack max-w-none gap-6"
               >
-                <SectionLabel icon={<Link2 size={16} />} title="Linked IDs" sub="Cross-platform identities" />
+                <SectionHeading
+                  icon={<Link2 size={16} />}
+                  title="Linked IDs"
+                  subtitle="Cross-platform identities used across your workflow."
+                />
+
                 <div className="grid gap-4 sm:grid-cols-2">
                   {profileFields.map((field) => {
-                    const val = externalProfiles[field.key];
-                    if (!isOwnProfile && !val) return null;
+                    const value = externalProfiles[field.key];
+
+                    if (!isOwnProfile && !value) {
+                      return null;
+                    }
+
                     return (
-                      <div key={field.key} className="space-y-1.5">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">{field.label}</p>
+                      <div key={field.key} className="surface-card p-5">
+                        <p className="field-label mb-2">{field.label}</p>
                         {isOwnProfile ? (
                           <input
-                            value={val || ""}
-                            onChange={(e) => setExternalProfiles((p) => ({ ...p, [field.key]: e.target.value }))}
-                            className={inputClass}
-                            placeholder={`Enter ${field.label}...`}
+                            value={value || ""}
+                            onChange={(event) =>
+                              setExternalProfiles((previous) => ({
+                                ...previous,
+                                [field.key]: event.target.value,
+                              }))
+                            }
+                            className="field-input"
+                            placeholder={`Enter ${field.label}`}
                           />
                         ) : (
-                          <p className="text-sm font-bold text-zinc-800 dark:text-zinc-200">{val || "—"}</p>
+                          <p className="text-sm font-medium text-zinc-800 dark:text-zinc-200">
+                            {value || "-"}
+                          </p>
                         )}
                       </div>
                     );
                   })}
                 </div>
+
                 {isOwnProfile && (
-                  <SaveButton saving={saving} onClick={submit} msg={msg} />
+                  <SaveButton
+                    saving={saving}
+                    onClick={submit}
+                    message={message}
+                  />
                 )}
               </Motion.div>
             )}
 
-            {/* SETTINGS TAB - own profile only */}
             {activeTab === "settings" && isOwnProfile && (
               <Motion.div
                 key="settings"
@@ -378,120 +541,164 @@ export default function ProfilePage() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 10 }}
                 transition={{ duration: 0.2 }}
-                className="space-y-10 max-w-md"
+                className="page-stack max-w-3xl gap-6"
               >
-                <SectionLabel icon={<Shield size={16} />} title="Settings" sub="Identity and visibility" />
+                <SectionHeading
+                  icon={<Palette size={16} />}
+                  title="Profile Settings"
+                  subtitle="Identity, visibility, and personal accent configuration."
+                />
 
-                 <div className="space-y-5">
-                  <div className="space-y-1.5">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Display Name</p>
-                    <input value={name} onChange={(e) => setName(e.target.value)} className={inputClass} placeholder="Your name..." />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Tagline</p>
-                    <input value={tagline} onChange={(e) => setTagline(e.target.value)} className={inputClass} placeholder="Short emotional hook..." />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Biography</p>
-                    <textarea 
-                      value={bio} 
-                      onChange={(e) => setBio(e.target.value)} 
-                      className={inputClass + " h-20 resize-none"} 
-                      placeholder="Tell your story..." 
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <FieldBlock label="Display Name">
+                    <input
+                      value={name}
+                      onChange={(event) => setName(event.target.value)}
+                      className="field-input"
+                      placeholder="Your name"
                     />
-                  </div>
+                  </FieldBlock>
 
-                  <div className="space-y-1.5">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Location</p>
-                    <input value={location} onChange={(e) => setLocation(e.target.value)} className={inputClass} placeholder="City, Country..." />
-                  </div>
+                  <FieldBlock label="Tagline">
+                    <input
+                      value={tagline}
+                      onChange={(event) => setTagline(event.target.value)}
+                      className="field-input"
+                      placeholder="Short emotional hook"
+                    />
+                  </FieldBlock>
 
-                  <div className="space-y-2.5">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Accent Color</p>
+                  <FieldBlock label="Biography" className="sm:col-span-2">
+                    <textarea
+                      value={bio}
+                      onChange={(event) => setBio(event.target.value)}
+                      className="field-input h-24 resize-none"
+                      placeholder="Tell your story"
+                    />
+                  </FieldBlock>
+
+                  <FieldBlock label="Location">
+                    <input
+                      value={location}
+                      onChange={(event) => setLocation(event.target.value)}
+                      className="field-input"
+                      placeholder="City, Country"
+                    />
+                  </FieldBlock>
+
+                  <FieldBlock label="Accent Color">
                     <div className="flex flex-wrap gap-3 pt-1">
-                      {["indigo", "sky", "rose", "emerald", "cyan", "orange", "violet"].map((c) => (
+                      {Object.keys(accentSwatches).map((color) => (
                         <button
-                          key={c}
-                          onClick={() => setAccentColor(c)}
+                          key={color}
+                          onClick={() => setAccentColor(color)}
                           className={`h-8 w-8 rounded-xl transition-all duration-300 ${
-                            accentColor === c ? "ring-2 ring-offset-2 ring-zinc-400 scale-110" : "scale-90 opacity-60 hover:opacity-100"
-                          } ${
-                            c === "rose" ? "bg-rose-400" : c === "sky" ? "bg-sky-400" : `bg-${c}-500`
-                          }`}
+                            accentColor === color
+                              ? "scale-110 ring-2 ring-zinc-400 ring-offset-2"
+                              : "scale-90 opacity-60 hover:opacity-100"
+                          } ${accentSwatches[color]}`}
                         />
                       ))}
                     </div>
-                  </div>
+                  </FieldBlock>
+                </div>
 
+                <div className="surface-card p-5">
                   <button
-                    onClick={() => setProfilePublic(!profilePublic)}
-                    className="flex w-full items-center justify-between py-4 text-sm font-bold text-zinc-700 dark:text-zinc-300 hover:text-indigo-500 transition-colors border-t border-zinc-100 dark:border-zinc-900/50 mt-4"
+                    onClick={() => setProfilePublic((currentValue) => !currentValue)}
+                    className="flex w-full items-center justify-between text-left"
                   >
-                    <span className="flex items-center gap-2.5">
-                      {profilePublic ? <Eye size={16} /> : <EyeOff size={16} />}
-                      Profile Visibility
-                    </span>
-                    <span className={`text-[10px] uppercase font-black tracking-widest ${profilePublic ? "text-emerald-500" : "text-zinc-400"}`}>
-                      {profilePublic ? "Public" : "Private"}
-                    </span>
+                    <div className="space-y-1">
+                      <p className="field-label">Profile Visibility</p>
+                      <p className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
+                        Choose whether other people can view this profile.
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      {profilePublic ? (
+                        <Eye size={16} className="accent-text" />
+                      ) : (
+                        <EyeOff size={16} className="text-zinc-400" />
+                      )}
+                      <span
+                        className={`text-[11px] font-semibold uppercase tracking-[0.18em] ${
+                          profilePublic ? "text-emerald-500" : "text-zinc-400"
+                        }`}
+                      >
+                        {profilePublic ? "Public" : "Private"}
+                      </span>
+                    </div>
                   </button>
                 </div>
 
-                <SaveButton saving={saving} onClick={submit} msg={msg} />
+                <SaveButton
+                  saving={saving}
+                  onClick={submit}
+                  message={message}
+                />
               </Motion.div>
             )}
           </AnimatePresence>
         </div>
       </main>
 
-      {/* CROP MODAL */}
       <AnimatePresence>
         {cropSrc && (
           <Motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-6"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-6 backdrop-blur-sm"
           >
             <Motion.div
               initial={{ scale: 0.94, y: 12 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.94, y: 12 }}
-              className="bg-white dark:bg-zinc-950 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-2xl w-full max-w-sm overflow-hidden"
+              className="w-full max-w-sm overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-2xl dark:border-zinc-800 dark:bg-zinc-950"
             >
-              {/* Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100 dark:border-zinc-800">
+              <div className="flex items-center justify-between border-b border-zinc-100 px-6 py-4 dark:border-zinc-800">
                 <div>
-                  <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-indigo-500 mb-0.5">Avatar</p>
-                  <h3 className="text-sm font-extrabold text-zinc-900 dark:text-zinc-100">Crop Image</h3>
+                  <p className="accent-text mb-0.5 text-[9px] font-bold uppercase tracking-[0.3em]">
+                    Avatar
+                  </p>
+                  <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                    Crop Image
+                  </h3>
                 </div>
-                <button onClick={() => setCropSrc(null)} className="flex h-8 w-8 items-center justify-center rounded-xl text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition">
+
+                <button
+                  onClick={() => setCropSrc(null)}
+                  className="flex h-8 w-8 items-center justify-center rounded-xl text-zinc-400 transition hover:bg-zinc-100 dark:hover:bg-zinc-900"
+                >
                   <X size={16} />
                 </button>
               </div>
 
-              {/* Preview */}
-              <div className="p-6 flex flex-col items-center gap-6">
+              <div className="flex flex-col items-center gap-6 p-6">
                 <div className="relative">
-                  {/* Square clip indicator */}
-                  <div className="h-[220px] w-[220px] overflow-hidden rounded-3xl border-2 border-dashed border-indigo-400/50 shadow-lg shadow-indigo-500/10">
-                    <img src={cropSrc} alt="crop preview" className="h-full w-full object-cover" />
+                  <div className="h-[220px] w-[220px] overflow-hidden rounded-3xl border-2 border-dashed [border-color:rgba(var(--primary),0.35)] shadow-[0_24px_50px_-32px_rgba(var(--primary),0.35)]">
+                    <img
+                      src={cropSrc}
+                      alt="crop preview"
+                      className="h-full w-full object-cover"
+                    />
                   </div>
-                  <p className="text-center text-[10px] text-zinc-400 mt-2">Square centre-crop will be applied</p>
+                  <p className="mt-2 text-center text-[10px] text-zinc-400">
+                    Square centre crop will be applied
+                  </p>
                 </div>
 
-                <div className="flex gap-3 w-full">
+                <div className="flex w-full gap-3">
                   <button
                     onClick={() => setCropSrc(null)}
-                    className="flex-1 rounded-full border border-zinc-200 dark:border-zinc-700 py-2.5 text-xs font-bold text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"
+                    className="btn-secondary flex-1 py-2.5 text-xs"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={applyCrop}
-                    className="flex-1 flex items-center justify-center gap-2 rounded-full bg-indigo-600 py-2.5 text-xs font-extrabold text-white shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 transition active:scale-95"
+                    className="btn-primary flex flex-1 items-center justify-center gap-2 py-2.5 text-xs"
                   >
                     <Check size={13} />
                     Apply Crop
@@ -506,45 +713,71 @@ export default function ProfilePage() {
   );
 }
 
-/* ── Sub-components ── */
-
-function StatTile({ icon, label, value, color }) {
+function MetaRow({ icon, value }) {
   return (
-    <div className="flex flex-col items-center gap-1">
-      <div className={`flex items-center justify-center h-8 w-8 rounded-full bg-zinc-100/50 dark:bg-zinc-900/50 ${color}`}>{icon}</div>
-      <p className="text-xl font-extrabold text-zinc-900 dark:text-zinc-100 tabular-nums tracking-tight">{value}</p>
-      <p className="text-[10px] font-extrabold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">{label}</p>
+    <div className="flex items-center gap-2.5 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+      <span className="accent-text">{icon}</span>
+      <span>{value}</span>
     </div>
   );
 }
 
-function LongMetric({ label, value, unit }) {
+function StatTile({ icon, label, value, colorClass }) {
   return (
-    <div className="space-y-1.5">
-      <p className="text-[11px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">{label}</p>
-      <div className="flex items-baseline gap-1.5">
-        <span className="text-3xl font-extrabold text-zinc-900 dark:text-zinc-100 tabular-nums tracking-tight">{value}</span>
-        <span className="text-[12px] font-bold uppercase text-zinc-500 dark:text-zinc-400">{unit}</span>
+    <div className="surface-card flex flex-col items-center gap-2 p-4 text-center">
+      <div
+        className={`flex h-9 w-9 items-center justify-center rounded-2xl bg-zinc-100/80 dark:bg-zinc-900/60 ${colorClass}`}
+      >
+        {icon}
+      </div>
+      <p className="text-2xl font-semibold tracking-[-0.03em] text-zinc-900 dark:text-zinc-100">
+        {value}
+      </p>
+      <p className="field-label">{label}</p>
+    </div>
+  );
+}
+
+function MetricCard({ label, value, unit }) {
+  return (
+    <div className="stat-card">
+      <p className="field-label">{label}</p>
+      <div className="mt-3 flex items-baseline gap-2">
+        <span className="text-3xl font-semibold tracking-[-0.03em] text-zinc-900 dark:text-zinc-100">
+          {value}
+        </span>
+        <span className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-400">
+          {unit}
+        </span>
       </div>
     </div>
   );
 }
 
-function SectionLabel({ icon, title, sub }) {
+function SectionHeading({ icon, title, subtitle }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400">
+      <span className="accent-bg-soft accent-text flex h-10 w-10 items-center justify-center rounded-2xl">
         {icon}
       </span>
       <div>
-        <h2 className="text-base font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100">{title}</h2>
-        <p className="text-[12px] font-medium text-zinc-500 dark:text-zinc-400 tracking-tight">{sub}</p>
+        <h3 className="section-title">{title}</h3>
+        <p className="section-copy">{subtitle}</p>
       </div>
     </div>
   );
 }
 
-function SaveButton({ saving, onClick, msg }) {
+function FieldBlock({ label, children, className = "" }) {
+  return (
+    <div className={`surface-card p-5 ${className}`.trim()}>
+      <p className="field-label mb-2">{label}</p>
+      {children}
+    </div>
+  );
+}
+
+function SaveButton({ saving, onClick, message }) {
   return (
     <div className="space-y-3">
       <button
@@ -555,9 +788,11 @@ function SaveButton({ saving, onClick, msg }) {
         {saving ? "Saving..." : "Save Changes"}
         <ArrowRight size={15} />
       </button>
-      {msg && <p className="text-center text-[11px] font-semibold uppercase tracking-[0.18em] text-indigo-500">{msg}</p>}
+      {message && (
+        <p className="accent-text text-center text-[11px] font-semibold uppercase tracking-[0.18em]">
+          {message}
+        </p>
+      )}
     </div>
   );
 }
-
-const inputClass = "field-input";

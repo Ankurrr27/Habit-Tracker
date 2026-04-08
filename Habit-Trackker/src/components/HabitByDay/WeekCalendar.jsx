@@ -168,7 +168,7 @@ export default function WeekCalendar({
           onChange={handleDateSearch}
           className="
             rounded-lg bg-zinc-100 px-2 py-1 text-xs
-            text-zinc-700 focus:outline-none focus:ring-1 focus:ring-indigo-500/30
+            text-zinc-700 focus:outline-none focus:ring-1 focus:ring-[rgba(var(--primary),0.3)]
             dark:bg-zinc-900 dark:text-zinc-300
           "
         />

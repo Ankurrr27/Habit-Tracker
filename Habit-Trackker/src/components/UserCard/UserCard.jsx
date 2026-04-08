@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Shield, ArrowUpRight, Sparkles, Flame, UserPlus } from "lucide-react";
+import { Shield, Sparkles, Flame } from "lucide-react";
 import { getAvatarColor, getInitial } from "./avatar.utils";
 import { motion as Motion } from "framer-motion";
 
@@ -70,7 +70,7 @@ function UserCard({ user, compact = false, onClick, onToggleFollow }) {
                 {user.name}
               </h3>
               {user.credibilityScore > 50 && (
-                <Sparkles size={11} className="text-indigo-500 shrink-0" />
+                <Sparkles size={11} className="accent-text shrink-0" />
               )}
             </div>
             <p className="text-[11px] font-medium text-zinc-400 truncate mb-1.5">
@@ -83,7 +83,7 @@ function UserCard({ user, compact = false, onClick, onToggleFollow }) {
               </div>
               <div className="h-2.5 w-px bg-zinc-300 dark:bg-zinc-700" />
               <div className="flex items-center gap-1">
-                <Shield size={11} className="text-indigo-500" />
+                <Shield size={11} className="accent-text" />
                 <span className="text-[11px] font-bold text-zinc-600 dark:text-zinc-300">{user.credibilityScore || 0}</span>
               </div>
             </div>
@@ -131,7 +131,7 @@ function UserCard({ user, compact = false, onClick, onToggleFollow }) {
             <p className="truncate text-[11px] text-zinc-400">@{user.username}</p>
           </div>
           {user.friendshipStatus === "friends" && (
-            <Sparkles size={12} className="text-indigo-400 ml-auto" />
+            <Sparkles size={12} className="accent-text-soft ml-auto" />
           )}
         </>
       )}

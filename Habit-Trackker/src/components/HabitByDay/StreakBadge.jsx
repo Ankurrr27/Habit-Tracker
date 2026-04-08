@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
-import { useSync } from "../../context/SyncContext";
+import { useSync } from "../../context/useSync";
 import { useAuth } from "../../context/useAuth";
 import { Flame } from "lucide-react";
 

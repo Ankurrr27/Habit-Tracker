@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import api from "../../api/axios";
 import { toDateKey, getDayKey } from "./heatmap.utils";
 import { addAppDays, startOfAppDay } from "../../utils/date";
-import { useSync } from "../../context/SyncContext";
+import { useSync } from "../../context/useSync";
 
 export function useHabitHeatmap() {
   const { syncVersion } = useSync();
